@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+enum ErrorCode
+{
+    Invaild = 0; //非法操作错误
+    Success = 1; //成功
+
+}
+
+message CS_SyncClientDeviceInfo
+{
+    string Data = 1;
+}
+
+message SC_SyncClientDeviceInfo
+{
+    ErrorCode Result = 1;
+}
+

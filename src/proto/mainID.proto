@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+enum MSG 
+{
+    NO = 0; // 不可用ID
+
+    CS_LOGIN = 1; //登录
+    SC_LOGIN = 2; 
+
+    CS_LOGOUT = 3;  //登出
+    SC_LOGOUT = 4;  //
+
+    CS_HEARTBEAT = 5; //心跳
+    SC_HEARTBEAT = 6; //
+
+    CS_SYNC_CLIENT_DEVICE_INFO = 7; // 同步客户端设备信息
+    SC_SYNC_CLIENT_DEVICE_INFO = 8;
+
+    SS_ROUTE = 9; //服务器间路由
+}

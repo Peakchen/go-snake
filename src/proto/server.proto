@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+enum ServerType
+{
+    No = 0;
+    Server = 1;  //一般为gate 或者其他监听服务器
+    Client = 2;  //
+}
+
+message SS_SSRoute
+{
+    ServerType st = 1;
+    bytes data = 2;
+}
