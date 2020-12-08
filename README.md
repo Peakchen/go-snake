@@ -3,7 +3,7 @@
 #### 软件架构
 
 1. gate server 数据安全防护，负载均衡, 分发客户端消息
-2. remote server 消息处理，数据存储 
+2. game server 消息处理，数据存储 
 3. db mysql 
 4. cache redis
 
