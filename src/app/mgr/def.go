@@ -5,4 +5,5 @@ const (
 	CstLogin   = "login"
 	CstAccount = "account"
 	CstGate    = "gate"
+	CstRobot   = "robot"
 )

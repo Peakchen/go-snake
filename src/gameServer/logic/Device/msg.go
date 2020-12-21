@@ -1,14 +1,14 @@
 package Device
 
 import (
-	"ak-remote/akmessage"
-	"ak-remote/common/myWebSocket"
-	"ak-remote/gameServer/logic/base"
+	"go-snake/akmessage"
+	"go-snake/common/webNet"
+	"go-snake/gameServer/logic/base"
 )
 
 func init() {
 	base.Register(func(entity EntityUser) {
-		myWebSocket.MsgRegister(akmessage.MSG_CS_SYNC_CLIENT_DEVICE_INFO, entity.SyncClientDevice)
+		webNet.MsgRegister(akmessage.MSG_CS_SYNC_CLIENT_DEVICE_INFO, entity.SyncClientDevice)
 	})
 
 }

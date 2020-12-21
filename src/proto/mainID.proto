@@ -12,11 +12,22 @@ enum MSG
     CS_LOGOUT = 3;  //登出
     SC_LOGOUT = 4;  //
 
-    CS_HEARTBEAT = 5; //心跳
+    CS_HEARTBEAT = 5; //客户端心跳
     SC_HEARTBEAT = 6; //
 
     CS_SYNC_CLIENT_DEVICE_INFO = 7; // 同步客户端设备信息
     SC_SYNC_CLIENT_DEVICE_INFO = 8;
 
     SS_ROUTE = 9; //服务器间路由
+
+    CS_ENTER_GAME_SCENE = 10;
+
+    CS_ACC_REGISTER = 11; //账号注册
+    SC_ACC_REGISTER = 12; 
+
+    SS_REGISTER_REQ = 13; //服务器注册
+    SS_REGISTER_RSP = 14; 
+
+    SS_HEARTBEAT_REQ = 15; //服务器间心跳
+    SS_HEARTBEAT_RSP = 16; //
 }

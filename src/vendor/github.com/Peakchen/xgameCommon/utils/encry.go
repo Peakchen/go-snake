@@ -4,7 +4,6 @@ package utils
 
 import (
 	"bytes"
-	"github.com/Peakchen/xgameCommon/aktime"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/des"
@@ -20,13 +19,8 @@ import (
 	mrand "math/rand"
 	"net"
 
-	uuid "github.com/satori/go.uuid"
+	"github.com/Peakchen/xgameCommon/aktime"
 )
-
-//get new uuid
-func GetUUID() string {
-	return uuid.NewV4().String()
-}
 
 // encrypt string to base64 crypto using AES
 func encrypt(key []byte, text string) string {

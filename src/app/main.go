@@ -1,9 +1,10 @@
 package main
 
 import (
-	"ak-remote/app/in"
-	"ak-remote/app/mgr"
-	"ak-remote/common"
+	"go-snake/app/in"
+	"go-snake/app/mgr"
+	"go-snake/common"
+	"time"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 
@@ -17,11 +18,11 @@ func main() {
 		app := mgr.GetApp(params.AppName)
 		if app != nil {
 			app.Init()
-			app.Run()
+			app.Run(params)
 		}
 	}, nil)
 	tool.SignalExit(func() {
-
+		time.Sleep(time.Second)
 	})
 	akLog.FmtPrintln("end.")
 }

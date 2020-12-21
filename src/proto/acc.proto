@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+import "errorcode.proto";
+
+message CS_AccRegister 
+{
+    string acc = 1; 
+    string pwd = 2;
+}
+
+message SC_AccRegister
+{
+    ErrorCode Ret = 1;
+}
+
+message CS_Login 
+{
+    string acc = 1; 
+    string pwd = 2;
+}
+
+message SC_Login
+{
+    ErrorCode Ret = 1;
+}
+
+message CS_Logout 
+{
+    
+}
+
+message SC_Logout 
+{
+  
+}

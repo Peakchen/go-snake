@@ -4,14 +4,13 @@ package tool
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
 	"os/signal"
 	"strconv"
 	"syscall"
-
 	//"runtime"
-	"github.com/Peakchen/xgameCommon/akLog"
 	//"syscall"
 )
 
@@ -24,7 +23,7 @@ func CheckPortUsed(port int) bool {
 	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
-		akLog.Error(err.Error() + ": " + stderr.String())
+		fmt.Println(err.Error() + ": " + stderr.String())
 		return false
 	}
 
@@ -51,13 +50,13 @@ func CmdHide() {
 	cmd.Stderr = &stderr
 	err = cmd.Run()
 	if err != nil {
-		akLog.Error(err.Error() + ": " + stderr.String())
+		fmt.Println(err.Error() + ": " + stderr.String())
 		return
 	}
 
 	err = os.Remove("hide.vbs")
 	if err != nil {
-		akLog.Error(err.Error())
+		fmt.Println(err.Error())
 		return
 	}
 }
@@ -89,13 +88,13 @@ func BatHide(param []string) {
 	cmd.Stderr = &stderr
 	err = cmd.Run()
 	if err != nil {
-		akLog.Error(err.Error() + ": " + stderr.String())
+		fmt.Println(err.Error() + ": " + stderr.String())
 		return
 	}
 
 	err = os.Remove("hide.bat")
 	if err != nil {
-		akLog.Error(err.Error())
+		fmt.Println(err.Error())
 		return
 	}
 }
@@ -104,18 +103,16 @@ func SignalExit(fn func()) {
 	chsignal := make(chan os.Signal, 1)
 	//listen sign: ctrl+c, kill
 	signal.Notify(chsignal, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGKILL)
-	for {
-		select {
-		case s := <-chsignal:
-			switch s {
-			case syscall.SIGKILL, syscall.SIGTERM, syscall.SIGQUIT:
-				akLog.FmtPrintln("signal exit:", s)
-				if fn != nil {
-					fn()
-				}
-			default:
-				akLog.FmtPrintln("other signal:", s)
+
+	select {
+	case s := <-chsignal:
+		switch s {
+		case syscall.SIGKILL, syscall.SIGTERM, syscall.SIGQUIT:
+			fmt.Println("signal exit:", s)
+			if fn != nil {
+				fn()
 			}
 		}
 	}
+
 }

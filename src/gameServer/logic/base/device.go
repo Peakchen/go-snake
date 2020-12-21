@@ -1,8 +1,8 @@
 package base
 
 import (
-	"ak-remote/akmessage"
-	"ak-remote/gameServer/logic/Device/device_model"
+	"go-snake/akmessage"
+	"go-snake/gameServer/logic/Device/device_model"
 )
 
 type IDevice interface {

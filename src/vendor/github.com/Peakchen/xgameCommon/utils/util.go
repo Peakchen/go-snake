@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"io"
 	"math"
-	"math/rand"
 	"os"
 	"path"
 	"path/filepath"
@@ -76,37 +75,6 @@ func MaxInt(a, b int) int {
 	} else {
 		return b
 	}
-}
-
-// 随机 [low, high]
-func RandomInt(low int, high int) int {
-	if low == high {
-		return low
-	}
-	if low > high || high == 0 {
-		return 0
-	}
-
-	return rand.Intn(high-low+1) + low
-}
-
-// c# random.next [low, high)
-func RandomNext2(low, high int) int {
-	return RandomInt(low, high-1)
-}
-
-// c# random.next [0, high)
-func RandomNext(high int) int {
-	return RandomNext2(0, high)
-}
-
-func RandomString(length int) string {
-	bytes := make([]byte, length)
-	for i := 0; i < length; i++ {
-		b := rand.Intn(26) + 65
-		bytes[i] = byte(b)
-	}
-	return string(bytes)
 }
 
 func IsDir(path string) bool {

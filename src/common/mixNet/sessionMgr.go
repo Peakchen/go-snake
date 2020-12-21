@@ -3,7 +3,7 @@ package mixNet
 // websocket, tcp socket session manager
 
 import (
-	"ak-remote/common/messageBase"
+	"go-snake/common/messageBase"
 	"sync"
 )
 
@@ -73,6 +73,18 @@ func (this *SessionMgr) RemoveTcpSession(id string) {
 
 func (this *SessionMgr) GetTcpSessions() sync.Map {
 	return this.svrSessions
+}
+
+func (this *SessionMgr) SendInner(sid string, id uint32, data []byte) {
+	this.App.SendInner(sid, id, data)
+}
+
+func (this *SessionMgr) SendClient(sid string, id uint32, data []byte) {
+	this.App.SendClient(sid, id, data)
+}
+
+func (this *SessionMgr) Handler(sid string, data []byte) {
+	this.App.Handler(sid, data)
 }
 
 func init() {

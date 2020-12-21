@@ -1,5 +1,10 @@
 package accountServer
 
+import (
+	"go-snake/akmessage"
+	"go-snake/app/in"
+)
+
 type Account struct {
 }
 
@@ -11,6 +16,10 @@ func (this *Account) Init() {
 
 }
 
-func (this *Account) Run() {
+func (this *Account) Type() akmessage.ServerType {
+	return akmessage.ServerType_Account
+}
+
+func (this *Account) Run(d *in.Input) {
 
 }

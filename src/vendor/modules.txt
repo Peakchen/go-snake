@@ -1,4 +1,4 @@
-# github.com/Peakchen/xgameCommon v0.0.6-0.20201208064518-d6714b896185
+# github.com/Peakchen/xgameCommon v0.0.6-0.20201216024322-e1b5d7c10063
 ## explicit
 github.com/Peakchen/xgameCommon/ado
 github.com/Peakchen/xgameCommon/akLog
@@ -19,6 +19,8 @@ github.com/axgle/mahonia
 github.com/bwmarrin/snowflake
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
+# github.com/denisenkom/go-mssqldb v0.0.0-20191124224453-732737034ffd
+## explicit
 # github.com/eapache/go-resiliency v1.1.0
 github.com/eapache/go-resiliency/breaker
 # github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21
@@ -50,6 +52,9 @@ github.com/gomodule/redigo/redis
 # github.com/gonutz/ide v0.0.0-20200517034207-df64a3832118
 ## explicit
 github.com/gonutz/ide/w32
+# github.com/google/uuid v1.1.2
+## explicit
+github.com/google/uuid
 # github.com/gorilla/websocket v1.4.2
 ## explicit
 github.com/gorilla/websocket
@@ -57,26 +62,65 @@ github.com/gorilla/websocket
 github.com/jinzhu/inflection
 # github.com/jinzhu/now v1.1.1
 github.com/jinzhu/now
+# github.com/json-iterator/go v1.1.10
+## explicit
+github.com/json-iterator/go
 # github.com/kr/pretty v0.2.1
 ## explicit
+# github.com/lib/pq v1.1.1
+## explicit
+# github.com/mattn/go-sqlite3 v1.14.0
+## explicit
+# github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421
+github.com/modern-go/concurrent
+# github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742
+github.com/modern-go/reflect2
 # github.com/pierrec/lz4 v2.0.5+incompatible
 github.com/pierrec/lz4
 github.com/pierrec/lz4/internal/xxh32
 # github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a
 github.com/rcrowley/go-metrics
+# github.com/rs/xid v1.2.1
+## explicit
+github.com/rs/xid
 # github.com/samuel/go-zookeeper v0.0.0-20200724154423-2164a8ac840e
 ## explicit
 github.com/samuel/go-zookeeper/zk
 # github.com/satori/go.uuid v1.2.0
 ## explicit
 github.com/satori/go.uuid
+# github.com/segmentio/ksuid v1.0.3
+## explicit
+github.com/segmentio/ksuid
 # github.com/smartystreets/goconvey v1.6.4
 ## explicit
 # github.com/sony/sonyflake v1.0.0
 ## explicit
 github.com/sony/sonyflake
-# golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
+# github.com/vmihailenco/msgpack v4.0.4+incompatible
+## explicit
+github.com/vmihailenco/msgpack
+github.com/vmihailenco/msgpack/codes
+# golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+## explicit
+# golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
+golang.org/x/net/context
+# golang.org/x/sys v0.0.0-20201015000850-e3ed0017c211
+## explicit
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/windows
+# google.golang.org/appengine v1.6.0
+google.golang.org/appengine
+google.golang.org/appengine/datastore
+google.golang.org/appengine/datastore/internal/cloudkey
+google.golang.org/appengine/datastore/internal/cloudpb
+google.golang.org/appengine/internal
+google.golang.org/appengine/internal/app_identity
+google.golang.org/appengine/internal/base
+google.golang.org/appengine/internal/datastore
+google.golang.org/appengine/internal/log
+google.golang.org/appengine/internal/modules
+google.golang.org/appengine/internal/remote_api
 # google.golang.org/protobuf v1.25.0
 ## explicit
 google.golang.org/protobuf/encoding/prototext
@@ -105,14 +149,23 @@ google.golang.org/protobuf/reflect/protoreflect
 google.golang.org/protobuf/reflect/protoregistry
 google.golang.org/protobuf/runtime/protoiface
 google.golang.org/protobuf/runtime/protoimpl
+# gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15
+## explicit
 # gopkg.in/ini.v1 v1.62.0
 ## explicit
 gopkg.in/ini.v1
+# gopkg.in/yaml.v2 v2.3.0
+## explicit
+# gorm.io/driver/mysql v1.0.3
+## explicit
+gorm.io/driver/mysql
 # gorm.io/gorm v1.20.8
 ## explicit
 gorm.io/gorm
+gorm.io/gorm/callbacks
 gorm.io/gorm/clause
 gorm.io/gorm/logger
+gorm.io/gorm/migrator
 gorm.io/gorm/schema
 gorm.io/gorm/utils
 # xorm.io/builder v0.3.6

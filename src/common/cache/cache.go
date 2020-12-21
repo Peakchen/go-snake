@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"ak-remote/common/rediscache"
+	"go-snake/common/rediscache"
 	"fmt"
 	"sync"
 	"time"

@@ -2,7 +2,7 @@ package cache
 
 import (
 	//"reflect"
-	"ak-remote/common/rediscache"
+	"go-snake/common/rediscache"
 	"fmt"
 
 	"github.com/globalsign/mgo/bson"

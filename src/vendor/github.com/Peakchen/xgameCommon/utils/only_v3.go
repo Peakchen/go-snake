@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
-	"strconv"
 	"strings"
 )
 
@@ -37,14 +36,11 @@ func NewInt64_v3() (id int64) {
 	if len(sid) == 0 {
 		return
 	}
-
-	val, err := strconv.Atoi(sid)
+	var err error
+	id, err = String2Int64(sid)
 	if err != nil {
 		panic(err)
-		return
 	}
-
-	id = int64(val)
 	return
 }
 

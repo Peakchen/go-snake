@@ -1,12 +1,12 @@
 package Device
 
 import (
-	"ak-remote/akmessage"
-	"ak-remote/common/myWebSocket"
+	"go-snake/akmessage"
+	"go-snake/common/webNet"
 )
 
 func init() {
-	myWebSocket.MsgRegister(akmessage.MSG_CS_HEARTBEAT)
+	webNet.MsgRegister(akmessage.MSG_CS_HEARTBEAT)
 }
 
 

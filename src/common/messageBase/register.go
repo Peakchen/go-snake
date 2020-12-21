@@ -61,3 +61,7 @@ func MsgRegister(id uint32, proc interface{}) {
 func MsgHandler(id uint32) *TMessageProc {
 	return msgs[id]
 }
+
+func GetMsgHandlers() map[uint32]*TMessageProc {
+	return msgs
+}

@@ -1,9 +1,9 @@
 package Device
 
 import (
-	"ak-remote/gameServer/logic/Device/device_model"
-	"ak-remote/gameServer/logic/Entity"
-	"ak-remote/gameServer/logic/base"
+	"go-snake/gameServer/logic/Device/device_model"
+	"go-snake/gameServer/logic/Entity"
+	"go-snake/gameServer/logic/base"
 )
 
 type DeviceInfo struct {

@@ -1,8 +1,8 @@
 package base
 
 type IEntity interface {
-	GetID() string
-	SetID(id string)
+	GetID() int64
+	SetID(id int64)
 	GetSessionID() string
 	SetSessionID(id string)
 }

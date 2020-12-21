@@ -5,12 +5,35 @@ option go_package = "../akmessage";
 enum ServerType
 {
     No = 0;
-    Server = 1;  //一般为gate 或者其他监听服务器
-    Client = 2;  //
+    Gate = 1;  //
+    Login = 2;  //
+    Account = 3; //
+    Game = 4; //
+    Robot = 5; //
 }
 
 message SS_SSRoute
 {
     ServerType st = 1;
     bytes data = 2;
+}
+
+message SS_Register_Req 
+{
+    ServerType st = 1;
+}
+
+message SS_Register_Resp
+{
+    
+}
+
+message SS_HeartBeat_Req
+{
+
+}
+
+message SS_HeartBeat_Rsp
+{
+
 }

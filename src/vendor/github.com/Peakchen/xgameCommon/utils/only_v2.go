@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/Peakchen/xgameCommon/aktime"
 	"github.com/sony/sonyflake"
@@ -13,19 +12,15 @@ func getMachineID_linux() (uint16, error) {
 }
 
 func checkMachineID_linux(machineID uint16) bool {
-	return machineID != 0
+	return false
 }
 
 func getMachineID_win() (uint16, error) {
-	val, err := strconv.Atoi(GetPhysicalID())
-	if err != nil {
-		return 0, err
-	}
-	return uint16(val), nil
+	return 0, nil
 }
 
 func checkMachineID_win(machineID uint16) bool {
-	return machineID != 0
+	return false
 }
 
 func NewOnly_v2() (id uint64, err error) {
@@ -61,4 +56,14 @@ func NewOnly_v2() (id uint64, err error) {
 		panic(err)
 	}
 	return
+}
+
+func NewInt64_v2() uint64 {
+	id, _ := NewOnly_v2()
+	return id
+}
+
+func NewString_v2() string {
+	id, _ := NewOnly_v2()
+	return Int642String(int64(id))
 }

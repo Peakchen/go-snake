@@ -1,11 +1,12 @@
 package mgr
 
 import (
-	"ak-remote/accountServer"
-	"ak-remote/common/application"
-	"ak-remote/gameServer"
-	"ak-remote/gateServer"
-	"ak-remote/loginServer"
+	"go-snake/accountServer"
+	"go-snake/app/application"
+	"go-snake/gameServer"
+	"go-snake/gateServer"
+	"go-snake/loginServer"
+	"go-snake/robot"
 )
 
 var (
@@ -14,6 +15,7 @@ var (
 		CstGate:    gateServer.New(),
 		CstLogin:   loginServer.New(),
 		CstAccount: accountServer.New(),
+		CstRobot:   robot.New(),
 	}
 )
 

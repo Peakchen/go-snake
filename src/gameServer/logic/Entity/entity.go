@@ -1,36 +1,34 @@
 package Entity
 
 import (
-	"ak-remote/gameServer/logic/base"
-
-	"github.com/globalsign/mgo/bson"
+	"go-snake/gameServer/logic/base"
 )
 
 type Entity struct {
 	base.IEntity
 
-	RID       string
-	SessionID string
+	uid int64
+	sid string
 }
 
-func NewEntity() *Entity {
+func NewEntity(uid int64) *Entity {
 	return &Entity{
-		RID: bson.NewObjectId().String(),
+		uid: uid,
 	}
 }
 
-func (this *Entity) GetID() string {
-	return this.RID
+func (this *Entity) GetID() int64 {
+	return this.uid
 }
 
-func (this *Entity) SetID(id string) {
-	this.RID = id
+func (this *Entity) SetID(id int64) {
+	this.uid = id
 }
 
 func (this *Entity) GetSessionID() string {
-	return this.SessionID
+	return this.sid
 }
 
 func (this *Entity) SetSessionID(id string) {
-	this.SessionID = id
+	this.sid = id
 }

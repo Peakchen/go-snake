@@ -1,6 +1,6 @@
 package Login
 
-import "ak-remote/gameServer/logic/Login/login_model"
+import "go-snake/gameServer/logic/Login/login_model"
 
 type User struct {
 }
