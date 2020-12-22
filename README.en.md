@@ -1,24 +1,16 @@
-####Software architecture
-
-
+##Software architecture
 1. Data security protection of gate server, load balancing and distribution of client messages
-
 2. Game server message processing, data storage
-
 3. Login server login service
-
 4. Robot server client simulator
-
 5. db mysql
-
 6. ...
 
+##Instructions for use
 
-####Instructions for use
+Serverapp parameter list:  
 
-Serverapp parameter list:
-
-"args": [
+"args": [  
 
 "-app",
 
@@ -49,7 +41,6 @@ Serverapp parameter list:
 "1"
 
 ]
-
 
 
 All server modules have init, run and other initial start modes.
