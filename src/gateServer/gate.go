@@ -3,11 +3,14 @@ package gateServer
 import (
 	"go-snake/akmessage"
 	"go-snake/app/in"
+	"go-snake/common/messageBase"
 	"go-snake/common/mixNet"
 	"go-snake/common/tcpNet"
 	"go-snake/common/webNet"
 	"go-snake/gateServer/app"
 	"math/rand"
+
+	"github.com/Peakchen/xgameCommon/utils"
 
 	"github.com/Peakchen/xgameCommon/aktime"
 )
@@ -27,6 +30,8 @@ func New() *Gate {
 
 func (this *Gate) Init() {
 	app.Init()
+	messageBase.InitCodec(&utils.CodecProtobuf{})
+	mixNet.NewSessionMgr(mixNet.GetApp())
 }
 
 func (this *Gate) Type() akmessage.ServerType {
@@ -34,8 +39,6 @@ func (this *Gate) Type() akmessage.ServerType {
 }
 
 func (this *Gate) Run(d *in.Input) {
-	mixNet.NewSessionMgr(mixNet.GetApp())
-
 	webNet.NewWebsocketSvr(d.WebHost)
 	tcpNet.NewTcpServer(
 		d.TCPHost,

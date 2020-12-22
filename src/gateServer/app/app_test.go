@@ -7,35 +7,27 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Peakchen/xgameCommon/akLog"
 	"google.golang.org/protobuf/proto"
 )
 
 type callbackFn func(int, proto.Message)
 
-func FN(id int, pb proto.Message) {
+func FN(id int, pb *akmessage.CS_AccRegister) {
 
 }
 
 func TestMsg(t *testing.T) {
 	rfhand := reflect.TypeOf(FN)
-	dst := reflect.New(rfhand.In(1)).Interface()
+	dst := reflect.New(rfhand.In(1).Elem()).Interface().(proto.Message)
 	fmt.Println("int:", dst, dst == nil)
 
-	cspt := messageBase.CSPackTool()
-	hb := &akmessage.CS_HeartBeat{}
-	src, err := proto.Marshal(hb)
-	if err != nil {
-		akLog.Error("pb marshal heart beat msg fail.")
+	hb := &akmessage.CS_AccRegister{
+		Acc: "111",
+		Pwd: "222",
+	}
+	data := messageBase.CSPackMsg_pb(akmessage.MSG_CS_ACC_REGISTER, hb)
+	if data == nil {
 		return
 	}
-	cspt.Init(uint32(akmessage.MSG_CS_HEARTBEAT), len(src), src)
-	data := make([]byte, len(src)+messageBase.CS_MSG_PACK_DATA_SIZE)
-	cspt.Pack(data)
-
-	err = proto.Unmarshal(data, dst.(proto.Message))
-	if err != nil {
-		akLog.Error(fmt.Errorf("unmarshal message fail, err: %v.", err))
-		return
-	}
+	messageBase.CSUnPackMsg_pb(data, dst)
 }

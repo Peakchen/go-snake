@@ -75,8 +75,8 @@ func (this *SessionMgr) GetTcpSessions() sync.Map {
 	return this.svrSessions
 }
 
-func (this *SessionMgr) SendInner(sid string, id uint32, data []byte) {
-	this.App.SendInner(sid, id, data)
+func (this *SessionMgr) CS_SendInner(sid string, id uint32, data []byte) {
+	this.App.CS_SendInner(sid, id, data)
 }
 
 func (this *SessionMgr) SendClient(sid string, id uint32, data []byte) {

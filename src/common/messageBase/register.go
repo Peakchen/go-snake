@@ -14,15 +14,14 @@ type TMessageProc struct {
 	paramTypes []reflect.Type
 }
 
-func (this *TMessageProc) Call(data []byte) error {
-	dst := reflect.New(this.paramTypes[1].Elem()).Interface()
-	err := proto.Unmarshal(data, dst.(proto.Message))
+func (this *TMessageProc) Call_pb(data []byte) error {
+	dst := reflect.New(this.paramTypes[1].Elem()).Interface().(proto.Message)
+	err := Codec().Unmarshal(data, dst)
 	if err != nil {
 		return fmt.Errorf("unmarshal message fail, err: %v.", err)
 	}
-	msg := dst.(proto.Message)
 	params := []reflect.Value{
-		reflect.ValueOf(msg),
+		reflect.ValueOf(dst),
 	}
 
 	this.proc.Call(params)

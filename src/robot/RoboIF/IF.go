@@ -27,7 +27,7 @@ func (this *RobotModel) Dail(cli *wscli.WsNet) {
 }
 
 func (this *RobotModel) SendMsg(id akmessage.MSG, pb proto.Message) {
-	data := messageBase.CSPackMsg(id, pb)
+	data := messageBase.CSPackMsg_pb(id, pb)
 	if data == nil {
 		akLog.Error("pack msg fail, mid: ", id)
 		return

@@ -23,7 +23,7 @@ func (this *EntityUser) xxx() {
 func (this *EntityUser) SendMsg(msgID akmessage.MSG, pb proto.Message) {
 	sess := mixNet.GetSessionMgr().GetTcpSession(this.GetSessionID())
 	if sess != nil {
-		data := messageBase.SSPackMsg(this.GetSessionID(), this.GetID(), msgID, pb)
+		data := messageBase.SSPackMsg_pb(this.GetSessionID(), this.GetID(), msgID, pb)
 		if data == nil {
 			akLog.Error("pack message fail.")
 			return

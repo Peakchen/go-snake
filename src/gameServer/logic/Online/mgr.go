@@ -53,7 +53,7 @@ func (this *GameApp) Bind(id int64) {
 
 }
 
-func (this *GameApp) SendInner(sid string, id uint32, data []byte) {
+func (this *GameApp) CS_SendInner(sid string, id uint32, data []byte) {
 
 }
 
@@ -62,5 +62,9 @@ func (this *GameApp) SendClient(sid string, id uint32, data []byte) {
 }
 
 func (this *GameApp) Handler(sid string, data []byte) {
+
+}
+
+func (this *GameApp) SS_SendInner(sid string, id uint32, data []byte) {
 
 }

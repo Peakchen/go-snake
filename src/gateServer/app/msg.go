@@ -14,7 +14,7 @@ type IGateMessage interface {
 }
 
 type GateMessage struct {
-	MessageActor
+	ServerMessage
 }
 
 func init() {

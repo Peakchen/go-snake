@@ -5,6 +5,8 @@ import (
 	"go-snake/robot/RoboIF"
 	"go-snake/robot/manager"
 	"go-snake/robot/wscli"
+	"reflect"
+	"time"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -20,12 +22,13 @@ type Login struct {
 }
 
 func (this *Login) Name() string {
-	return "login"
+	return reflect.ValueOf(this).Elem().String()
 }
 
 func (this *Login) Init(c *wscli.WsNet) {
 	this.fns = []func(){}
-	this.fns = append(this.fns, func() { this.login() })
+	this.fns = append(this.fns, this.register)
+	this.fns = append(this.fns, this.login)
 	this.Dail(c)
 }
 
@@ -47,7 +50,11 @@ func (this *Login) login() {
 }
 
 func (this *Login) register() {
-
+	this.SendMsg(akmessage.MSG_CS_ACC_REGISTER, &akmessage.CS_AccRegister{
+		Acc: "111",
+		Pwd: "222",
+	})
+	time.Sleep(time.Second)
 }
 
 func (this *Login) Recv(pb proto.Message) {

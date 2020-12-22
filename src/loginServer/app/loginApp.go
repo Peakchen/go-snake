@@ -59,7 +59,7 @@ func (this *LoginApp) Bind(id int64) {
 
 }
 
-func (this *LoginApp) SendInner(sid string, id uint32, data []byte) {
+func (this *LoginApp) CS_SendInner(sid string, id uint32, data []byte) {
 	if this.session == nil || data == nil {
 		return
 	}
@@ -87,7 +87,7 @@ func (this *LoginApp) Handler(sid string, data []byte) {
 	user := base.GetEntityMgr().GetEntityByID(sspt.GetUID())
 	if content != nil {
 		dst := reflect.New(content.RefPb.Elem()).Interface().(proto.Message)
-		err := proto.Unmarshal(sspt.GetData(), dst)
+		err := messageBase.Codec().Unmarshal(sspt.GetData(), dst)
 		if err != nil {
 			akLog.Error(fmt.Errorf("unmarshal message fail, err: %v.", err))
 			return
@@ -116,4 +116,8 @@ func (this *LoginApp) Handler(sid string, data []byte) {
 		refs = append(refs, reflect.ValueOf(dst))
 		content.RefProc.Call(refs)
 	}
+}
+
+func (this *LoginApp) SS_SendInner(sid string, id uint32, data []byte) {
+
 }

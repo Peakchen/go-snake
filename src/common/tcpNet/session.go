@@ -92,6 +92,7 @@ func (this *TcpSession) writeloop() {
 			_, err := this.conn.Write(data)
 			if err != nil {
 				akLog.Error("send data fail, err: ", err)
+				return
 			}
 		}
 	}

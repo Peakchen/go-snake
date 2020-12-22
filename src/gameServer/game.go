@@ -3,9 +3,12 @@ package gameServer
 import (
 	"go-snake/akmessage"
 	"go-snake/app/in"
+	"go-snake/common/messageBase"
 	"go-snake/common/mixNet"
 	"go-snake/common/tcpNet"
 	"go-snake/gameServer/app"
+
+	"github.com/Peakchen/xgameCommon/utils"
 )
 
 type Game struct {
@@ -19,6 +22,8 @@ func (this *Game) Init() {
 	//load config...
 	//...
 	app.Init()
+	messageBase.InitCodec(&utils.CodecProtobuf{})
+	mixNet.NewSessionMgr(mixNet.GetApp())
 }
 
 func (this *Game) Type() akmessage.ServerType {
@@ -26,7 +31,6 @@ func (this *Game) Type() akmessage.ServerType {
 }
 
 func (this *Game) Run(d *in.Input) {
-	mixNet.NewSessionMgr(mixNet.GetApp())
 	tcpNet.NewTcpClient(
 		d.TCPHost,
 		this.Type(),

@@ -140,119 +140,15 @@ func (*SC_HeartBeat) Descriptor() ([]byte, []int) {
 	return file_logic_proto_rawDescGZIP(), []int{2}
 }
 
-//同步设备信息
-type CS_SyncClientDeviceInfo struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Data string `protobuf:"bytes,1,opt,name=Data,proto3" json:"Data,omitempty"`
-}
-
-func (x *CS_SyncClientDeviceInfo) Reset() {
-	*x = CS_SyncClientDeviceInfo{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_logic_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CS_SyncClientDeviceInfo) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CS_SyncClientDeviceInfo) ProtoMessage() {}
-
-func (x *CS_SyncClientDeviceInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_logic_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CS_SyncClientDeviceInfo.ProtoReflect.Descriptor instead.
-func (*CS_SyncClientDeviceInfo) Descriptor() ([]byte, []int) {
-	return file_logic_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *CS_SyncClientDeviceInfo) GetData() string {
-	if x != nil {
-		return x.Data
-	}
-	return ""
-}
-
-//回复
-type SC_SyncClientDeviceInfo struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Ret ErrorCode `protobuf:"varint,1,opt,name=Ret,proto3,enum=ErrorCode" json:"Ret,omitempty"`
-}
-
-func (x *SC_SyncClientDeviceInfo) Reset() {
-	*x = SC_SyncClientDeviceInfo{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_logic_proto_msgTypes[4]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *SC_SyncClientDeviceInfo) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SC_SyncClientDeviceInfo) ProtoMessage() {}
-
-func (x *SC_SyncClientDeviceInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_logic_proto_msgTypes[4]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SC_SyncClientDeviceInfo.ProtoReflect.Descriptor instead.
-func (*SC_SyncClientDeviceInfo) Descriptor() ([]byte, []int) {
-	return file_logic_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *SC_SyncClientDeviceInfo) GetRet() ErrorCode {
-	if x != nil {
-		return x.Ret
-	}
-	return ErrorCode_Invaild
-}
-
 var File_logic_proto protoreflect.FileDescriptor
 
 var file_logic_proto_rawDesc = []byte{
-	0x0a, 0x0b, 0x6c, 0x6f, 0x67, 0x69, 0x63, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x0f, 0x65,
-	0x72, 0x72, 0x6f, 0x72, 0x63, 0x6f, 0x64, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x13,
-	0x0a, 0x11, 0x43, 0x53, 0x5f, 0x45, 0x6e, 0x74, 0x65, 0x72, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x63,
-	0x65, 0x6e, 0x65, 0x22, 0x0e, 0x0a, 0x0c, 0x43, 0x53, 0x5f, 0x48, 0x65, 0x61, 0x72, 0x74, 0x42,
-	0x65, 0x61, 0x74, 0x22, 0x0e, 0x0a, 0x0c, 0x53, 0x43, 0x5f, 0x48, 0x65, 0x61, 0x72, 0x74, 0x42,
-	0x65, 0x61, 0x74, 0x22, 0x2d, 0x0a, 0x17, 0x43, 0x53, 0x5f, 0x53, 0x79, 0x6e, 0x63, 0x43, 0x6c,
-	0x69, 0x65, 0x6e, 0x74, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x12,
-	0x0a, 0x04, 0x44, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x44, 0x61,
-	0x74, 0x61, 0x22, 0x37, 0x0a, 0x17, 0x53, 0x43, 0x5f, 0x53, 0x79, 0x6e, 0x63, 0x43, 0x6c, 0x69,
-	0x65, 0x6e, 0x74, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x1c, 0x0a,
-	0x03, 0x52, 0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x0a, 0x2e, 0x45, 0x72, 0x72,
-	0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x03, 0x52, 0x65, 0x74, 0x42, 0x0e, 0x5a, 0x0c, 0x2e,
-	0x2e, 0x2f, 0x61, 0x6b, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x0a, 0x0b, 0x6c, 0x6f, 0x67, 0x69, 0x63, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x13, 0x0a,
+	0x11, 0x43, 0x53, 0x5f, 0x45, 0x6e, 0x74, 0x65, 0x72, 0x47, 0x61, 0x6d, 0x65, 0x53, 0x63, 0x65,
+	0x6e, 0x65, 0x22, 0x0e, 0x0a, 0x0c, 0x43, 0x53, 0x5f, 0x48, 0x65, 0x61, 0x72, 0x74, 0x42, 0x65,
+	0x61, 0x74, 0x22, 0x0e, 0x0a, 0x0c, 0x53, 0x43, 0x5f, 0x48, 0x65, 0x61, 0x72, 0x74, 0x42, 0x65,
+	0x61, 0x74, 0x42, 0x0e, 0x5a, 0x0c, 0x2e, 0x2e, 0x2f, 0x61, 0x6b, 0x6d, 0x65, 0x73, 0x73, 0x61,
+	0x67, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -267,22 +163,18 @@ func file_logic_proto_rawDescGZIP() []byte {
 	return file_logic_proto_rawDescData
 }
 
-var file_logic_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_logic_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_logic_proto_goTypes = []interface{}{
-	(*CS_EnterGameScene)(nil),       // 0: CS_EnterGameScene
-	(*CS_HeartBeat)(nil),            // 1: CS_HeartBeat
-	(*SC_HeartBeat)(nil),            // 2: SC_HeartBeat
-	(*CS_SyncClientDeviceInfo)(nil), // 3: CS_SyncClientDeviceInfo
-	(*SC_SyncClientDeviceInfo)(nil), // 4: SC_SyncClientDeviceInfo
-	(ErrorCode)(0),                  // 5: ErrorCode
+	(*CS_EnterGameScene)(nil), // 0: CS_EnterGameScene
+	(*CS_HeartBeat)(nil),      // 1: CS_HeartBeat
+	(*SC_HeartBeat)(nil),      // 2: SC_HeartBeat
 }
 var file_logic_proto_depIdxs = []int32{
-	5, // 0: SC_SyncClientDeviceInfo.Ret:type_name -> ErrorCode
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_logic_proto_init() }
@@ -290,7 +182,6 @@ func file_logic_proto_init() {
 	if File_logic_proto != nil {
 		return
 	}
-	file_errorcode_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_logic_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CS_EnterGameScene); i {
@@ -328,30 +219,6 @@ func file_logic_proto_init() {
 				return nil
 			}
 		}
-		file_logic_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CS_SyncClientDeviceInfo); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_logic_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SC_SyncClientDeviceInfo); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -359,7 +226,7 @@ func file_logic_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_logic_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

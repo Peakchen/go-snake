@@ -6,6 +6,7 @@ import (
 	"go-snake/common/mixNet"
 	"net"
 	"os"
+	"time"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 )
@@ -24,19 +25,19 @@ func NewTcpClient(host string, st akmessage.ServerType, extFn ...OptionFn) {
 	cli.connect(host, mixNet.GetSessionMgr())
 }
 
-func (this *myTcpClient) connect(host string, mgr mixNet.SessionMgrIf) {
+func (this *myTcpClient) connect(host string, mgr mixNet.SessionMgrIf) bool {
 	os.Setenv("GOTRACEBACK", "crash")
 
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", host)
 	if err != nil {
-		akLog.Fail("resolve tcp error: ", err.Error(), host)
-		return
+		akLog.Error("resolve tcp error: ", err.Error(), host)
+		return false
 	}
 
 	c, err := net.DialTCP("tcp", nil, tcpAddr)
 	if err != nil {
-		akLog.Fail("net dial err: ", err, tcpAddr)
-		return
+		akLog.Error("net dial err: ", err, tcpAddr)
+		return false
 	}
 
 	NewTcpSession(c, this.st, this.stop, mgr, this.extFns)
@@ -46,13 +47,18 @@ func (this *myTcpClient) connect(host string, mgr mixNet.SessionMgrIf) {
 	}, func() {
 		os.Exit(1)
 	})
+	return true
 }
 
 func (this *myTcpClient) checkDisconnect(host string, mgr mixNet.SessionMgrIf) {
 	for {
 		select {
 		case <-this.stop:
-			this.connect(host, mgr)
+			akLog.FmtPrintln("begin reconnect...")
+			if !this.connect(host, mgr) {
+				time.Sleep(3 * time.Second)
+				this.stop <- true
+			}
 		}
 	}
 }

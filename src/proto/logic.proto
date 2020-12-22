@@ -2,8 +2,6 @@ syntax = "proto3";
 
 option go_package = "../akmessage";
 
-import "errorcode.proto";
-
 //进入游戏
 message CS_EnterGameScene
 {
@@ -19,16 +17,3 @@ message SC_HeartBeat
 {
 
 }
-
-//同步设备信息
-message CS_SyncClientDeviceInfo
-{
-    string Data = 1;
-}
-
-//回复
-message SC_SyncClientDeviceInfo
-{
-    ErrorCode Ret = 1;
-}
-

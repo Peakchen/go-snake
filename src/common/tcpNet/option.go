@@ -37,7 +37,7 @@ func WithMessageHandler(fn MsgCallBack) OptionFn {
 }
 
 func SS_HeatBeatMsg(sid string) []byte {
-	return messageBase.SSPackMsg(sid, 0, akmessage.MSG_SS_HEARTBEAT_REQ, &akmessage.SS_HeartBeat_Req{})
+	return messageBase.SSPackMsg_pb(sid, 0, akmessage.MSG_SS_HEARTBEAT_REQ, &akmessage.SS_HeartBeat_Req{})
 }
 
 func CS_HeatBeatMsg(sid string) []byte {

@@ -107,7 +107,7 @@ func (this *GateApp) Bind(id int64) {
 }
 
 //c->[gate1<=>gate2]->s
-func (this *GateApp) SendInner(sid string, id uint32, data []byte) {
+func (this *GateApp) CS_SendInner(sid string, id uint32, data []byte) {
 	c, ok := this.c2s[sid]
 	if !ok {
 		akLog.Error("can not find client session, sid: ", sid)
@@ -130,7 +130,7 @@ func (this *GateApp) SendInner(sid string, id uint32, data []byte) {
 		content := GetActorMessageProc(cspt.GetMsgID())
 		if content != nil {
 			dst := reflect.New(content.refPb.Elem()).Interface().(proto.Message)
-			err := proto.Unmarshal(cspt.GetData(), dst)
+			err := messageBase.Codec().Unmarshal(cspt.GetData(), dst)
 			if err != nil {
 				akLog.Error(fmt.Errorf("unmarshal message fail, err: %v.", err))
 				return
@@ -156,7 +156,7 @@ func (this *GateApp) SendInner(sid string, id uint32, data []byte) {
 		akLog.Error("can not find server select server, selectSID: ", selectSID)
 		return
 	}
-	packMsg := messageBase.SSPackMsg(sid, s.session.GetUID(), akmessage.MSG_SS_ROUTE, &akmessage.SS_SSRoute{Data: data})
+	packMsg := messageBase.SSPackMsg_pb(sid, s.session.GetUID(), akmessage.MSG_SS_ROUTE, &akmessage.SS_SSRoute{Data: data})
 	if packMsg == nil {
 		return
 	}
@@ -187,18 +187,19 @@ func (this *GateApp) Handler(sid string, data []byte) {
 	case uint32(akmessage.MSG_SS_REGISTER_REQ):
 		func(data []byte, sessid string) {
 			reg := &akmessage.SS_Register_Req{}
-			err := proto.Unmarshal(data, reg)
+			err := messageBase.Codec().Unmarshal(data, reg)
 			if err != nil {
 				akLog.Error("proto unmarshal msg fail.")
 				return
 			}
 			s, ok := this.s2s[sessid]
 			if !ok {
-				akLog.Error("s2s can not find session, sid: ", sid)
+				akLog.Error("s2s can not find session, sid: ", sessid)
 				return
 			}
 			akLog.FmtPrintln("register client dst:", reg.St)
 			s.session.SetCliType(reg.St)
+			s.msgActor.SetSession(sessid)
 			rsp := messageBase.GetActorRegisterRsp(sessid, akmessage.ServerType_Gate)
 			s.session.SendMsg(rsp)
 		}(sspt.GetData(), sid)
@@ -214,7 +215,7 @@ func (this *GateApp) Handler(sid string, data []byte) {
 			content := GetActorMessageProc(id)
 			if content != nil {
 				dst := reflect.New(content.refPb.Elem()).Interface().(proto.Message)
-				err := proto.Unmarshal(data, dst)
+				err := messageBase.Codec().Unmarshal(data, dst)
 				if err != nil {
 					akLog.Error(fmt.Errorf("unmarshal message fail, err: %v.", err))
 					return
@@ -224,6 +225,7 @@ func (this *GateApp) Handler(sid string, data []byte) {
 					akLog.Error("s2s can not find session, sid: ", sid)
 					return
 				}
+				s.msgActor.SetSession(sid)
 				var refs []reflect.Value
 				refs = append(refs, reflect.ValueOf(s.msgActor))
 				refs = append(refs, reflect.ValueOf(dst))
@@ -235,4 +237,13 @@ func (this *GateApp) Handler(sid string, data []byte) {
 
 	}
 	this.SendClient(sspt.GetSessID(), sspt.GetMsgID(), sspt.GetData())
+}
+
+func (this *GateApp) SS_SendInner(sid string, id uint32, data []byte) {
+	sessContent, ok := this.s2s[sid]
+	if !ok {
+		akLog.Error("can not find client session, id: ", sid)
+		return
+	}
+	sessContent.session.SendMsg(data)
 }

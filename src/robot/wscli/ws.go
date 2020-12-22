@@ -8,8 +8,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"google.golang.org/protobuf/proto"
-
 	"github.com/Peakchen/xgameCommon/akLog"
 
 	"github.com/gorilla/websocket"
@@ -78,6 +76,9 @@ func (this *WsNet) readloop() {
 			fn()
 		default:
 			if this.GetStatus() == WS_CONNECTED {
+
+				this.c.SetReadDeadline(time.Now().Add(40 * time.Second))
+
 				_, data, err := this.c.ReadMessage()
 				if err != nil {
 					akLog.Error("read:", err)
@@ -98,6 +99,7 @@ func (this *WsNet) writeloop(modelFns func(*WsNet)) {
 	for {
 		select {
 		case <-ticker.C:
+			akLog.FmtPrintln("send test, status: ", this.GetStatus())
 			if this.GetStatus() == WS_CONNECTED {
 				modelFns(this)
 			}
@@ -106,7 +108,9 @@ func (this *WsNet) writeloop(modelFns func(*WsNet)) {
 			if err != nil {
 				akLog.Error("write fail: ", err)
 				this.close()
-				this.lostData <- data
+				if len(this.lostData) < cap(this.lostData) {
+					this.lostData <- data
+				}
 			}
 		}
 	}
@@ -149,22 +153,22 @@ func (this *WsNet) heartbeat() {
 }
 
 func (this *WsNet) sendHeartBeatMsg() {
-	cspt := messageBase.CSPackTool()
 	hb := &akmessage.CS_HeartBeat{}
-	src, err := proto.Marshal(hb)
-	if err != nil {
-		akLog.Error("pb marshal heart beat msg fail.")
+	data := messageBase.CSPackMsg_pb(akmessage.MSG_CS_HEARTBEAT, hb)
+	if data == nil {
+		akLog.Error("pack heart beat msg fail.")
 		return
 	}
-	cspt.Init(uint32(akmessage.MSG_CS_HEARTBEAT), len(src), src)
-	data := make([]byte, len(src)+messageBase.CS_MSG_PACK_DATA_SIZE)
-	cspt.Pack(data)
-	akLog.FmtPrintf("heart beat, id: %v, size: %v, data: %v.", uint32(akmessage.MSG_CS_HEARTBEAT), len(src), data)
+	akLog.FmtPrintf("heart beat, id: %v.", uint32(akmessage.MSG_CS_HEARTBEAT))
 	this.SendMsg(data)
 }
 
 func (this *WsNet) SendMsg(data []byte) {
-	this.sendCh <- data
+	if len(this.sendCh) >= cap(this.sendCh) {
+		this.lostData <- data
+	} else {
+		this.sendCh <- data
+	}
 }
 
 func (this *WsNet) SetClose() {

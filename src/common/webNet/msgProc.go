@@ -32,7 +32,7 @@ func TextMessageFunc(sess *WebSession, msg *wsMessage) {
 }
 
 func BinaryMessageFunc(sess *WebSession, msg *wsMessage) {
-	sess.GetSessionMgr().SendInner(sess.GetSessionID(), 0, msg.data)
+	sess.GetSessionMgr().CS_SendInner(sess.GetSessionID(), 0, msg.data)
 	//RecvMessage(sess, msg)
 }
 

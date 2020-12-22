@@ -41,8 +41,8 @@ func (this *Entity) GetSessionID() string { return this.sid }
 func (this *Entity) SetSessionID(id string) { this.sid = id }
 
 func (this *Entity) SendMsg(id akmessage.MSG, pb proto.Message) {
-	data := messageBase.SSPackMsg(this.GetSessionID(), this.GetID(), id, pb)
-	mixNet.GetApp().SendInner(this.GetSessionID(), 0, data)
+	data := messageBase.SSPackMsg_pb(this.GetSessionID(), this.GetID(), id, pb)
+	mixNet.GetApp().CS_SendInner(this.GetSessionID(), 0, data)
 }
 
 type IEntityUser interface {

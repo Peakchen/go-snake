@@ -2,6 +2,7 @@ package acc_model
 
 import (
 	"go-snake/common/akOrm"
+	"reflect"
 
 	"github.com/Peakchen/xgameCommon/utils"
 
@@ -21,7 +22,7 @@ type Acc struct {
 }
 
 func (this *Acc) TableName() string {
-	return "Account"
+	return reflect.ValueOf(this).Elem().String()
 }
 
 func (this *Acc) BeforeCreate(tx *gorm.DB) (err error) {
