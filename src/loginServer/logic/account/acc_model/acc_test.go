@@ -2,6 +2,7 @@ package acc_model
 
 import (
 	"go-snake/common/akOrm"
+	"reflect"
 	"testing"
 	"time"
 
@@ -47,4 +48,9 @@ func TestAccs(t *testing.T) {
 		}
 
 	}
+}
+
+func TestTableName(t *testing.T) {
+	acc := &Acc{}
+	akLog.FmtPrintln(reflect.TypeOf(*acc).Name())
 }

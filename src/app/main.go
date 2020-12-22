@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	common.DosafeRoutine(func() {
+	common.Dosafe(func() {
 		params := in.ParseInput()
 		akLog.FmtPrintln("input params: ", *params)
 		app := mgr.GetApp(params.AppName)

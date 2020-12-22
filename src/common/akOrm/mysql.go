@@ -34,7 +34,7 @@ func newDB(cfg string) (db *gorm.DB) {
 		PrepareStmt: true,
 	})
 	if err != nil {
-		akLog.Fail("open mysql fail,config: ", cfg)
+		akLog.Error("open mysql fail,config: ", cfg)
 	}
 	return db
 }
@@ -44,7 +44,7 @@ func OpenDB(user, pwd, host, dbName string) {
 		dbCfg = fmt.Sprintf("%s:%s@(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, pwd, host, dbName)
 		_db = newDB(dbCfg)
 		if _db == nil {
-			return
+			panic("exit.")
 		}
 		/*
 			无服务监听时，注册则会报错
@@ -74,6 +74,7 @@ func OpenDB(user, pwd, host, dbName string) {
 			_dbengines[i].actor.loop()
 		}
 	}, func() {
+		time.Sleep(time.Second)
 		common.SafeExit()
 	})
 }

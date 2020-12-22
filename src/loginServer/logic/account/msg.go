@@ -14,7 +14,7 @@ import (
 )
 
 func init() {
-	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_LOGIN), (*akmessage.CS_AccRegister)(nil), func(actor entityMgr.IEntityUser, pb proto.Message) {
+	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_ACC_REGISTER), (*akmessage.CS_AccRegister)(nil), func(actor entityMgr.IEntityUser, pb proto.Message) {
 		actor.HandlerRegister(pb)
 	})
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_LOGIN), (*akmessage.CS_Login)(nil), func(actor entityMgr.IEntityUser, pb proto.Message) {
@@ -29,15 +29,15 @@ func (this *Acc) HandlerRegister(pb proto.Message) {
 	reg := pb.(*akmessage.CS_AccRegister)
 	akLog.FmtPrintln("AccRegister...", reg.Acc, reg.Pwd)
 	rsp := func(acc *Acc, ret akmessage.ErrorCode) {
-		res := &akmessage.SC_Login{
+		res := &akmessage.SC_AccRegister{
 			Ret: ret,
 		}
-		acc.SendMsg(akmessage.MSG_SC_LOGIN, res)
+		acc.SendMsg(akmessage.MSG_SC_ACC_REGISTER, res)
 	}
 
 	accM := &acc_model.Acc{}
 	if akOrm.HasExistAcc(accM, reg.Acc, reg.Pwd) {
-		rsp(&Acc{user: accM}, akmessage.ErrorCode_AccountExisted)
+		rsp(this, akmessage.ErrorCode_AccountExisted)
 		return
 	}
 
@@ -66,7 +66,7 @@ func (this *Acc) HandlerLogin(pb proto.Message) {
 
 	accM := &acc_model.Acc{}
 	if !akOrm.HasExistAcc(accM, login.Acc, login.Pwd) {
-		rsp(&Acc{user: accM}, akmessage.ErrorCode_Invaild)
+		rsp(this, akmessage.ErrorCode_Invaild)
 		return
 	}
 	this.user = accM

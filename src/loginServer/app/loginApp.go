@@ -13,9 +13,6 @@ import (
 
 	"google.golang.org/protobuf/proto"
 
-	_ "go-snake/loginServer/logic/account"
-	_ "go-snake/loginServer/logic/innner"
-
 	"github.com/Peakchen/xgameCommon/akLog"
 )
 
@@ -83,17 +80,38 @@ func (this *LoginApp) Handler(sid string, data []byte) {
 		return
 	}
 
-	content := msg.GetActorMessageProc(sspt.GetMsgID())
+	msgid := sspt.GetMsgID()
+	dstData := sspt.GetData()
+
+	if sspt.GetMsgID() == uint32(akmessage.MSG_SS_ROUTE) {
+		ssroute := &akmessage.SS_SSRoute{}
+		err := messageBase.Codec().Unmarshal(dstData, ssroute)
+		if err != nil {
+			akLog.Error(fmt.Errorf("unmarshal message fail, err: %v.", err))
+			return
+		}
+		cspt := messageBase.CSPackTool()
+		err = cspt.UnPack(ssroute.Data)
+		if err != nil {
+			akLog.Error(fmt.Errorf("cs unpack message fail, err: %v.", err))
+			return
+		}
+
+		msgid = cspt.GetMsgID()
+		dstData = cspt.GetData()
+	}
+
+	content := msg.GetActorMessageProc(msgid)
 	user := base.GetEntityMgr().GetEntityByID(sspt.GetUID())
 	if content != nil {
 		dst := reflect.New(content.RefPb.Elem()).Interface().(proto.Message)
-		err := messageBase.Codec().Unmarshal(sspt.GetData(), dst)
+		err := messageBase.Codec().Unmarshal(dstData, dst)
 		if err != nil {
 			akLog.Error(fmt.Errorf("unmarshal message fail, err: %v.", err))
 			return
 		}
 
-		switch sspt.GetMsgID() {
+		switch msgid {
 		case uint32(akmessage.MSG_CS_ACC_REGISTER),
 			uint32(akmessage.MSG_CS_LOGIN),
 			uint32(akmessage.MSG_SS_REGISTER_RSP):

@@ -103,13 +103,18 @@ func (this *WsNet) writeloop(modelFns func(*WsNet)) {
 			if this.GetStatus() == WS_CONNECTED {
 				modelFns(this)
 			}
+
 		case data := <-this.sendCh:
-			err := this.c.WriteMessage(websocket.BinaryMessage, data)
-			if err != nil {
-				akLog.Error("write fail: ", err)
-				this.close()
-				if len(this.lostData) < cap(this.lostData) {
-					this.lostData <- data
+
+			if this.GetStatus() == WS_CONNECTED {
+				this.c.SetWriteDeadline(time.Now().Add(15 * time.Second))
+				err := this.c.WriteMessage(websocket.BinaryMessage, data)
+				if err != nil {
+					akLog.Error("write fail: ", err)
+					this.close()
+					if len(this.lostData) < cap(this.lostData) {
+						this.lostData <- data
+					}
 				}
 			}
 		}
@@ -139,7 +144,7 @@ func (this *WsNet) checkconnect() {
 }
 
 func (this *WsNet) heartbeat() {
-	tick := time.NewTicker(5 * time.Second)
+	tick := time.NewTicker(30 * time.Second)
 	defer tick.Stop()
 
 	for {

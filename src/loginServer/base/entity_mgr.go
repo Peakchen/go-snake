@@ -25,6 +25,6 @@ func (this *EntityManager) GetEntityByID(rid int64) entityMgr.IEntityUser {
 }
 
 func (this *EntityManager) SetEntityByID(rid int64, user entityMgr.IEntityUser) {
-	user.(*entityMgr.EntityUser).RegModels()
+	user.RegModels()
 	this.Users[rid] = user
 }

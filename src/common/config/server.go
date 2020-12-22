@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 
@@ -9,50 +10,63 @@ import (
 )
 
 type ServerConfig struct {
-	Host   string
-	DBHost string
-	DBpwd  string
+	TCPHost string
+	WebHost string
+
+	RedisHost  string
+	RedisPwd   string
+	RedisIndex int
+
+	MysqlHost     string
+	MysqlUser     string
+	MysqlPwd      string
+	MysqlDataBase string
 }
 
 func (this *ServerConfig) PrintAll() {
-	akLog.FmtPrintf("Host: %v, DBHost: %v, DBpwd: %v.", this.Host, this.DBHost, this.DBpwd)
+	akLog.FmtPrintf("TCPHost: %v, WebHost: %v, RedisHost: %v, RedisPwd: %v, RedisIndex: %v, MysqlHost: %v, MysqlUser: %v, MysqlPwd: %v, MysqlDataBase: %v.",
+		this.TCPHost,
+		this.WebHost,
+
+		this.RedisHost,
+		this.RedisPwd,
+		this.RedisIndex,
+
+		this.MysqlHost,
+		this.MysqlUser,
+		this.MysqlPwd,
+		this.MysqlDataBase,
+	)
 }
 
 var (
-	_svrcfg = new(ServerConfig)
+	_svrcfg *ServerConfig
 )
 
-func LoadServerConfig(s string) {
-	f, err := ini.Load("./server.ini")
+func LoadServerConfig(s string) *ServerConfig {
+	f, err := ini.Load("../ini/server.ini")
 	if err != nil {
 		panic(fmt.Errorf("Failed to parse config file: %s", err))
 	}
+
 	section, err := f.GetSection(s)
 	if err != nil {
 		panic(fmt.Errorf("invalid config section: %s", err))
 	}
 
-	if section.HasKey("host") {
-		k, err := section.GetKey("host")
-		if err != nil {
-			panic(fmt.Errorf("invalid config key: host"))
+	_cfg := new(ServerConfig)
+	for _, k := range section.Keys() {
+		fv := reflect.ValueOf(_cfg).Elem().FieldByName(k.Name())
+		switch fv.Kind() {
+		case reflect.String:
+			fv.Set(reflect.ValueOf(k.Value()))
+		case reflect.Int:
+			intv, _ := k.Int()
+			fv.Set(reflect.ValueOf(intv))
 		}
-		_svrcfg.Host = k.String()
 	}
-	if section.HasKey("DBHost") {
-		k, err := section.GetKey("DBHost")
-		if err != nil {
-			panic(fmt.Errorf("invalid config key: DBHost"))
-		}
-		_svrcfg.DBHost = k.String()
-	}
-	if section.HasKey("DBpwd") {
-		k, err := section.GetKey("DBpwd")
-		if err != nil {
-			panic(fmt.Errorf("invalid config key: DBpwd"))
-		}
-		_svrcfg.DBpwd = k.String()
-	}
+	_svrcfg = _cfg
+	return _svrcfg
 }
 
 func GetServerConfig() *ServerConfig {

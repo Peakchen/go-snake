@@ -13,20 +13,20 @@ enum MSG
     CS_LOGOUT = 3;  //登出
     SC_LOGOUT = 4;  //
 
+    CS_ACC_REGISTER = 5; //账号注册
+    SC_ACC_REGISTER = 6; 
+
     LOGIN_MAX = 100; //
 
     //服务器间协议
     SS_Begin = 101; //服务器间起始协议
     SS_ROUTE = 102; //服务器间路由
 
-    CS_ACC_REGISTER = 103; //账号注册
-    SC_ACC_REGISTER = 104; 
+    SS_REGISTER_REQ = 103; //服务器注册
+    SS_REGISTER_RSP = 104; 
 
-    SS_REGISTER_REQ = 105; //服务器注册
-    SS_REGISTER_RSP = 106; 
-
-    SS_HEARTBEAT_REQ = 107; //服务器间心跳
-    SS_HEARTBEAT_RSP = 108; //
+    SS_HEARTBEAT_REQ = 105; //服务器间心跳
+    SS_HEARTBEAT_RSP = 106; //
 
     SS_MAX = 1000;
 

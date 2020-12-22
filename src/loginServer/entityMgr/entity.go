@@ -48,6 +48,8 @@ func (this *Entity) SendMsg(id akmessage.MSG, pb proto.Message) {
 type IEntityUser interface {
 	IEntity
 
+	RegModels()
+
 	IAcc
 	IClientRegister
 }
@@ -59,7 +61,7 @@ type EntityUser struct {
 	IClientRegister
 }
 
-func NewEntity(sid string) *EntityUser {
+func NewEntity(sid string) IEntityUser {
 	return &EntityUser{
 		Entity: newEntity(sid),
 	}

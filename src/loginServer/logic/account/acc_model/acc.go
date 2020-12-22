@@ -22,7 +22,7 @@ type Acc struct {
 }
 
 func (this *Acc) TableName() string {
-	return reflect.ValueOf(this).Elem().String()
+	return reflect.TypeOf(*this).Name()
 }
 
 func (this *Acc) BeforeCreate(tx *gorm.DB) (err error) {

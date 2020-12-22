@@ -2,6 +2,8 @@ package in
 
 import (
 	"flag"
+	"fmt"
+	"go-snake/common/config"
 )
 
 /*
@@ -31,6 +33,8 @@ type Input struct {
 	PProfIP string
 	Log     int
 	Clis    int
+
+	Scfg *config.ServerConfig
 }
 
 func ParseInput() *Input {
@@ -63,12 +67,8 @@ func ParseInput() *Input {
 	if clients != nil {
 		in.Clis = clients.Value.(flag.Getter).Get().(int)
 	}
-	if len(in.AppName) == 0 ||
-		len(in.Ver) == 0 ||
-		len(in.WebHost) == 0 ||
-		len(in.TCPHost) == 0 ||
-		len(in.PProfIP) == 0 {
-
+	if len(in.Ver) > 0 && len(in.AppName) > 0 {
+		in.Scfg = config.LoadServerConfig(fmt.Sprintf("%v_%v", in.AppName, in.Ver))
 	}
 	return in
 }
