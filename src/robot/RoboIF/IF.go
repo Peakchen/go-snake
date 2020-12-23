@@ -3,7 +3,9 @@ package RoboIF
 import (
 	"go-snake/akmessage"
 	"go-snake/common/messageBase"
+	"go-snake/robot/base"
 	"go-snake/robot/wscli"
+	"reflect"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 
@@ -12,9 +14,9 @@ import (
 
 type IRobotModel interface {
 	Name() string
-	Init(c *wscli.WsNet)
+	Init(reflect.Value)
 	Enter()
-	Recv(pb proto.Message)
+	Recv(base.ModelRecvFn) bool
 	Left()
 }
 

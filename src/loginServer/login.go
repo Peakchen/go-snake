@@ -38,6 +38,6 @@ func (this *Login) Run(d *in.Input) {
 	tcpNet.NewTcpClient(
 		d.TCPHost,
 		this.Type(),
-		tcpNet.WithSSHeartBeat(tcpNet.SS_HeatBeatMsg),
+		tcpNet.WithSSHeartBeat(messageBase.SS_HeatBeatMsg),
 		tcpNet.WithMessageHandler(tcpNet.ServerMsgProc))
 }

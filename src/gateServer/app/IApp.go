@@ -34,28 +34,20 @@ func GetActorMessageProc(id uint32) *MessageContent {
 	return mps[id]
 }
 
-type ClientMessage struct {
+type GateSession struct {
 	sid string
 }
 
-func (this *ClientMessage) SetSession(sid string) {
+func (this *GateSession) SetSession(sid string) {
 	this.sid = sid
 }
 
-func (this *ClientMessage) SendMsg(id uint32, pb proto.Message) {
+func (this *GateSession) SendMsg_cs(id uint32, pb proto.Message) {
 	packdata := messageBase.CSPackMsg_pb(akmessage.MSG(id), pb)
 	mixNet.GetApp().SendClient(this.sid, id, packdata)
 }
 
-type ServerMessage struct {
-	sid string
-}
-
-func (this *ServerMessage) SetSession(sid string) {
-	this.sid = sid
-}
-
-func (this *ServerMessage) SendMsg(id uint32, pb proto.Message) {
+func (this *GateSession) SendMsg_ss(id uint32, pb proto.Message) {
 	packdata := messageBase.SSPackMsg_pb(this.sid, 0, akmessage.MSG(id), pb)
 	mixNet.GetApp().SS_SendInner(this.sid, id, packdata)
 }

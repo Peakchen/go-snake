@@ -52,21 +52,19 @@ func (this *LoginApp) Offline(nt messageBase.NetType, id string) {
 	}
 }
 
-func (this *LoginApp) Bind(id int64) {
+func (this *LoginApp) Bind(sid string, id int64) {
 
 }
 
 func (this *LoginApp) CS_SendInner(sid string, id uint32, data []byte) {
-	if this.session == nil || data == nil {
-		return
-	}
-	this.session.SendMsg(data)
+
 }
 
 func (this *LoginApp) SendClient(sid string, id uint32, data []byte) {
 
 }
 
+//gate2->login
 func (this *LoginApp) Handler(sid string, data []byte) {
 	if this.session == nil {
 		akLog.FmtPrintln("session disconnect...")
@@ -84,7 +82,7 @@ func (this *LoginApp) Handler(sid string, data []byte) {
 	dstData := sspt.GetData()
 
 	if sspt.GetMsgID() == uint32(akmessage.MSG_SS_ROUTE) {
-		ssroute := &akmessage.SS_SSRoute{}
+		ssroute := messageBase.GetSSRoute()
 		err := messageBase.Codec().Unmarshal(dstData, ssroute)
 		if err != nil {
 			akLog.Error(fmt.Errorf("unmarshal message fail, err: %v.", err))
@@ -102,7 +100,7 @@ func (this *LoginApp) Handler(sid string, data []byte) {
 	}
 
 	content := msg.GetActorMessageProc(msgid)
-	user := base.GetEntityMgr().GetEntityByID(sspt.GetUID())
+	user := base.GetUserByID(sspt.GetUID())
 	if content != nil {
 		dst := reflect.New(content.RefPb.Elem()).Interface().(proto.Message)
 		err := messageBase.Codec().Unmarshal(dstData, dst)
@@ -136,6 +134,11 @@ func (this *LoginApp) Handler(sid string, data []byte) {
 	}
 }
 
+//login->gate2
 func (this *LoginApp) SS_SendInner(sid string, id uint32, data []byte) {
-
+	if this.session == nil {
+		akLog.Error("session disconnetced..., msg not send, id: ", id)
+		return
+	}
+	this.session.SendMsg(data)
 }

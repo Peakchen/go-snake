@@ -36,7 +36,7 @@ func SSPackMsg_pb(session string, rid int64, mainID akmessage.MSG, msg proto.Mes
 
 	out := make([]byte, len(data)+SS_MSG_PACK_NODATA_SIZE)
 	pack.Pack(out)
-	akLog.FmtPrintln("ss pack msg: ", out, len(out))
+	akLog.FmtPrintln("=ss= pack msg: ", mainID)
 	return out
 }
 
@@ -78,10 +78,11 @@ func CSPackMsg_pb(mainID akmessage.MSG, msg proto.Message) []byte {
 	}
 
 	pack := CSPackTool()
-	pack.Init(uint32(mainID), len(data), data)
+	pack.Init(uint32(mainID), data)
 
 	out := make([]byte, len(data)+CS_MSG_PACK_NODATA_SIZE)
 	pack.Pack(out)
+	akLog.FmtPrintln("[cs] pack msg: ", mainID)
 	return out
 }
 

@@ -92,7 +92,6 @@ func (this *TcpSession) writeloop() {
 			_, err := this.conn.Write(data)
 			if err != nil {
 				akLog.Error("send data fail, err: ", err)
-				return
 			}
 		}
 	}
@@ -111,11 +110,11 @@ func (this *TcpSession) Bind(uid int64) {
 	this.uid = uid
 }
 
+func (this *TcpSession) GetUID() int64 { return this.uid }
+
 func (this *TcpSession) GetType() akmessage.ServerType {
 	return this.svrt
 }
-
-func (this *TcpSession) GetUID() int64 { return this.uid }
 
 func (this *TcpSession) SetCliType(t akmessage.ServerType) { this.clit = t }
 func (this *TcpSession) GetCliType() akmessage.ServerType  { return this.clit }

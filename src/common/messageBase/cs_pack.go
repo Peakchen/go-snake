@@ -13,9 +13,9 @@ type TCSPackProto struct {
 	data     []byte
 }
 
-func (this *TCSPackProto) Init(id uint32, size int, src []byte) {
+func (this *TCSPackProto) Init(id uint32, src []byte) {
 	this.mainID = id
-	this.dataSize = uint32(size)
+	this.dataSize = uint32(len(src))
 	this.data = src
 }
 

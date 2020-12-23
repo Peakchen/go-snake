@@ -14,7 +14,7 @@ type IGateMessage interface {
 }
 
 type GateMessage struct {
-	ServerMessage
+	GateSession
 }
 
 func init() {
@@ -35,12 +35,12 @@ func init() {
 
 func (this *GateMessage) Handler_CS_HeartBeat(pb proto.Message) {
 	akLog.FmtPrintln("gate client heart beat.", pb.(*akmessage.CS_HeartBeat))
-	this.SendMsg(uint32(akmessage.MSG_SC_HEARTBEAT), &akmessage.SC_HeartBeat{})
+	this.SendMsg_cs(uint32(akmessage.MSG_SC_HEARTBEAT), &akmessage.SC_HeartBeat{})
 }
 
 func (this *GateMessage) Handler_SS_HeartBeat(pb proto.Message) {
 	akLog.FmtPrintln("gate server heart beat.", pb.(*akmessage.SS_HeartBeat_Req))
-	this.SendMsg(uint32(akmessage.MSG_SS_HEARTBEAT_RSP), &akmessage.SS_HeartBeat_Rsp{})
+	this.SendMsg_ss(uint32(akmessage.MSG_SS_HEARTBEAT_RSP), &akmessage.SS_HeartBeat_Rsp{})
 }
 
 func (this *GateMessage) HandlerRegister(pb proto.Message) {

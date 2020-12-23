@@ -8,6 +8,12 @@ message CS_EnterGameScene
     
 }
 
+//进入游戏
+message SC_EnterGameScene
+{
+    
+}
+
 message CS_HeartBeat
 {
 

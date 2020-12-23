@@ -5,6 +5,8 @@ import (
 	"go-snake/common/messageBase"
 	"go-snake/common/mixNet"
 
+	"github.com/Peakchen/xgameCommon/akLog"
+
 	"github.com/Peakchen/xgameCommon/utils"
 
 	"google.golang.org/protobuf/proto"
@@ -42,7 +44,11 @@ func (this *Entity) SetSessionID(id string) { this.sid = id }
 
 func (this *Entity) SendMsg(id akmessage.MSG, pb proto.Message) {
 	data := messageBase.SSPackMsg_pb(this.GetSessionID(), this.GetID(), id, pb)
-	mixNet.GetApp().CS_SendInner(this.GetSessionID(), 0, data)
+	if data == nil {
+		akLog.Error("invalid msg pack fail, id: ", id)
+		return
+	}
+	mixNet.GetApp().SS_SendInner(this.GetSessionID(), uint32(id), data)
 }
 
 type IEntityUser interface {

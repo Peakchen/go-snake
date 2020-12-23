@@ -4,13 +4,16 @@ import (
 	"go-snake/akmessage"
 	"go-snake/common"
 	"go-snake/common/messageBase"
+	"go-snake/robot/option"
 	"net/url"
+	"reflect"
 	"sync/atomic"
 	"time"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 
 	"github.com/gorilla/websocket"
+	"github.com/panjf2000/ants/v2"
 )
 
 const (
@@ -26,12 +29,17 @@ type WsNet struct {
 	sendCh   chan []byte
 	status   uint32
 	lostData chan []byte
+
+	opts *option.RobotOption
 }
 
-func NewClient(host string, modelFns func(*WsNet)) {
+func NewClient(host string, optFns ...option.RobotOptionFn) {
 	ws := &WsNet{host: host,
 		sendCh:   make(chan []byte, 100),
-		lostData: make(chan []byte, 10)}
+		lostData: make(chan []byte, 10),
+		fnCh:     make(chan func(), 100),
+		opts:     option.SortRobotOptions(optFns...),
+	}
 
 	err := ws.dail()
 	if err != nil {
@@ -40,7 +48,7 @@ func NewClient(host string, modelFns func(*WsNet)) {
 	}
 
 	common.DosafeRoutine(func() { ws.readloop() }, nil)
-	common.DosafeRoutine(func() { ws.writeloop(modelFns) }, nil)
+	common.DosafeRoutine(func() { ws.writeloop() }, nil)
 	common.DosafeRoutine(func() { ws.checkconnect() }, nil)
 	common.DosafeRoutine(func() { ws.heartbeat() }, nil)
 }
@@ -73,7 +81,8 @@ func (this *WsNet) readloop() {
 	for {
 		select {
 		case fn := <-this.fnCh:
-			fn()
+			_ = ants.Submit(fn)
+			//common.Dosafe(fn, nil)
 		default:
 			if this.GetStatus() == WS_CONNECTED {
 
@@ -85,14 +94,28 @@ func (this *WsNet) readloop() {
 					this.close()
 					continue
 				}
-				akLog.FmtPrintln("recv: ", string(data))
+
+				akLog.FmtPrintln("ReadMessage...")
+				if this.opts.ModelsRecv != nil {
+					this.fnCh <- func() {
+						cspt := messageBase.CSPackTool()
+						err = cspt.UnPack(data)
+						if err != nil {
+							akLog.Error("cs unpack fail.")
+							return
+						}
+						this.opts.ModelsRecv([]reflect.Value{
+							reflect.ValueOf(cspt.GetMsgID()),
+							reflect.ValueOf(cspt.GetData())})
+					}
+				}
 			}
 
 		}
 	}
 }
 
-func (this *WsNet) writeloop(modelFns func(*WsNet)) {
+func (this *WsNet) writeloop() {
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 
@@ -100,8 +123,9 @@ func (this *WsNet) writeloop(modelFns func(*WsNet)) {
 		select {
 		case <-ticker.C:
 			akLog.FmtPrintln("send test, status: ", this.GetStatus())
-			if this.GetStatus() == WS_CONNECTED {
-				modelFns(this)
+
+			if this.GetStatus() == WS_CONNECTED && this.opts.ModelsRun != nil {
+				this.opts.ModelsRun(reflect.ValueOf(this))
 			}
 
 		case data := <-this.sendCh:

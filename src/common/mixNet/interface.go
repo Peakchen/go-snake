@@ -24,7 +24,7 @@ type SessionMgrIf interface {
 type Application interface {
 	Online(nt messageBase.NetType, sess interface{})
 	Offline(nt messageBase.NetType, id string)
-	Bind(id int64)
+	Bind(sid string, id int64)
 	CS_SendInner(sid string, id uint32, data []byte)
 	SendClient(sid string, id uint32, data []byte)
 	Handler(sid string, data []byte)

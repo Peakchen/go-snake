@@ -32,6 +32,7 @@ type WebSession struct {
 	wg         sync.WaitGroup
 	sessmgr    mixNet.SessionMgrIf
 	msgprocs   map[uint32]*messageBase.TMessageProc
+	uid        int64
 }
 
 func NewWebSession(conn *websocket.Conn, mgr mixNet.SessionMgrIf) *WebSession {
@@ -150,7 +151,7 @@ func (this *WebSession) sendOffline() {
 }
 
 func (this *WebSession) Write(msgtype int, data []byte) {
-	fmt.Println("session writed channel data len: ", len(this.writeCh), common.SizeVal(this.writeCh), time.Now().Unix())
+	akLog.FmtPrintln("session writed channel data len: ", len(this.writeCh), common.SizeVal(this.writeCh), time.Now().Unix())
 	this.writeCh <- &wsMessage{
 		messageType: msgtype,
 		data:        data,
@@ -161,9 +162,6 @@ func (this *WebSession) GetSessionMgr() mixNet.SessionMgrIf {
 	return this.sessmgr
 }
 
-// func (this *WebSession) Handler(id uint32, pb proto.Message) {
-// 	handler := this.msgprocs[id]
-// 	if handler != nil {
-// 		handler(this, pb)
-// 	}
-// }
+func (this *WebSession) Bind(uid int64) { this.uid = uid }
+
+func (this *WebSession) GetUID() int64 { return this.uid }

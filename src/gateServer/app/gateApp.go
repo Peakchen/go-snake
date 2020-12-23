@@ -102,8 +102,17 @@ func (this *GateApp) Offline(nt messageBase.NetType, id string) {
 	}
 }
 
-func (this *GateApp) Bind(id int64) {
-
+func (this *GateApp) Bind(sid string, id int64) {
+	sessContent, ok := this.c2s[sid]
+	if !ok {
+		akLog.Error("can not find client session, id: ", sid)
+		return
+	}
+	if id == 0 {
+		akLog.Error("invalid uid: ", id)
+		return
+	}
+	sessContent.session.Bind(id)
 }
 
 //c->[gate1<=>gate2]->s
@@ -146,7 +155,7 @@ func (this *GateApp) CS_SendInner(sid string, id uint32, data []byte) {
 	}
 	selectSID := this.selectServer(routeID)
 	if len(selectSID) == 0 {
-		akLog.Error("can select server, routeID: ", routeID)
+		akLog.Error("can select server, selectSID: ", selectSID)
 		return
 	}
 	s, ok := this.s2s[selectSID]
@@ -171,7 +180,11 @@ func (this *GateApp) SendClient(sid string, id uint32, data []byte) {
 		akLog.Error("can not find client session, id: ", sid)
 		return
 	}
-	sessContent.session.Write(websocket.BinaryMessage, data)
+	cspt := messageBase.CSPackTool()
+	cspt.Init(id, data)
+	out := make([]byte, len(data)+messageBase.CS_MSG_PACK_NODATA_SIZE)
+	cspt.Pack(out)
+	sessContent.session.Write(websocket.BinaryMessage, out)
 }
 
 //game/login/...->gate->client
@@ -183,6 +196,7 @@ func (this *GateApp) Handler(sid string, data []byte) {
 		return
 	}
 
+	//服务器注册
 	switch sspt.GetMsgID() {
 	case uint32(akmessage.MSG_SS_REGISTER_REQ):
 		func(data []byte, sessid string) {
@@ -208,6 +222,7 @@ func (this *GateApp) Handler(sid string, data []byte) {
 
 	}
 
+	//网关自身消息回调处理
 	routeID := akmessage.GetMsgRoute(akmessage.MSG(sspt.GetMsgID()))
 	switch routeID {
 	case akmessage.ServerType_Gate:
@@ -235,6 +250,11 @@ func (this *GateApp) Handler(sid string, data []byte) {
 		return
 	default:
 
+	}
+	//客户端消息转发
+	switch sspt.GetMsgID() {
+	case uint32(akmessage.MSG_SC_LOGIN):
+		this.Bind(sspt.GetSessID(), sspt.GetUID())
 	}
 	this.SendClient(sspt.GetSessID(), sspt.GetMsgID(), sspt.GetData())
 }

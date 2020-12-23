@@ -22,8 +22,8 @@ func newAcc(entity entityMgr.IEntityUser) *Acc {
 	}
 }
 
-func GetAcc(user, pwd string) *Acc {
-	return nil
+func (this *Acc) GetAcc(user, pwd string) *acc_model.Acc {
+	return this.user
 }
 
 func (this *Acc) setAcc(acc *acc_model.Acc) {

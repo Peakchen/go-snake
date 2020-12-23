@@ -7,18 +7,15 @@ enum MSG
     NO = 0; // 不可用ID
 
     //客户端-服务器（登录服）
-    CS_LOGIN = 1; //登录
-    SC_LOGIN = 2; 
+    CS_ACC_REGISTER = 1; //账号注册
+    SC_ACC_REGISTER = 2; 
 
-    CS_LOGOUT = 3;  //登出
-    SC_LOGOUT = 4;  //
-
-    CS_ACC_REGISTER = 5; //账号注册
-    SC_ACC_REGISTER = 6; 
+    CS_LOGIN = 3; //登录
+    SC_LOGIN = 4; 
 
     LOGIN_MAX = 100; //
 
-    //服务器间协议
+    //服务器间协议（以及特殊协议）
     SS_Begin = 101; //服务器间起始协议
     SS_ROUTE = 102; //服务器间路由
 
@@ -28,15 +25,19 @@ enum MSG
     SS_HEARTBEAT_REQ = 105; //服务器间心跳
     SS_HEARTBEAT_RSP = 106; //
 
+    CS_HEARTBEAT = 107; //客户端心跳
+    SC_HEARTBEAT = 108; //
+
     SS_MAX = 1000;
 
     //留空...（1001-10000）
 
     //客户端-服务器协议（game）
-    CS_HEARTBEAT = 10001; //客户端心跳
-    SC_HEARTBEAT = 10002; //
+    CS_ENTER_GAME_SCENE = 10001; //进入游戏
+    SC_ENTER_GAME_SCENE = 10002; //进入游戏
 
-    CS_ENTER_GAME_SCENE = 10003; //进入游戏
+    CS_LOGOUT = 10003;  //登出
+    SC_LOGOUT = 10004;  //
 
     GAME_MAX = 100000; //客户端服务器最大协议
 }

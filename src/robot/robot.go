@@ -5,8 +5,9 @@ import (
 	"go-snake/app/in"
 	"go-snake/common/messageBase"
 	"go-snake/common/mixNet"
-	_ "go-snake/robot/login"
 	"go-snake/robot/manager"
+	_ "go-snake/robot/model"
+	"go-snake/robot/option"
 	"go-snake/robot/wscli"
 
 	"github.com/Peakchen/xgameCommon/utils"
@@ -32,6 +33,10 @@ func (this *Robot) Type() akmessage.ServerType {
 
 func (this *Robot) Run(d *in.Input) {
 	for i := 0; i < d.Clis; i++ {
-		wscli.NewClient(d.WebHost, manager.RangeModels)
+		wscli.NewClient(
+			d.WebHost,
+			option.WithModelsRun(manager.RangeModels),
+			option.WithModelRecv(manager.RangeRecv),
+		)
 	}
 }

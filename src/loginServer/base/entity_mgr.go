@@ -16,15 +16,15 @@ func GetEntityMgr() *EntityManager {
 	return entitys
 }
 
-func GetUserByID(id int64) entityMgr.IEntityUser {
-	return entitys.Users[id]
+func GetUserByID(uid int64) entityMgr.IEntityUser {
+	return entitys.Users[uid]
 }
 
-func (this *EntityManager) GetEntityByID(rid int64) entityMgr.IEntityUser {
-	return this.Users[rid]
+func (this *EntityManager) GetEntityByID(uid int64) entityMgr.IEntityUser {
+	return this.Users[uid]
 }
 
-func (this *EntityManager) SetEntityByID(rid int64, user entityMgr.IEntityUser) {
+func (this *EntityManager) SetEntityByID(uid int64, user entityMgr.IEntityUser) {
 	user.RegModels()
-	this.Users[rid] = user
+	this.Users[uid] = user
 }
