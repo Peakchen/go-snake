@@ -102,17 +102,20 @@ func BatHide(param []string) {
 func SignalExit(fn func()) {
 	chsignal := make(chan os.Signal, 1)
 	//listen sign: ctrl+c, kill
-	signal.Notify(chsignal, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGKILL)
+	signal.Notify(chsignal, os.Interrupt, os.Kill, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGKILL)
 
-	select {
-	case s := <-chsignal:
-		switch s {
-		case syscall.SIGKILL, syscall.SIGTERM, syscall.SIGQUIT:
-			fmt.Println("signal exit:", s)
-			if fn != nil {
-				fn()
+signalLoop:
+	for {
+		select {
+		case s := <-chsignal:
+			switch s {
+			case syscall.SIGHUP, syscall.SIGINT, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGQUIT:
+				if fn != nil {
+					fn()
+					break signalLoop
+				}
 			}
 		}
 	}
-
+	fmt.Println("signalLoop out....")
 }

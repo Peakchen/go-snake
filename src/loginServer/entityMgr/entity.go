@@ -57,14 +57,14 @@ type IEntityUser interface {
 	RegModels()
 
 	IAcc
-	IClientRegister
+	IInner
 }
 
 type EntityUser struct {
 	*Entity
 
 	IAcc
-	IClientRegister
+	IInner
 }
 
 func NewEntity(sid string) IEntityUser {
@@ -80,7 +80,7 @@ func (this *EntityUser) RegModels() {
 		case M_ACCOUNT:
 			this.IAcc = entity.(IAcc)
 		case M_SERVERINNER:
-			this.IClientRegister = entity.(IClientRegister)
+			this.IInner = entity.(IInner)
 		}
 	})
 }

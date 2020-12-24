@@ -75,7 +75,6 @@ func (this *TAokoLog) createConsumer() {
 	client, err := sarama.NewConsumerGroup(brokerAddr, KAFKA_LOG_CONSUMER_GROUP, config)
 	if err != nil {
 		panic("create ConsumerGroup err: " + err.Error())
-		return
 	}
 	this.consumeClient = client
 }
@@ -124,21 +123,18 @@ func initLogFile(logtype string, aokoLog *TAokoLog) {
 	exist, err := utils.IsPathExisted(filepath)
 	if err != nil {
 		panic("check path exist err: " + err.Error())
-		return
 	}
 
 	if false == exist {
 		err = os.Mkdir(filepath, os.ModePerm)
 		if err != nil {
 			panic("log mkdir fail, err: " + err.Error())
-			return
 		}
 	}
 
 	filehandler, err := os.OpenFile(filepath+"/"+RealFileName, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
 		panic("open file fail, err: " + err.Error())
-		return
 	}
 
 	aokoLog.filehandle = filehandler
@@ -168,15 +164,15 @@ func Error(args ...interface{}) {
 }
 
 func ErrorIDCard(identify string, args ...interface{}) {
-	format := fmt.Sprintf("identify: %v, %v.", identify, args)
+	format := fmt.Sprintf("identify: %v.", identify)
 	timeFormat := aktime.Now().Local().Format(public.CstTimeFmt)
-	WriteLog(EnLogType_Error, "[IDCard]\t", timeFormat, format)
+	WriteLog(EnLogType_Error, "[IDCard]\t"+timeFormat, format, args)
 }
 
 func ErrorModule(data public.IDBCache, args ...interface{}) {
 	format := fmt.Sprintf("main: %v, sub: %v, identify: %v, %v.", data.MainModel(), data.SubModel(), data.Identify(), args)
 	timeFormat := aktime.Now().Local().Format(public.CstTimeFmt)
-	WriteLog(EnLogType_Error, "[Module]\t", timeFormat, format)
+	WriteLog(EnLogType_Error, "[Module]\t"+timeFormat, format, args)
 }
 
 func Info(format string, args ...interface{}) {
@@ -204,7 +200,7 @@ func Panic() {
 	}
 }
 
-func WriteLog(logtype, title, format string, args ...interface{}) {
+func WriteLog(logtype, title, format string, args []interface{}) {
 	aokoLog := checkNewLog(logtype)
 	if aokoLog == nil {
 		Panic()
@@ -225,20 +221,19 @@ func WriteLog(logtype, title, format string, args ...interface{}) {
 				logStr += fmt.Sprintf("%v", data)
 			}
 		}
-		logStr += "\n"
 	} else if len(args) == 0 && len(format) > 0 { //print("aaa,bbb,ccc.")
-		logStr = fmt.Sprintf(title + format)
+		logStr = fmt.Sprintf(title + "\t" + format)
 	} else if len(format) > 0 && len(args) > 0 { //print("a: %v, b: %v.",a,b)
 		logStr = fmt.Sprintf(title+"\t"+format, args...)
-		logStr += "\n"
-	}
-
-	if logtype == EnLogType_Fail {
-		logStr += string(debug.Stack())
 	}
 
 	if len(logStr) == 0 {
 		return
+	}
+
+	logStr += "\n"
+	if logtype == EnLogType_Fail {
+		logStr += string(debug.Stack())
 	}
 
 	if aokoLog.filesize >= EnAKLogFileMaxLimix {
@@ -289,25 +284,19 @@ func (this *TAokoLog) exit(wg *sync.WaitGroup) {
 }
 
 func (this *TAokoLog) loop(wg *sync.WaitGroup) {
+	tick := time.NewTicker(time.Duration(10 * time.Second))
 	defer func() {
+		tick.Stop()
 		wg.Done()
 	}()
 
-	tick := time.NewTicker(time.Duration(10 * time.Second))
 	for {
 		select {
 		case <-this.ctx.Done():
-			tick.Stop()
 			return
-		case log, ok := <-this.data:
-			if !ok {
-				continue
-			}
+		case log := <-this.data:
 			this.writelog(log)
-		case s, ok := <-exitchan:
-			if !ok {
-				continue
-			}
+		case s := <-exitchan:
 			fmt.Println("Got signal:", s)
 			os.Exit(0)
 			return
@@ -328,10 +317,7 @@ func (this *TAokoLog) loop2(wg *sync.WaitGroup) {
 		case <-this.ctx.Done():
 			tick.Stop()
 			return
-		case s, ok := <-exitchan:
-			if !ok {
-				continue
-			}
+		case s := <-exitchan:
 			fmt.Println("Got signal:", s)
 			os.Exit(0)
 			return

@@ -37,14 +37,13 @@ func BinaryMessageFunc(sess *WebSession, msg *wsMessage) {
 }
 
 func CloseMessageFunc(sess *WebSession, msg *wsMessage) {
-	fmt.Println("read CloseMessage.")
-	sess.offch <- true
+	fmt.Println("close CloseMessage.")
 }
 
 func PingMessageFunc(sess *WebSession, msg *wsMessage) {
-	fmt.Println("read PingMessage.")
+	fmt.Println("ping PingMessage.")
 }
 
 func PongMessageFunc(sess *WebSession, msg *wsMessage) {
-	fmt.Println("read PongMessage.")
+	fmt.Println("pong PongMessage.")
 }

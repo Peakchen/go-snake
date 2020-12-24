@@ -19,6 +19,7 @@ type SessionMgrIf interface {
 	CS_SendInner(sid string, id uint32, data []byte)
 	SendClient(sid string, id uint32, data []byte)
 	Handler(sid string, data []byte)
+	IsClose() bool
 }
 
 type Application interface {
@@ -29,6 +30,8 @@ type Application interface {
 	SendClient(sid string, id uint32, data []byte)
 	Handler(sid string, data []byte)
 	SS_SendInner(sid string, id uint32, data []byte)
+	Close()
+	IsClose() bool
 }
 
 var _app Application

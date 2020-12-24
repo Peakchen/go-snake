@@ -25,6 +25,8 @@ type GameApp struct {
 	roles uint32
 
 	session *tcpNet.TcpSession
+
+	isclose bool
 }
 
 func NewApp() *GameApp {
@@ -79,31 +81,50 @@ func (this *GameApp) Handler(sid string, data []byte) {
 		akLog.Error(fmt.Errorf("unmarshal message fail, err: %v.", err))
 		return
 	}
-	cspt := messageBase.CSPackTool()
-	err = cspt.UnPack(ssroute.Data)
-	if err != nil {
-		akLog.Error(fmt.Errorf("cs unpack message fail, err: %v.", err))
-		return
+
+	msgid := sspt.GetMsgID()
+	dstData := sspt.GetData()
+
+	if sspt.GetMsgID() == uint32(akmessage.MSG_SS_ROUTE) {
+		ssroute := messageBase.GetSSRoute()
+		err := messageBase.Codec().Unmarshal(dstData, ssroute)
+		if err != nil {
+			akLog.Error(fmt.Errorf("unmarshal message fail, err: %v.", err))
+			return
+		}
+		cspt := messageBase.CSPackTool()
+		err = cspt.UnPack(ssroute.Data)
+		if err != nil {
+			akLog.Error(fmt.Errorf("cs unpack message fail, err: %v.", err))
+			return
+		}
+
+		msgid = cspt.GetMsgID()
+		dstData = cspt.GetData()
 	}
 
-	msgid := cspt.GetMsgID()
-	dstData := cspt.GetData()
 	sessid := sspt.GetSessID()
 	uid := sspt.GetUID()
 
+	entity := base.GetUserByID(uid)
 	switch msgid {
-	case uint32(akmessage.MSG_CS_ENTER_GAME_SCENE):
-		base.AddUser(uid, entityMgr.NewEntity(sessid, uid))
+	case uint32(akmessage.MSG_CS_ENTER_GAME_SCENE),
+		uint32(akmessage.MSG_SS_REGISTER_RSP),
+		uint32(akmessage.MSG_SS_HEARTBEAT_RSP):
+		if entity == nil {
+			entity = entityMgr.NewEntity(sessid, uid)
+			base.AddUser(uid, entity)
+		}
+	}
+
+	if entity == nil {
+		akLog.Error("invalid uid: ", uid)
+		return
 	}
 
 	content := msg.GetActorMessageProc(msgid)
 	if content == nil {
 		akLog.Error("invalid msgid: ", msgid)
-		return
-	}
-	entity := base.GetUserByID(uid)
-	if entity == nil {
-		akLog.Error("invalid uid: ", uid)
 		return
 	}
 
@@ -129,4 +150,14 @@ func (this *GameApp) SS_SendInner(sid string, id uint32, data []byte) {
 		return
 	}
 	this.session.SendMsg(data)
+}
+
+func (this *GameApp) Close() {
+	this.session.Stop()
+	this.session = nil
+	this.isclose = true
+}
+
+func (this *GameApp) IsClose() bool {
+	return this.isclose
 }

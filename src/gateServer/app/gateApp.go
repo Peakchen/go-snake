@@ -33,13 +33,15 @@ type C2SContext struct {
 }
 
 type GateApp struct {
-	c2sMt sync.Mutex
-	s2sMt sync.Mutex
+	c2sMt sync.RWMutex
+	s2sMt sync.RWMutex
 
 	roles uint32
 	c2s   map[string]*C2SContext
 	s2s   map[string]*S2SContext
 	o2i   map[string]string
+
+	isclose bool
 }
 
 func New() *GateApp {
@@ -103,6 +105,9 @@ func (this *GateApp) Offline(nt messageBase.NetType, id string) {
 }
 
 func (this *GateApp) Bind(sid string, id int64) {
+	//this.c2sMt.Lock()
+	//defer this.c2sMt.Unlock()
+
 	sessContent, ok := this.c2s[sid]
 	if !ok {
 		akLog.Error("can not find client session, id: ", sid)
@@ -117,6 +122,9 @@ func (this *GateApp) Bind(sid string, id int64) {
 
 //c->[gate1<=>gate2]->s
 func (this *GateApp) CS_SendInner(sid string, id uint32, data []byte) {
+	//this.c2sMt.Lock()
+	//defer this.c2sMt.Unlock()
+
 	c, ok := this.c2s[sid]
 	if !ok {
 		akLog.Error("can not find client session, sid: ", sid)
@@ -155,9 +163,13 @@ func (this *GateApp) CS_SendInner(sid string, id uint32, data []byte) {
 	}
 	selectSID := this.selectServer(routeID)
 	if len(selectSID) == 0 {
-		akLog.Error("can select server, selectSID: ", selectSID)
+		akLog.Error("can select server, info: ", cspt.GetMsgID(), routeID)
 		return
 	}
+
+	//this.s2sMt.RLock()
+	//defer this.s2sMt.RUnlock()
+
 	s, ok := this.s2s[selectSID]
 	if ok {
 		c.SID = selectSID
@@ -175,6 +187,9 @@ func (this *GateApp) CS_SendInner(sid string, id uint32, data []byte) {
 //s->[gate2<=>gate1]->c
 //s-> gate2 rid
 func (this *GateApp) SendClient(sid string, id uint32, data []byte) {
+	//this.c2sMt.RLock()
+	//defer this.c2sMt.RUnlock()
+
 	sessContent, ok := this.c2s[sid]
 	if !ok {
 		akLog.Error("can not find client session, id: ", sid)
@@ -206,6 +221,10 @@ func (this *GateApp) Handler(sid string, data []byte) {
 				akLog.Error("proto unmarshal msg fail.")
 				return
 			}
+
+			//this.s2sMt.Lock()
+			//defer this.s2sMt.Unlock()
+
 			s, ok := this.s2s[sessid]
 			if !ok {
 				akLog.Error("s2s can not find session, sid: ", sessid)
@@ -260,10 +279,39 @@ func (this *GateApp) Handler(sid string, data []byte) {
 }
 
 func (this *GateApp) SS_SendInner(sid string, id uint32, data []byte) {
+	//this.s2sMt.RLock()
+	//defer this.s2sMt.RUnlock()
+
 	sessContent, ok := this.s2s[sid]
 	if !ok {
 		akLog.Error("can not find client session, id: ", sid)
 		return
 	}
 	sessContent.session.SendMsg(data)
+}
+
+func (this *GateApp) Close() {
+
+	this.isclose = true
+
+	akLog.Info("begin -> c2s：%v, s2s: %v.", len(this.c2s), len(this.s2s))
+	this.c2sMt.Lock()
+	for _, c := range this.c2s {
+		c.session.Stop()
+	}
+	this.c2s = map[string]*C2SContext{}
+	this.c2sMt.Unlock()
+
+	this.s2sMt.Lock()
+	for _, c := range this.s2s {
+		c.session.Stop()
+	}
+	this.s2s = map[string]*S2SContext{}
+	this.s2sMt.Unlock()
+
+	akLog.Info("after -> c2s：%v, s2s: %v.", len(this.c2s), len(this.s2s))
+}
+
+func (this *GateApp) IsClose() bool {
+	return this.isclose
 }

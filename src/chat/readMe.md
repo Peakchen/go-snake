@@ -1,0 +1,1 @@
+#### chat between to roles  in game

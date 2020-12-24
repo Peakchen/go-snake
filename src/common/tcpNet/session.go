@@ -3,9 +3,11 @@ package tcpNet
 import (
 	"go-snake/akmessage"
 	"go-snake/common"
+	"go-snake/common/messageBase"
 	"go-snake/common/mixNet"
 	"net"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/Peakchen/xgameCommon/aktime"
@@ -19,7 +21,7 @@ import (
 
 type TcpSession struct {
 	id     string
-	stop   chan bool
+	stop   chan<- bool
 	sendCh chan []byte
 	conn   *net.TCPConn
 
@@ -29,9 +31,11 @@ type TcpSession struct {
 	uid  int64
 	svrt akmessage.ServerType
 	clit akmessage.ServerType
+
+	status uint32
 }
 
-func NewTcpSession(c *net.TCPConn, st akmessage.ServerType, stop chan bool, mgr mixNet.SessionMgrIf, extFn *ExtFnsOption) *TcpSession {
+func NewTcpSession(c *net.TCPConn, st akmessage.ServerType, stop chan<- bool, mgr mixNet.SessionMgrIf, extFn *ExtFnsOption) *TcpSession {
 	session := &TcpSession{
 		id:      strings.Trim(utils.GetUUID(), " "),
 		stop:    stop,
@@ -41,6 +45,8 @@ func NewTcpSession(c *net.TCPConn, st akmessage.ServerType, stop chan bool, mgr 
 		extFns:  extFn,
 		svrt:    st,
 	}
+	session.conn.SetKeepAlive(true)
+	session.SetConnected()
 	mgr.AddTcpSession(session.id, session)
 	session.handler()
 	return session
@@ -51,12 +57,10 @@ func (this *TcpSession) GetSessionID() string {
 }
 
 func (this *TcpSession) handler() {
-	this.conn.SetKeepAlive(true)
-
-	common.DosafeRoutine(func() { this.readloop() }, func() { this.Stop() })
-	common.DosafeRoutine(func() { this.writeloop() }, func() { this.Stop() })
+	common.DosafeRoutine(this.readloop, this.close)
+	common.DosafeRoutine(this.writeloop, this.close)
 	if this.extFns.CS_HeartBeat != nil {
-		common.DosafeRoutine(func() { this.heartBeat() }, func() { this.Stop() })
+		common.DosafeRoutine(this.heartBeat, this.close)
 	}
 }
 
@@ -65,14 +69,20 @@ func (this *TcpSession) heartBeat() {
 	defer tick.Stop()
 
 	for range tick.C {
+		if this.GetStatus() == messageBase.CLOSED {
+			return
+		}
 		this.sendCh <- this.extFns.CS_HeartBeat(this.id)
 	}
 }
 
 func (this *TcpSession) readloop() {
-	defer this.Stop()
+	defer this.close()
 
 	for {
+		if this.GetStatus() == messageBase.CLOSED {
+			return
+		}
 		this.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
 		if this.extFns.Handler != nil {
 			if !this.extFns.Handler(this.id, this.conn, this.Sessmgr.Handler) {
@@ -83,26 +93,44 @@ func (this *TcpSession) readloop() {
 }
 
 func (this *TcpSession) writeloop() {
-	defer this.Stop()
+	defer this.close()
 
 	for {
 		select {
 		case data := <-this.sendCh:
+			if this.GetStatus() == messageBase.CLOSED {
+				return
+			}
 			this.conn.SetWriteDeadline(aktime.Now().Add(15 * time.Second))
 			_, err := this.conn.Write(data)
 			if err != nil {
 				akLog.Error("send data fail, err: ", err)
+				return
 			}
 		}
 	}
 }
 
 func (this *TcpSession) Stop() {
+	if this.GetStatus() == messageBase.CLOSED {
+		return
+	}
 	this.stop <- true
+	this.SetClose()
+	time.Sleep(time.Second)
+	this.conn.Close()
+}
+
+func (this *TcpSession) close() {
+	this.Stop()
 	this.Sessmgr.RemoveTcpSession(this.id)
 }
 
 func (this *TcpSession) SendMsg(data []byte) {
+	if this.GetStatus() == messageBase.CLOSED {
+		akLog.Error("status CLOSED...")
+		return
+	}
 	this.sendCh <- data
 }
 
@@ -118,3 +146,15 @@ func (this *TcpSession) GetType() akmessage.ServerType {
 
 func (this *TcpSession) SetCliType(t akmessage.ServerType) { this.clit = t }
 func (this *TcpSession) GetCliType() akmessage.ServerType  { return this.clit }
+
+func (this *TcpSession) SetClose() {
+	atomic.StoreUint32(&this.status, messageBase.CLOSED)
+}
+
+func (this *TcpSession) SetConnected() {
+	atomic.StoreUint32(&this.status, messageBase.CONNECTED)
+}
+
+func (this *TcpSession) GetStatus() uint32 {
+	return atomic.LoadUint32(&this.status)
+}

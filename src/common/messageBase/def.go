@@ -32,3 +32,9 @@ const (
 	Net_TCP NetType = 1
 	Net_WS  NetType = 2
 )
+
+const (
+	CLOSED     = uint32(0)
+	CONNECTING = uint32(1)
+	CONNECTED  = uint32(2)
+)

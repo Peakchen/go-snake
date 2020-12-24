@@ -57,12 +57,14 @@ type IEntityUser interface {
 	RegModels()
 
 	IRole
+	IInner
 }
 
 type EntityUser struct {
 	*Entity
 
 	IRole
+	IInner
 }
 
 func NewEntityBySid(sid string) IEntityUser {
@@ -83,6 +85,8 @@ func (this *EntityUser) RegModels() {
 		switch id {
 		case M_ROLE:
 			this.IRole = entity.(IRole)
+		case M_SERVERINNER:
+			this.IInner = entity.(IInner)
 		}
 	})
 }

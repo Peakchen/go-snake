@@ -10,8 +10,6 @@ import (
 	"time"
 
 	"github.com/Peakchen/xgameCommon/akLog"
-
-	"google.golang.org/protobuf/proto"
 )
 
 func init() {
@@ -21,8 +19,8 @@ func init() {
 type Login struct {
 	RoboIF.RobotModel
 
-	fns     []func()
-	recvs   map[uint32]func(pb proto.Message)
+	fns []func()
+
 	isreg   bool
 	islogin bool
 }
@@ -35,10 +33,6 @@ func (this *Login) Init(v reflect.Value) {
 	this.fns = []func(){}
 	this.fns = append(this.fns, this.register)
 	this.fns = append(this.fns, this.login)
-
-	this.recvs = make(map[uint32]func(pb proto.Message))
-	// this.recvs[uint32(akmessage.MSG_SC_ACC_REGISTER)] = this.SC_ACC_REGISTER
-	// this.recvs[uint32(akmessage.MSG_SC_LOGIN)] = this.SC_LOGIN
 
 	c := v.Interface().(*wscli.WsNet)
 	this.Dail(c)

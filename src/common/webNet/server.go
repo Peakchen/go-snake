@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Peakchen/xgameCommon/akLog"
 	"github.com/gorilla/websocket"
 	//"strings"
 	//"strconv"
@@ -42,6 +43,11 @@ func (this *WebSocketSvr) sessionHandler(resp http.ResponseWriter, req *http.Req
 	wsSocket, err := upgrader.Upgrade(resp, req, nil)
 	if err != nil {
 		fmt.Println("upgrader websocket fail, err: ", err.Error())
+		return
+	}
+
+	if this.sessmgr.IsClose() {
+		akLog.Info("server close ws...")
 		return
 	}
 

@@ -26,6 +26,7 @@ var (
 	maxlp      = int64(runtime.NumCPU())
 	_db        *gorm.DB
 	dbCfg      string
+	_exit      = make(chan bool, 1)
 )
 
 func newDB(cfg string) (db *gorm.DB) {
@@ -73,6 +74,8 @@ func OpenDB(user, pwd, host, dbName string) {
 			_dbengines[i].actor = newDBActor(_dbengines[i])
 			_dbengines[i].actor.loop()
 		}
+
+		common.DosafeRoutine(checkExitLoop, func() { time.Sleep(time.Duration(maxlp) * time.Second) })
 	}, func() {
 		time.Sleep(time.Second)
 		common.SafeExit()
@@ -110,6 +113,21 @@ func (this *DBEngine) checkConnect() bool {
 	return true
 }
 
+func Stop() {
+	_exit <- true
+}
+
+func checkExitLoop() {
+	for {
+		select {
+		case <-_exit:
+			for _, e := range _dbengines {
+				e.actor.flush()
+			}
+		}
+	}
+}
+
 func GetDBActor(rowID int64) *DBActor {
 	en, ok := _dbengines[rowID%maxlp]
 	if !ok {
@@ -125,15 +143,15 @@ type DBOper struct {
 
 type DBActor struct {
 	*DBEngine
-	oper chan *DBOper
-	stop chan bool
-	wg   sync.WaitGroup
+	opers chan *DBOper
+	stop  chan bool
+	wg    sync.WaitGroup
 }
 
 func newDBActor(db *DBEngine) *DBActor {
 	return &DBActor{
 		DBEngine: db,
-		oper:     make(chan *DBOper, 1000),
+		opers:    make(chan *DBOper, 1000),
 		stop:     make(chan bool),
 	}
 }
@@ -144,37 +162,9 @@ func (this *DBActor) loop() {
 	dbloop:
 		for {
 			select {
-			case oper := <-this.oper:
-				var sess *gorm.DB
-				common.Dosafe(func() {
-					if !this.checkConnect() {
-						this.stop <- true
-					} else {
-						sess = this.ormDB.Session(&gorm.Session{PrepareStmt: true})
-					}
-				}, nil)
-				if sess == nil {
+			case oper := <-this.opers:
+				if !this.update(oper) {
 					break dbloop
-				}
-				switch oper.Type {
-				case ORM_CREATE:
-					common.Dosafe(func() {
-						sess.Create(oper.Data)
-						this.oper <- &DBOper{
-							Type: ORM_UPDATE,
-							Data: oper.Data,
-						}
-					}, func() {
-						this.stop <- true
-					})
-				case ORM_UPDATE:
-					common.Dosafe(func() { sess.Save(oper.Data) }, func() {
-						this.stop <- true
-					})
-				case ORM_DELETE:
-					common.Dosafe(func() { sess.Delete(oper.Data) }, func() {
-						this.stop <- true
-					})
 				}
 			case <-this.stop:
 				break dbloop
@@ -188,7 +178,7 @@ func (this *DBActor) loop() {
 }
 
 func (this *DBActor) Do(oper int, m IAkModel) {
-	this.oper <- &DBOper{
+	this.opers <- &DBOper{
 		Type: oper,
 		Data: m,
 	}
@@ -199,4 +189,49 @@ func (this *DBActor) DB() *gorm.DB {
 		return nil
 	}
 	return this.ormDB
+}
+
+func (this *DBActor) update(oper *DBOper) bool {
+	var sess *gorm.DB
+	common.Dosafe(func() {
+		if !this.checkConnect() {
+			this.stop <- true
+		} else {
+			sess = this.ormDB.Session(&gorm.Session{PrepareStmt: true})
+		}
+	}, nil)
+
+	if sess == nil {
+		return false
+	}
+
+	switch oper.Type {
+	case ORM_CREATE:
+		common.Dosafe(func() {
+			sess.Create(oper.Data)
+			this.opers <- &DBOper{
+				Type: ORM_UPDATE,
+				Data: oper.Data,
+			}
+		}, func() {
+			this.stop <- true
+		})
+	case ORM_UPDATE:
+		common.Dosafe(func() { sess.Save(oper.Data) }, func() {
+			this.stop <- true
+		})
+	case ORM_DELETE:
+		common.Dosafe(func() { sess.Delete(oper.Data) }, func() {
+			this.stop <- true
+		})
+	default:
+		return false
+	}
+	return true
+}
+
+func (this *DBActor) flush() {
+	for range this.opers {
+		this.update(<-this.opers)
+	}
 }

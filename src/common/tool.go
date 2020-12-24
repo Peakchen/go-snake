@@ -5,6 +5,7 @@ import (
 	"os"
 	"runtime"
 	"runtime/debug"
+	"time"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 )
@@ -40,6 +41,9 @@ const (
 func ExceptionStack(fn func()) {
 	err := recover()
 	if err != nil {
+		if fn != nil {
+			fn()
+		}
 		errstr := fmt.Sprintf("\n%s runtime error: %v\n traceback:\n", separator, err)
 		errstr += callerDebug()
 		errstr += separator + "\n"
@@ -49,5 +53,6 @@ func ExceptionStack(fn func()) {
 
 func SafeExit() {
 	akLog.Error("\nunknow exception, exit: \n", separator, callerDebug(), string(debug.Stack()), separator+"\n")
-	os.Exit(1)
+	time.Sleep(time.Second)
+	os.Exit(0)
 }

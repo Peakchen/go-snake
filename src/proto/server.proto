@@ -10,6 +10,9 @@ enum ServerType
     Account = 3; //
     Game = 4; //
     Robot = 5; //
+    Chat = 6;
+    BackUpdate = 7; 
+    WebControl = 8; 
 }
 
 message SS_SSRoute

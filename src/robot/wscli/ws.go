@@ -16,12 +16,6 @@ import (
 	"github.com/panjf2000/ants/v2"
 )
 
-const (
-	WS_CLOSE      = uint32(0)
-	WS_CONNECTING = uint32(1)
-	WS_CONNECTED  = uint32(2)
-)
-
 type WsNet struct {
 	host     string
 	c        *websocket.Conn
@@ -70,7 +64,7 @@ func (this *WsNet) dail() error {
 }
 
 func (this *WsNet) close() {
-	if this.GetStatus() == WS_CLOSE {
+	if this.GetStatus() == messageBase.CLOSED {
 		return
 	}
 	this.c.Close()
@@ -84,7 +78,7 @@ func (this *WsNet) readloop() {
 			_ = ants.Submit(fn)
 			//common.Dosafe(fn, nil)
 		default:
-			if this.GetStatus() == WS_CONNECTED {
+			if this.GetStatus() == messageBase.CONNECTED {
 
 				this.c.SetReadDeadline(time.Now().Add(40 * time.Second))
 
@@ -124,13 +118,13 @@ func (this *WsNet) writeloop() {
 		case <-ticker.C:
 			akLog.FmtPrintln("send test, status: ", this.GetStatus())
 
-			if this.GetStatus() == WS_CONNECTED && this.opts.ModelsRun != nil {
+			if this.GetStatus() == messageBase.CONNECTED && this.opts.ModelsRun != nil {
 				this.opts.ModelsRun(reflect.ValueOf(this))
 			}
 
 		case data := <-this.sendCh:
 
-			if this.GetStatus() == WS_CONNECTED {
+			if this.GetStatus() == messageBase.CONNECTED {
 				this.c.SetWriteDeadline(time.Now().Add(15 * time.Second))
 				err := this.c.WriteMessage(websocket.BinaryMessage, data)
 				if err != nil {
@@ -153,10 +147,10 @@ func (this *WsNet) checkconnect() {
 		select {
 		case <-tick.C:
 			akLog.FmtPrintln("checkconnect status: ", this.GetStatus())
-			if this.GetStatus() == WS_CLOSE || this.GetStatus() == WS_CONNECTING {
+			if this.GetStatus() == messageBase.CLOSED || this.GetStatus() == messageBase.CONNECTING {
 				this.dail()
 			}
-			if this.GetStatus() == WS_CONNECTED {
+			if this.GetStatus() == messageBase.CONNECTED {
 				if len(this.lostData) > 0 {
 					for d := range this.lostData {
 						this.sendCh <- d
@@ -174,7 +168,7 @@ func (this *WsNet) heartbeat() {
 	for {
 		select {
 		case <-tick.C:
-			if this.GetStatus() == WS_CONNECTED {
+			if this.GetStatus() == messageBase.CONNECTED {
 				this.sendHeartBeatMsg()
 			}
 		}
@@ -201,15 +195,15 @@ func (this *WsNet) SendMsg(data []byte) {
 }
 
 func (this *WsNet) SetClose() {
-	atomic.StoreUint32(&this.status, WS_CLOSE)
+	atomic.StoreUint32(&this.status, messageBase.CLOSED)
 }
 
 func (this *WsNet) SetConnected() {
-	atomic.StoreUint32(&this.status, WS_CONNECTED)
+	atomic.StoreUint32(&this.status, messageBase.CONNECTED)
 }
 
 func (this *WsNet) SetConnecting() {
-	atomic.StoreUint32(&this.status, WS_CONNECTING)
+	atomic.StoreUint32(&this.status, messageBase.CONNECTING)
 }
 
 func (this *WsNet) GetStatus() uint32 {

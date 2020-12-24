@@ -30,12 +30,12 @@ func GetSessionMgr() *SessionMgr {
 
 //--- websocket
 func (this *SessionMgr) AddWebSession(id string, sess interface{}) {
-	this.svrSessions.Store(id, sess)
+	this.cliSessions.Store(id, sess)
 	this.App.Online(messageBase.Net_WS, sess)
 }
 
 func (this *SessionMgr) GetWebSession(id string) (sess interface{}) {
-	val, exist := this.svrSessions.Load(id)
+	val, exist := this.cliSessions.Load(id)
 	if exist {
 		sess = val
 	}
@@ -43,12 +43,12 @@ func (this *SessionMgr) GetWebSession(id string) (sess interface{}) {
 }
 
 func (this *SessionMgr) RemoveWebSession(id string) {
-	this.svrSessions.Delete(id)
+	this.cliSessions.Delete(id)
 	this.App.Offline(messageBase.Net_WS, id)
 }
 
 func (this *SessionMgr) GetWebSessions() sync.Map {
-	return this.svrSessions
+	return this.cliSessions
 }
 
 //--- tcp
@@ -85,6 +85,10 @@ func (this *SessionMgr) SendClient(sid string, id uint32, data []byte) {
 
 func (this *SessionMgr) Handler(sid string, data []byte) {
 	this.App.Handler(sid, data)
+}
+
+func (this *SessionMgr) IsClose() bool {
+	return this.App.IsClose()
 }
 
 func init() {

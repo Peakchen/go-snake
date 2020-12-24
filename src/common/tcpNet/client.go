@@ -22,7 +22,12 @@ func NewTcpClient(host string, st akmessage.ServerType, extFn ...OptionFn) {
 	cli.stop = make(chan bool, 1)
 	cli.st = st
 	cli.extFns = SortOptions(extFn...)
-	cli.connect(host, mixNet.GetSessionMgr())
+	if !cli.connect(host, mixNet.GetSessionMgr()) {
+		cli.stop <- true
+	}
+	common.DosafeRoutine(func() {
+		cli.checkDisconnect(host, mixNet.GetSessionMgr())
+	}, nil)
 }
 
 func (this *myTcpClient) connect(host string, mgr mixNet.SessionMgrIf) bool {
@@ -41,12 +46,6 @@ func (this *myTcpClient) connect(host string, mgr mixNet.SessionMgrIf) bool {
 	}
 
 	NewTcpSession(c, this.st, this.stop, mgr, this.extFns)
-
-	common.DosafeRoutine(func() {
-		this.checkDisconnect(host, mgr)
-	}, func() {
-		os.Exit(1)
-	})
 	return true
 }
 
@@ -54,6 +53,10 @@ func (this *myTcpClient) checkDisconnect(host string, mgr mixNet.SessionMgrIf) {
 	for {
 		select {
 		case <-this.stop:
+			if mgr.IsClose() {
+				akLog.Info("client close tcp...")
+				return
+			}
 			akLog.FmtPrintln("begin reconnect...")
 			if !this.connect(host, mgr) {
 				time.Sleep(3 * time.Second)

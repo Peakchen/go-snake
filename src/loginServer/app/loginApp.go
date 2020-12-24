@@ -25,6 +25,8 @@ type LoginApp struct {
 	roles uint32
 
 	session *tcpNet.TcpSession
+
+	isclose bool
 }
 
 func NewApp() *LoginApp {
@@ -112,7 +114,8 @@ func (this *LoginApp) Handler(sid string, data []byte) {
 		switch msgid {
 		case uint32(akmessage.MSG_CS_ACC_REGISTER),
 			uint32(akmessage.MSG_CS_LOGIN),
-			uint32(akmessage.MSG_SS_REGISTER_RSP):
+			uint32(akmessage.MSG_SS_REGISTER_RSP),
+			uint32(akmessage.MSG_SS_HEARTBEAT_RSP):
 			if user == nil {
 				user = entityMgr.NewEntity(sspt.GetSessID())
 				base.GetEntityMgr().SetEntityByID(user.GetID(), user)
@@ -141,4 +144,15 @@ func (this *LoginApp) SS_SendInner(sid string, id uint32, data []byte) {
 		return
 	}
 	this.session.SendMsg(data)
+}
+
+func (this *LoginApp) Close() {
+	this.session.Stop()
+	this.session = nil
+
+	this.isclose = true
+}
+
+func (this *LoginApp) IsClose() bool {
+	return this.isclose
 }
