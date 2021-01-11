@@ -3,7 +3,7 @@ module go-snake
 go 1.15
 
 require (
-	github.com/Peakchen/xgameCommon v0.0.6-0.20201216024322-e1b5d7c10063
+	github.com/Peakchen/xgameCommon v0.0.6-0.20201224111837-6e0dc4f38968
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect

@@ -41,7 +41,7 @@ func RangeRecv(v []reflect.Value) {
 			dst := reflect.New(refFn.Type().In(0).Elem()).Interface().(proto.Message)
 			err := messageBase.Codec().Unmarshal(data, dst)
 			if err != nil {
-				akLog.Error("unmarshal fail,id: ", mid)
+				akLog.Error("unmarshal fail,info: ", mid, data)
 				return false
 			}
 			refFn.Call([]reflect.Value{reflect.ValueOf(dst)})

@@ -43,7 +43,6 @@ func (this *myTcpServer) StartTcpListen(host string, mgr mixNet.SessionMgrIf, st
 				akLog.Info("server close tcp...")
 				return
 			}
-			akLog.FmtPrintln("new tcp session, addr: ", conn.RemoteAddr())
 			NewTcpSession(conn, st, make(chan bool, 1), mgr, extFns)
 		}
 	}, nil)

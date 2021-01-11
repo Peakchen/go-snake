@@ -9,7 +9,6 @@ import (
 	"go-snake/common"
 	"go-snake/common/mixNet"
 	"net/http"
-	"time"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 	"github.com/gorilla/websocket"
@@ -31,8 +30,8 @@ func NewWebsocketSvr(addr string) {
 }
 
 var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+	ReadBufferSize:  1024 * 4,
+	WriteBufferSize: 1024 * 4,
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
@@ -52,7 +51,6 @@ func (this *WebSocketSvr) sessionHandler(resp http.ResponseWriter, req *http.Req
 	}
 
 	NewWebSession(wsSocket, this.sessmgr)
-	fmt.Println("connect ws socket: ", time.Now().Unix())
 }
 
 func (this *WebSocketSvr) run() {

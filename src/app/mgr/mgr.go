@@ -1,6 +1,7 @@
 package mgr
 
 import (
+	"go-snake/SDKServer"
 	"go-snake/accountServer"
 	"go-snake/app/application"
 	"go-snake/gameServer"
@@ -16,6 +17,7 @@ var (
 		CstLogin:   loginServer.New(),
 		CstAccount: accountServer.New(),
 		CstRobot:   robot.New(),
+		CstSDK:     SDKServer.New(),
 	}
 )
 

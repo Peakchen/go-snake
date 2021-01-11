@@ -7,5 +7,5 @@ var (
 )
 
 func GetSSRoute() *akmessage.SS_SSRoute {
-	return _ssroute
+	return new(akmessage.SS_SSRoute)
 }

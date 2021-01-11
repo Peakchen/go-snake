@@ -12,13 +12,15 @@ const (
 	pongWait = 60 * time.Second
 
 	//在此期间将ping发送给同级。 必须小于pongWait。
-	pingPeriod = (pongWait * 5) / 10
+	pingPeriod = (pongWait * 9) / 10
 
 	//允许来自对等方的最大信息大小。
-	maxMessageSize = 512
+	maxMessageSize = 512 * 4
 
-	//发送通信管道最大信息量
+	//写通信管道最大信息量
 	maxWriteMsgSize = 1000
+	//读通信管道最大信息量
+	maxReadMsgSize = 1000
 )
 
 const (

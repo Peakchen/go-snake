@@ -13,6 +13,8 @@ enum ServerType
     Chat = 6;
     BackUpdate = 7; 
     WebControl = 8; 
+    Email = 9;
+    SDK = 10;
 }
 
 message SS_SSRoute

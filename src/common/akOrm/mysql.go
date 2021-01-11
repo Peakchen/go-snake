@@ -1,6 +1,7 @@
 package akOrm
 
 import (
+	"container/list"
 	"fmt"
 	"go-snake/common"
 	"runtime"
@@ -35,18 +36,27 @@ func newDB(cfg string) (db *gorm.DB) {
 		PrepareStmt: true,
 	})
 	if err != nil {
-		akLog.Error("open mysql fail,config: ", cfg)
+		akLog.Error("open mysql fail,config: ", cfg, err)
+		return nil
 	}
+	sqlDB, _ := db.DB()
+	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
+	sqlDB.SetMaxIdleConns(10)
+	// SetMaxOpenConns sets the maximum number of open connections to the database.
+	sqlDB.SetMaxOpenConns(100)
+	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
+	sqlDB.SetConnMaxLifetime(time.Hour)
 	return db
 }
 
 func OpenDB(user, pwd, host, dbName string) {
-	common.DosafeRoutine(func() {
+	common.Dosafe(func() {
 		dbCfg = fmt.Sprintf("%s:%s@(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, pwd, host, dbName)
 		_db = newDB(dbCfg)
 		if _db == nil {
 			panic("exit.")
 		}
+
 		/*
 			无服务监听时，注册则会报错
 			db.Use(prometheus.New(prometheus.Config{
@@ -72,7 +82,7 @@ func OpenDB(user, pwd, host, dbName string) {
 				fmt.Println(err)
 			}
 			_dbengines[i].actor = newDBActor(_dbengines[i])
-			_dbengines[i].actor.loop()
+			common.DosafeRoutine(_dbengines[i].actor.loop, func() { time.Sleep(time.Second) })
 		}
 
 		common.DosafeRoutine(checkExitLoop, func() { time.Sleep(time.Duration(maxlp) * time.Second) })
@@ -143,45 +153,69 @@ type DBOper struct {
 
 type DBActor struct {
 	*DBEngine
-	opers chan *DBOper
-	stop  chan bool
-	wg    sync.WaitGroup
+	sync.RWMutex
+
+	operList *list.List
+	stop     chan bool
+	fnch     chan func()
 }
 
 func newDBActor(db *DBEngine) *DBActor {
 	return &DBActor{
 		DBEngine: db,
-		opers:    make(chan *DBOper, 1000),
+		operList: list.New(),
 		stop:     make(chan bool),
+		fnch:     make(chan func(), 1000),
 	}
+}
+
+func (this *DBActor) consume() {
+	this.Lock()
+	defer this.Unlock()
+
+	var count = this.operList.Len()
+	if count == 0 {
+		return
+	}
+	akLog.Info("sql oper now: ", count, time.Now().Unix())
+	for i := 0; i < count; i++ {
+		op := this.operList.Front()
+		v := op.Value.(*DBOper)
+		if !this.update(v) {
+			akLog.Error("update fail, oper: ", v.Type, v.Data.GetDBID())
+		}
+		this.operList.Remove(op)
+	}
+	akLog.Info("sql oper left: ", this.operList.Len(), time.Now().Unix())
+
 }
 
 func (this *DBActor) loop() {
+	tick := time.NewTicker(200 * time.Millisecond)
+	defer tick.Stop()
 
-	common.DosafeRoutine(func() {
-	dbloop:
-		for {
-			select {
-			case oper := <-this.opers:
-				if !this.update(oper) {
-					break dbloop
-				}
-			case <-this.stop:
-				break dbloop
-			}
+dbloop:
+	for {
+		select {
+		case <-tick.C:
+			common.Dosafe(func() {
+				this.consume()
+			}, nil)
+		case f := <-this.fnch:
+			common.Dosafe(f, nil)
+		case <-this.stop:
+			break dbloop
 		}
-		this.wg.Done()
-	}, func() {
-		time.Sleep(time.Second)
-	})
-
+	}
 }
 
 func (this *DBActor) Do(oper int, m IAkModel) {
-	this.opers <- &DBOper{
+	this.Lock()
+	defer this.Unlock()
+	this.operList.PushBack(&DBOper{
 		Type: oper,
 		Data: m,
-	}
+	})
 }
 
 func (this *DBActor) DB() *gorm.DB {
@@ -195,7 +229,7 @@ func (this *DBActor) update(oper *DBOper) bool {
 	var sess *gorm.DB
 	common.Dosafe(func() {
 		if !this.checkConnect() {
-			this.stop <- true
+			//this.stop <- true
 		} else {
 			sess = this.ormDB.Session(&gorm.Session{PrepareStmt: true})
 		}
@@ -209,20 +243,20 @@ func (this *DBActor) update(oper *DBOper) bool {
 	case ORM_CREATE:
 		common.Dosafe(func() {
 			sess.Create(oper.Data)
-			this.opers <- &DBOper{
+			this.operList.PushBack(&DBOper{
 				Type: ORM_UPDATE,
 				Data: oper.Data,
-			}
+			})
 		}, func() {
-			this.stop <- true
+
 		})
 	case ORM_UPDATE:
 		common.Dosafe(func() { sess.Save(oper.Data) }, func() {
-			this.stop <- true
+
 		})
 	case ORM_DELETE:
 		common.Dosafe(func() { sess.Delete(oper.Data) }, func() {
-			this.stop <- true
+
 		})
 	default:
 		return false
@@ -231,7 +265,7 @@ func (this *DBActor) update(oper *DBOper) bool {
 }
 
 func (this *DBActor) flush() {
-	for range this.opers {
-		this.update(<-this.opers)
+	this.fnch <- func() {
+		this.consume()
 	}
 }

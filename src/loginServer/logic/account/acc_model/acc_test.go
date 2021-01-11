@@ -17,7 +17,12 @@ func init() {
 func TestAcc(t *testing.T) {
 	userName := "111"
 	pwd := "222"
-	if akOrm.HasExistAcc(&Acc{}, userName, pwd) {
+	exist, err := akOrm.HasExistAcc(&Acc{}, userName, pwd)
+	if err != nil {
+		akLog.FmtPrintln("err: ", err)
+		return
+	}
+	if exist {
 		akLog.FmtPrintln("acc is existed.")
 		return
 	}
@@ -33,7 +38,12 @@ func TestAcc(t *testing.T) {
 func TestAccs(t *testing.T) {
 	userName := "333"
 	pwd := "444"
-	if akOrm.HasExistAcc(&Acc{}, userName, pwd) {
+	exist, err := akOrm.HasExistAcc(&Acc{}, userName, pwd)
+	if err != nil {
+		akLog.FmtPrintln("err: ", err)
+		return
+	}
+	if exist {
 		akLog.FmtPrintln("acc is existed.")
 		return
 	}

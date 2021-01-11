@@ -1,8 +1,9 @@
-# github.com/Peakchen/xgameCommon v0.0.6-0.20201216024322-e1b5d7c10063
+# github.com/Peakchen/xgameCommon v0.0.6-0.20201224111837-6e0dc4f38968
 ## explicit
 github.com/Peakchen/xgameCommon/ado
 github.com/Peakchen/xgameCommon/akLog
 github.com/Peakchen/xgameCommon/aktime
+github.com/Peakchen/xgameCommon/pprof
 github.com/Peakchen/xgameCommon/public
 github.com/Peakchen/xgameCommon/tool
 github.com/Peakchen/xgameCommon/utils

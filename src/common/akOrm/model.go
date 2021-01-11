@@ -1,26 +1,19 @@
 package akOrm
 
 import (
+	"errors"
 	"reflect"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 )
 
-//尝试兼容mongo和mysql存储
-type AkModel struct {
-	RowID     string `gorm:"primary_key" bson:"_id" json:"_id"`
-	CreatedAt int64
-	UpdatedAt int64
-	DeletedAt int64
-}
-
 func Update(m IAkModel) bool {
 	if !hasExist(m) {
 		return false
 	}
-	actor := GetDBActor(m.GetUserID())
+	actor := GetDBActor(m.GetDBID())
 	if actor == nil {
-		akLog.Error("can not find db actor, rowid: ", m.GetUserID())
+		akLog.Error("can not find db actor, rowid: ", m.GetDBID())
 		return false
 	}
 	actor.Do(ORM_UPDATE, m)
@@ -31,9 +24,9 @@ func Delete(m IAkModel) bool {
 	if !hasExist(m) {
 		return false
 	}
-	actor := GetDBActor(m.GetUserID())
+	actor := GetDBActor(m.GetDBID())
 	if actor == nil {
-		akLog.Error("can not find db actor, userid: ", m.GetUserID())
+		akLog.Error("can not find db actor, userid: ", m.GetDBID())
 		return false
 	}
 	actor.Do(ORM_DELETE, m)
@@ -44,16 +37,16 @@ func Create(m IAkModel) bool {
 	if hasExist(m) {
 		return false
 	}
-	actor := GetDBActor(m.GetUserID())
+	actor := GetDBActor(m.GetDBID())
 	if actor == nil {
-		akLog.Error("can not find db actor, userid: ", m.GetUserID())
+		akLog.Error("can not find db actor, userid: ", m.GetDBID())
 		return false
 	}
 	actor.Do(ORM_CREATE, m)
 	return true
 }
 
-func checkRec() bool {
+func checkDB() bool {
 	rc := func() bool {
 		_db = newDB(dbCfg)
 		return _db == nil
@@ -74,30 +67,48 @@ func checkRec() bool {
 }
 
 func hasExist(m IAkModel) bool {
-	if !checkRec() {
+	if !checkDB() {
 		return false
 	}
 	ref := reflect.New(reflect.TypeOf(m).Elem()).Interface()
 	_db.AutoMigrate(ref)
-	_db.First(ref, "userid = ?", m.GetUserID())
+	_db.First(ref, "userid = ?", m.GetDBID())
 	if ref == nil {
 		return false
 	}
 	im := ref.(IAkModel)
-	return im.GetUserID() != 0
+	return im.GetDBID() != 0
 }
 
-func HasExistAcc(m IAkModel, user string, pwd string) bool {
-	if !checkRec() {
-		return false
+func HasExistAcc(m IAkModel, user string, pwd string) (bool, error) {
+	if !checkDB() {
+		return false, errors.New("db session disconnect.")
 	}
 	_db.AutoMigrate(m)
 	_db.First(m, "user = ?", user, "pwd = ?", pwd)
-	return m.GetUserID() != 0
+	return m.GetDBID() != 0, nil
+}
+
+func HasExistForWx(m IAkModel, openid string) (bool, error) {
+	if !checkDB() {
+		return false, errors.New("db session disconnect.")
+	}
+	_db.AutoMigrate(m)
+	_db.First(m, "openid = ?", openid)
+	return m.GetDBID() != 0, nil
+}
+
+func GetModel(m interface{}, openid string) error {
+	if !checkDB() {
+		return errors.New("invalid db status.")
+	}
+	_db.AutoMigrate(m)
+	_db.First(m, "openid = ?", openid)
+	return nil
 }
 
 func Find(ms interface{}) {
-	if !checkRec() {
+	if !checkDB() {
 		return
 	}
 	_db.Find(ms)

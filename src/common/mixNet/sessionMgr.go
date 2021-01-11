@@ -79,10 +79,6 @@ func (this *SessionMgr) CS_SendInner(sid string, id uint32, data []byte) {
 	this.App.CS_SendInner(sid, id, data)
 }
 
-func (this *SessionMgr) SendClient(sid string, id uint32, data []byte) {
-	this.App.SendClient(sid, id, data)
-}
-
 func (this *SessionMgr) Handler(sid string, data []byte) {
 	this.App.Handler(sid, data)
 }

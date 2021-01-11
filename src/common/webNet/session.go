@@ -27,11 +27,13 @@ type WebSession struct {
 	wsconn     *websocket.Conn
 	RemoteAddr string
 	writeCh    chan *wsMessage
+	readCh     chan *wsMessage
 	sessionID  string
 	sessmgr    mixNet.SessionMgrIf
 	msgprocs   map[uint32]*messageBase.TMessageProc
 	uid        int64
 	status     uint32
+	stop       chan bool
 }
 
 func NewWebSession(conn *websocket.Conn, mgr mixNet.SessionMgrIf) *WebSession {
@@ -39,10 +41,13 @@ func NewWebSession(conn *websocket.Conn, mgr mixNet.SessionMgrIf) *WebSession {
 		wsconn:     conn,
 		RemoteAddr: conn.RemoteAddr().String(),
 		writeCh:    make(chan *wsMessage, maxWriteMsgSize),
+		readCh:     make(chan *wsMessage, maxReadMsgSize),
 		sessionID:  utils.GetUUID(),
 		sessmgr:    mgr,
 		msgprocs:   messageBase.GetMsgHandlers(),
+		stop:       make(chan bool, 1),
 	}
+	akLog.Info("ws new session: ", sess.sessionID)
 	sess.sessmgr.AddWebSession(sess.GetSessionID(), sess)
 	sess.Handle()
 	return sess
@@ -69,12 +74,21 @@ func (this *WebSession) close() {
 }
 
 func (this *WebSession) Stop() {
+	if this.GetStatus() == messageBase.CLOSED {
+		return
+	}
+	this.stop <- true
 	this.SetClose()
+	//this.wsconn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 	time.Sleep(time.Second)
 	this.wsconn.Close()
-
 	if len(this.writeCh) > 0 {
+		akLog.Info("write left: ", len(this.writeCh))
 		close(this.writeCh)
+	}
+	if len(this.readCh) > 0 {
+		akLog.Info("read left: ", len(this.readCh))
+		close(this.readCh)
 	}
 }
 
@@ -84,34 +98,43 @@ func (this *WebSession) readloop() {
 		this.close()
 	}()
 
-	this.wsconn.SetReadLimit(maxMessageSize)
-	for {
+	//gorilla websocket causes panic if number of errors is >= 1000
+	var error_count = 0
+	//reset connection before error count exceeds the websocket limit
+readloop:
+	for error_count <= 500 {
 		select {
+		case <-this.stop:
+			break readloop
+		case rd := <-this.readCh:
+			common.Dosafe(func() { this.read(rd) }, this.close)
 		default:
-			if this.GetStatus() == messageBase.CLOSED {
-				akLog.Info("session close...")
-				return
-			}
 			common.Dosafe(func() {
-				this.wsconn.SetReadDeadline(time.Now().Add(pongWait))
+				this.wsconn.SetReadLimit(maxMessageSize)
+				this.wsconn.SetReadDeadline(time.Now().Add(pongWait * 2))
+
 				msgType, data, err := this.wsconn.ReadMessage()
 				if err != nil {
-					akLog.Error("msg read fail, err: ", err.Error())
+					error_count++
 					this.close()
+					akLog.Info("msg read fail:", err.Error(), this.GetSessionID())
 					websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure)
 					return
 				}
 
-				this.read(&wsMessage{
+				this.readCh <- &wsMessage{
 					messageType: msgType,
 					data:        data,
-				})
-			}, nil)
+				}
+
+			}, this.close)
 		}
 	}
+	akLog.Error("error_count: ", error_count)
 }
 
 func (this *WebSession) read(content *wsMessage) {
+	akLog.FmtPrintln("read: ", content.messageType)
 	if handler := GetMessageHandler(content.messageType); handler != nil {
 		handler(this, content)
 	} else {
@@ -120,38 +143,27 @@ func (this *WebSession) read(content *wsMessage) {
 }
 
 func (this *WebSession) writeloop() {
-	ticker := time.NewTicker(pingPeriod)
-	deadline := time.Duration(pingPeriod / 2)
-	defer func() {
-		ticker.Stop()
-		this.close()
-	}()
 
-	for {
-		select {
-		case msg := <-this.writeCh:
-			if this.GetStatus() == messageBase.CLOSED {
-				akLog.Info("session close...")
-				return
-			}
-			common.Dosafe(func() {
+	common.Dosafe(func() {
+		defer this.close()
+
+	writeloop:
+		for {
+			select {
+			case <-this.stop:
+				break writeloop
+			case msg := <-this.writeCh:
+
 				this.wsconn.SetWriteDeadline(time.Now().Add(writeWait))
 				if err := this.wsconn.WriteMessage(msg.messageType, msg.data); err != nil {
-					akLog.Error("send msg fail, err: ", err.Error(), len(this.writeCh))
+					akLog.Info("send msg fail: ", this.GetSessionID(), err.Error(), len(this.writeCh))
 					this.close()
 					return
 				}
-			}, nil)
-		case <-ticker.C:
-			common.Dosafe(func() {
-				if err := this.wsconn.WriteControl(websocket.PingMessage, []byte("ping"), time.Now().Add(deadline)); err != nil {
-					akLog.Error("send ping, err: ", err.Error())
-					this.close()
-					return
-				}
-			}, nil)
+
+			}
 		}
-	}
+	}, nil)
 }
 
 func (this *WebSession) sendOffline() {
@@ -164,11 +176,6 @@ func (this *WebSession) sendOffline() {
 
 func (this *WebSession) Write(msgtype int, data []byte) {
 	akLog.FmtPrintln("session writed channel data len: ", len(this.writeCh), common.SizeVal(this.writeCh), time.Now().Unix())
-	if this.GetStatus() == messageBase.CLOSED {
-		akLog.Info("session close...")
-		return
-	}
-
 	this.writeCh <- &wsMessage{
 		messageType: msgtype,
 		data:        data,
@@ -192,5 +199,6 @@ func (this *WebSession) SetConnected() {
 }
 
 func (this *WebSession) GetStatus() uint32 {
-	return atomic.LoadUint32(&this.status)
+	//return atomic.LoadUint32(&this.status)
+	return this.status
 }

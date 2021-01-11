@@ -17,6 +17,7 @@ import (
 )
 
 type WsNet struct {
+	n        int
 	host     string
 	c        *websocket.Conn
 	fnCh     chan func()
@@ -27,11 +28,13 @@ type WsNet struct {
 	opts *option.RobotOption
 }
 
-func NewClient(host string, optFns ...option.RobotOptionFn) {
-	ws := &WsNet{host: host,
-		sendCh:   make(chan []byte, 100),
-		lostData: make(chan []byte, 10),
-		fnCh:     make(chan func(), 100),
+func NewClient(number int, host string, optFns ...option.RobotOptionFn) {
+	ws := &WsNet{
+		n:        number,
+		host:     host,
+		sendCh:   make(chan []byte, 1000),
+		lostData: make(chan []byte, 100),
+		fnCh:     make(chan func(), 1000),
 		opts:     option.SortRobotOptions(optFns...),
 	}
 
@@ -40,6 +43,8 @@ func NewClient(host string, optFns ...option.RobotOptionFn) {
 		akLog.Fail("dial fail:", err)
 		return
 	}
+
+	ws.c.SetCloseHandler(nil)
 
 	common.DosafeRoutine(func() { ws.readloop() }, nil)
 	common.DosafeRoutine(func() { ws.writeloop() }, nil)
@@ -64,53 +69,63 @@ func (this *WsNet) dail() error {
 }
 
 func (this *WsNet) close() {
-	if this.GetStatus() == messageBase.CLOSED {
-		return
-	}
-	this.c.Close()
 	this.SetClose()
+	this.c.Close()
 }
 
 func (this *WsNet) readloop() {
-	for {
+
+	//gorilla websocket causes panic if number of errors is >= 1000
+	var error_count = 0
+	//reset connection before error count exceeds the websocket limit
+	for error_count <= 500 {
 		select {
 		case fn := <-this.fnCh:
-			_ = ants.Submit(fn)
+			if this.GetStatus() == messageBase.CONNECTED {
+				_ = ants.Submit(fn)
+			}
 			//common.Dosafe(fn, nil)
 		default:
-			if this.GetStatus() == messageBase.CONNECTED {
+			common.Dosafe(func() {
 
-				this.c.SetReadDeadline(time.Now().Add(40 * time.Second))
+				this.c.SetReadDeadline(time.Now().Add(2 * 60 * time.Second))
 
-				_, data, err := this.c.ReadMessage()
+				tp, data, err := this.c.ReadMessage()
 				if err != nil {
-					akLog.Error("read:", err)
-					this.close()
-					continue
+					error_count++
+					akLog.Info("read err: ", err)
+					if this.GetStatus() == messageBase.CONNECTED {
+						this.close()
+					}
+					websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure)
+					return
+				}
+
+				if tp == websocket.PongMessage {
+					akLog.Info("PongMessage==========")
 				}
 
 				akLog.FmtPrintln("ReadMessage...")
 				if this.opts.ModelsRecv != nil {
-					this.fnCh <- func() {
+					_ = ants.Submit(func() {
 						cspt := messageBase.CSPackTool()
 						err = cspt.UnPack(data)
 						if err != nil {
-							akLog.Error("cs unpack fail.")
+							akLog.Error("cs unpack fail: ", err, data)
 							return
 						}
 						this.opts.ModelsRecv([]reflect.Value{
 							reflect.ValueOf(cspt.GetMsgID()),
 							reflect.ValueOf(cspt.GetData())})
-					}
+					})
 				}
-			}
-
+			}, nil)
 		}
 	}
 }
 
 func (this *WsNet) writeloop() {
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(1000 * time.Millisecond)
 	defer ticker.Stop()
 
 	for {
@@ -119,22 +134,27 @@ func (this *WsNet) writeloop() {
 			akLog.FmtPrintln("send test, status: ", this.GetStatus())
 
 			if this.GetStatus() == messageBase.CONNECTED && this.opts.ModelsRun != nil {
-				this.opts.ModelsRun(reflect.ValueOf(this))
+				_ = ants.Submit(func() {
+					akLog.FmtPrintln("===========run nunmber:\t", this.n)
+					this.opts.ModelsRun(reflect.ValueOf(this))
+				})
 			}
 
 		case data := <-this.sendCh:
 
-			if this.GetStatus() == messageBase.CONNECTED {
+			common.Dosafe(func() {
 				this.c.SetWriteDeadline(time.Now().Add(15 * time.Second))
 				err := this.c.WriteMessage(websocket.BinaryMessage, data)
 				if err != nil {
-					akLog.Error("write fail: ", err)
-					this.close()
+					akLog.Info("write err: ", err)
+					if this.GetStatus() == messageBase.CONNECTED {
+						this.close()
+					}
 					if len(this.lostData) < cap(this.lostData) {
 						this.lostData <- data
 					}
 				}
-			}
+			}, this.close)
 		}
 	}
 }
@@ -162,15 +182,13 @@ func (this *WsNet) checkconnect() {
 }
 
 func (this *WsNet) heartbeat() {
-	tick := time.NewTicker(30 * time.Second)
+	tick := time.NewTicker(50 * time.Second)
 	defer tick.Stop()
 
 	for {
 		select {
 		case <-tick.C:
-			if this.GetStatus() == messageBase.CONNECTED {
-				this.sendHeartBeatMsg()
-			}
+			common.Dosafe(this.sendHeartBeatMsg, nil)
 		}
 	}
 }
@@ -207,5 +225,5 @@ func (this *WsNet) SetConnecting() {
 }
 
 func (this *WsNet) GetStatus() uint32 {
-	return atomic.LoadUint32(&this.status)
+	return this.status
 }

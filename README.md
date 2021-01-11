@@ -2,12 +2,13 @@
 
 #### 软件架构
 
-1. gate server 数据安全防护，负载均衡, 分发客户端消息
+1. gate server （内、外网管）数据安全防护，负载均衡, 分发客户端消息
 2. game server 消息处理，数据存储 
-3. login server 登录服
+3. login server 登录服(账号登录，微信登录...)
 4. robot server 客户端模拟器
 5. db mysql 
-6. ... 
+6. 网络协议采用protobuf（后端：go，前端：js）
+7. ...
 
 #### 使用说明
 serverApp 参数列表：   

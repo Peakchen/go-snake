@@ -1,14 +1,19 @@
 package base
 
-import "go-snake/gameServer/entityMgr"
+import (
+	"go-snake/gameServer/entityBase"
+	"sync"
+)
 
 type EntityManager struct {
-	Users map[int64]entityMgr.IEntityUser
+	sync.RWMutex
+
+	entitys map[int64]entityBase.IEntityUser
 }
 
 var (
 	entitys = &EntityManager{
-		Users: make(map[int64]entityMgr.IEntityUser),
+		entitys: make(map[int64]entityBase.IEntityUser),
 	}
 )
 
@@ -16,26 +21,38 @@ func GetEntityMgr() *EntityManager {
 	return entitys
 }
 
-func GetUserByID(uid int64) entityMgr.IEntityUser {
-	return entitys.Users[uid]
+func GetUserByID(uid int64) entityBase.IEntityUser {
+	entitys.RLock()
+	defer entitys.RUnlock()
+
+	return entitys.entitys[uid]
 }
 
-func AddUser(uid int64, user entityMgr.IEntityUser) {
-	if _, ok := entitys.Users[uid]; ok {
+func AddUser(uid int64, user entityBase.IEntityUser) {
+	entitys.Lock()
+	defer entitys.Unlock()
+
+	if _, ok := entitys.entitys[uid]; ok {
 		return
 	}
 	user.RegModels()
-	entitys.Users[uid] = user
+	entitys.entitys[uid] = user
 }
 
-func (this *EntityManager) GetEntityByID(uid int64) entityMgr.IEntityUser {
-	return this.Users[uid]
+func (this *EntityManager) GetEnity(uid int64) entityBase.IEntityUser {
+	this.RLock()
+	defer this.RUnlock()
+
+	return this.entitys[uid]
 }
 
-func (this *EntityManager) SetEntityByID(uid int64, user entityMgr.IEntityUser) {
-	if _, ok := this.Users[uid]; ok {
+func (this *EntityManager) AddEnity(uid int64, user entityBase.IEntityUser) {
+	this.Lock()
+	defer this.Unlock()
+
+	if _, ok := this.entitys[uid]; ok {
 		return
 	}
 	user.RegModels()
-	this.Users[uid] = user
+	this.entitys[uid] = user
 }

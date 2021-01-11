@@ -1,7 +1,7 @@
 package akOrm
 
 type IAkModel interface {
-	GetUserID() int64
+	GetDBID() int64
 	Update() bool
 	Delete() bool
 	Create() bool

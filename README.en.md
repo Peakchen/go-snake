@@ -1,10 +1,11 @@
 ##Software architecture
 1. Data security protection of gate server, load balancing and distribution of client messages
 2. Game server message processing, data storage
-3. Login server login service
+3. Login server login service (for common login [by accountID and pwd] and wechat)
 4. Robot server client simulator
 5. db mysql
-6. ...
+6. The network protocol adopts protobuf (back end: go, front end: JS)
+7. ...
 
 ##Instructions for use
 

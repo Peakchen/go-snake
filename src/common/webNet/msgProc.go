@@ -5,8 +5,7 @@ package webNet
 */
 
 import (
-	"fmt"
-
+	"github.com/Peakchen/xgameCommon/akLog"
 	"github.com/gorilla/websocket"
 )
 
@@ -27,7 +26,7 @@ func GetMessageHandler(id int) receiveMsgProc {
 }
 
 func TextMessageFunc(sess *WebSession, msg *wsMessage) {
-	fmt.Println("read TextMessage data: ", string(msg.data))
+	akLog.Info("read TextMessage data: ", string(msg.data))
 	sess.Write(websocket.TextMessage, []byte("hello,too!"))
 }
 
@@ -37,13 +36,13 @@ func BinaryMessageFunc(sess *WebSession, msg *wsMessage) {
 }
 
 func CloseMessageFunc(sess *WebSession, msg *wsMessage) {
-	fmt.Println("close CloseMessage.")
+	akLog.Info("close CloseMessage.")
 }
 
 func PingMessageFunc(sess *WebSession, msg *wsMessage) {
-	fmt.Println("ping PingMessage.")
+	akLog.Info("ping PingMessage.")
 }
 
 func PongMessageFunc(sess *WebSession, msg *wsMessage) {
-	fmt.Println("pong PongMessage.")
+	akLog.Info("pong PongMessage.")
 }

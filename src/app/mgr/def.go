@@ -6,4 +6,5 @@ const (
 	CstAccount = "account"
 	CstGate    = "gate"
 	CstRobot   = "robot"
+	CstSDK     = "sdk"
 )

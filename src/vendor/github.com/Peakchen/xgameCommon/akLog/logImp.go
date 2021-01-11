@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"runtime"
 	"runtime/debug"
 	"sync"
 	"syscall"
@@ -50,14 +51,14 @@ const (
 )
 
 var (
-	aokoLog    map[string]*TAokoLog
+	aokoLog    sync.Map //map[string]*TAokoLog
 	brokerAddr []string
 )
 
 var exitchan = make(chan os.Signal, 1)
 
 func init() {
-	aokoLog = map[string]*TAokoLog{}
+	//aokoLog = map[string]*TAokoLog{}
 }
 
 func InitLogBroker(addr []string) {
@@ -80,10 +81,7 @@ func (this *TAokoLog) createConsumer() {
 }
 
 func checkNewLog(logtype string) (logobj *TAokoLog) {
-	var (
-		ok bool
-	)
-	logobj, ok = aokoLog[logtype]
+	iter, ok := aokoLog.Load(logtype)
 	if !ok {
 		logobj = &TAokoLog{
 			FileNo: 1,
@@ -91,14 +89,16 @@ func checkNewLog(logtype string) (logobj *TAokoLog) {
 		if false == (brokerAddr == nil || len(brokerAddr) == 0) {
 			logobj.createConsumer()
 		}
-		aokoLog[logtype] = logobj
+		aokoLog.Store(logtype, logobj)
 		initLogFile(logtype, logobj)
 		go run(logobj)
+
+		return logobj
 	}
-	return
+	return iter.(*TAokoLog)
 }
 
-func initLogFile(logtype string, aokoLog *TAokoLog) {
+func initLogFile(logtype string, log *TAokoLog) {
 	var (
 		RealFileName string
 		PathDir      string = logtype
@@ -107,29 +107,22 @@ func initLogFile(logtype string, aokoLog *TAokoLog) {
 	filename := utils.GetExeFileName()
 	switch logtype {
 	case EnLogType_Info:
-		RealFileName = fmt.Sprintf("%v_Info_No%v_%v.log", filename, aokoLog.FileNo, aktime.Now().Local().Format(public.CstTimeDate))
+		RealFileName = fmt.Sprintf("%v_Info_No%v_%v.log", filename, log.FileNo, aktime.Now().Local().Format(public.CstTimeDate))
 	case EnLogType_Error:
-		RealFileName = fmt.Sprintf("%v_Error_No%v_%v.log", filename, aokoLog.FileNo, aktime.Now().Local().Format(public.CstTimeDate))
+		RealFileName = fmt.Sprintf("%v_Error_No%v_%v.log", filename, log.FileNo, aktime.Now().Local().Format(public.CstTimeDate))
 	case EnLogType_Fail:
-		RealFileName = fmt.Sprintf("%v_Fail_No%v_%v.log", filename, aokoLog.FileNo, aktime.Now().Local().Format(public.CstTimeDate))
+		RealFileName = fmt.Sprintf("%v_Fail_No%v_%v.log", filename, log.FileNo, aktime.Now().Local().Format(public.CstTimeDate))
 	case EnLogType_Debug:
-		RealFileName = fmt.Sprintf("%v_Debug_No%v_%v.log", filename, aokoLog.FileNo, aktime.Now().Local().Format(public.CstTimeDate))
+		RealFileName = fmt.Sprintf("%v_Debug_No%v_%v.log", filename, log.FileNo, aktime.Now().Local().Format(public.CstTimeDate))
 	default:
 
 	}
 
 	exepath := utils.GetExeFilePath()
 	filepath := exepath + "/" + PathDir
-	exist, err := utils.IsPathExisted(filepath)
-	if err != nil {
-		panic("check path exist err: " + err.Error())
-	}
-
-	if false == exist {
-		err = os.Mkdir(filepath, os.ModePerm)
-		if err != nil {
-			panic("log mkdir fail, err: " + err.Error())
-		}
+	if _, err := os.Stat(filepath); os.IsNotExist(err) {
+		os.Mkdir(filepath, 0777)
+		os.Chmod(filepath, 0777)
 	}
 
 	filehandler, err := os.OpenFile(filepath+"/"+RealFileName, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
@@ -137,24 +130,24 @@ func initLogFile(logtype string, aokoLog *TAokoLog) {
 		panic("open file fail, err: " + err.Error())
 	}
 
-	aokoLog.filehandle = filehandler
-	aokoLog.filename = RealFileName
-	aokoLog.data = make(chan *LoadingContent, EnLogDataChanMax)
+	log.filehandle = filehandler
+	log.filename = RealFileName
+	log.data = make(chan *LoadingContent, EnLogDataChanMax)
 
 }
 
-func run(aokoLog *TAokoLog) {
+func run(log *TAokoLog) {
 	signal.Notify(exitchan, os.Interrupt, os.Kill, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGSEGV)
-	aokoLog.ctx, aokoLog.cancle = context.WithCancel(context.Background())
+	log.ctx, log.cancle = context.WithCancel(context.Background())
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go aokoLog.loop(&wg)
-	if aokoLog.consumeClient != nil {
+	go log.loop(&wg)
+	if log.consumeClient != nil {
 		wg.Add(1)
-		go aokoLog.loop2(&wg)
+		go log.loop2(&wg)
 	}
 	wg.Wait()
-	aokoLog.exit(&wg)
+	log.exit(&wg)
 	time.Sleep(time.Duration(3) * time.Second)
 }
 
@@ -175,9 +168,9 @@ func ErrorModule(data public.IDBCache, args ...interface{}) {
 	WriteLog(EnLogType_Error, "[Module]\t"+timeFormat, format, args)
 }
 
-func Info(format string, args ...interface{}) {
+func Info(args ...interface{}) {
 	timeFormat := aktime.Now().Local().Format(public.CstTimeFmt)
-	WriteLog(EnLogType_Info, "[Info]\t"+timeFormat, format, args)
+	WriteLog(EnLogType_Info, "[Info]\t"+timeFormat, "", args)
 }
 
 func Fail(args ...interface{}) {
@@ -190,63 +183,53 @@ func Debug(format string, args ...interface{}) {
 }
 
 func Panic() {
-	aokoLog := checkNewLog(EnLogType_Fail)
-	if aokoLog != nil {
+	log := checkNewLog(EnLogType_Fail)
+	if log != nil {
 		debug.PrintStack()
 		buf := debug.Stack()
-		aokoLog.filehandle.WriteString(string(buf[:]))
-		aokoLog.endLog()
+		log.filehandle.WriteString(string(buf[:]))
+		log.endLog()
 		//close(aokoLog.data)
 	}
 }
 
 func WriteLog(logtype, title, format string, args []interface{}) {
-	aokoLog := checkNewLog(logtype)
-	if aokoLog == nil {
+	log := checkNewLog(logtype)
+	if log == nil {
 		Panic()
 		return
 	}
 
-	var (
-		logStr string
-	)
-
-	/*
-		print(a,b,c...)
-	*/
-	if len(format) == 0 && len(args) > 0 {
-		logStr += fmt.Sprintf(title + format + "\t")
-		for i, data := range args {
-			if i+1 <= len(args) {
-				logStr += fmt.Sprintf("%v", data)
-			}
+	var logStr string
+	pc, _, line, ok := runtime.Caller(2)
+	if ok {
+		logStr += fmt.Sprintf(title+" "+"[%v:%v]", runtime.FuncForPC(pc).Name(), line)
+	}
+	logStr += fmt.Sprintf(" " + format)
+	for i, data := range args {
+		if i+1 <= len(args) {
+			logStr += fmt.Sprintf("%v", data)
 		}
-	} else if len(args) == 0 && len(format) > 0 { //print("aaa,bbb,ccc.")
-		logStr = fmt.Sprintf(title + "\t" + format)
-	} else if len(format) > 0 && len(args) > 0 { //print("a: %v, b: %v.",a,b)
-		logStr = fmt.Sprintf(title+"\t"+format, args...)
+		if i+1 < len(args) && i >= 0 {
+			logStr += ","
+		}
 	}
-
-	if len(logStr) == 0 {
-		return
-	}
-
 	logStr += "\n"
 	if logtype == EnLogType_Fail {
 		logStr += string(debug.Stack())
 	}
 
-	if aokoLog.filesize >= EnAKLogFileMaxLimix {
-		FmtPrintf("log file: %v over max limix.", aokoLog.filename)
-		aokoLog.FileNo++
-		initLogFile(logtype, aokoLog)
-		aokoLog.filesize = 0
+	if log.filesize >= EnAKLogFileMaxLimix {
+		FmtPrintf("log file: %v over max limix.", log.filename)
+		log.FileNo++
+		initLogFile(logtype, log)
+		log.filesize = 0
 	}
 
-	aokoLog.filesize += uint64(len(logStr))
-	aokoLog.logNum++
+	log.filesize += uint64(len(logStr))
+	log.logNum++
 
-	aokoLog.data <- &LoadingContent{
+	log.data <- &LoadingContent{
 		Content: logStr,
 		logType: logtype,
 	}
@@ -264,10 +247,11 @@ func WriteLog(logtype, title, format string, args []interface{}) {
 
 	fmt.Print(logStr)
 
-	if aokoLog.logNum%EnLogDataChanMax == 0 {
-		aokoLog.flush()
-		aokoLog.data = make(chan *LoadingContent, EnLogDataChanMax)
+	if log.logNum%EnLogDataChanMax == 0 {
+		log.flush()
+		log.data = make(chan *LoadingContent, EnLogDataChanMax)
 	}
+	aokoLog.Store(logtype, log)
 }
 
 func (this *TAokoLog) endLog() {

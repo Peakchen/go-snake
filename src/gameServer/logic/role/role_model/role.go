@@ -12,9 +12,9 @@ import (
 type Role struct {
 	gorm.Model
 
-	RowID  string `gorm:"column:rowid;type:varchar(50);primary_key" bson:"rowid" json:"rowid"` //数据操作行ID
-	DBID   string `gorm:"column:dbid;type:varchar(50);unique_index" bson:"dbid" json:"dbid"`   //数据库唯一ID
-	UserID int64  `gorm:"column:userid;type:varchar(50)" bson:"userid" json:"userid"`          //玩家ID 供客户端显示
+	RowID  string `gorm:"column:rowid;type:varchar(50);primary_key" bson:"rowid" json:"rowid"`     //数据操作行ID
+	DBID   int64  `gorm:"column:dbid;unique_index" bson:"dbid" json:"dbid"`                        //数据库唯一ID
+	UserID string `gorm:"column:userid;type:varchar(50);unique_index" bson:"userid" json:"userid"` //玩家ID 供客户端显示
 
 	Level    uint32 `gorm:"colum:level;type:uint" `
 	Name     string `gorm:"colum:name;type:string;default:''" `
@@ -25,7 +25,7 @@ func (this *Role) TableName() string {
 	return reflect.TypeOf(*this).Name()
 }
 
-func NewRole(dbid string, uid int64, level uint32, name string, headicon string) *Role {
+func NewRole(uid string, dbid int64, level uint32, name string, headicon string) *Role {
 	role := &Role{
 		RowID:    utils.GetOnlyString_v6(),
 		DBID:     dbid,
@@ -46,8 +46,8 @@ func (this *Role) Load() []*Role {
 	return rets
 }
 
-func (this *Role) GetUserID() int64 {
-	return this.UserID
+func (this *Role) GetDBID() int64 {
+	return this.DBID
 }
 
 func (this *Role) Create() bool {

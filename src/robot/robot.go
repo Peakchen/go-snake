@@ -9,6 +9,7 @@ import (
 	_ "go-snake/robot/model"
 	"go-snake/robot/option"
 	"go-snake/robot/wscli"
+	"time"
 
 	"github.com/Peakchen/xgameCommon/utils"
 )
@@ -33,7 +34,10 @@ func (this *Robot) Type() akmessage.ServerType {
 
 func (this *Robot) Run(d *in.Input) {
 	for i := 0; i < d.Clis; i++ {
+		time.Sleep(10 * time.Millisecond)
+
 		wscli.NewClient(
+			i,
 			d.WebHost,
 			option.WithModelsRun(manager.RangeModels),
 			option.WithModelRecv(manager.RangeRecv),

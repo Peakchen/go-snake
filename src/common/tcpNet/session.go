@@ -20,10 +20,11 @@ import (
 //for client connect server.
 
 type TcpSession struct {
-	id     string
-	stop   chan<- bool
-	sendCh chan []byte
-	conn   *net.TCPConn
+	id       string
+	stop     chan<- bool
+	stopthis chan bool
+	sendCh   chan []byte
+	conn     *net.TCPConn
 
 	Sessmgr mixNet.SessionMgrIf
 	extFns  *ExtFnsOption
@@ -37,14 +38,16 @@ type TcpSession struct {
 
 func NewTcpSession(c *net.TCPConn, st akmessage.ServerType, stop chan<- bool, mgr mixNet.SessionMgrIf, extFn *ExtFnsOption) *TcpSession {
 	session := &TcpSession{
-		id:      strings.Trim(utils.GetUUID(), " "),
-		stop:    stop,
-		sendCh:  make(chan []byte, 100),
-		conn:    c,
-		Sessmgr: mgr,
-		extFns:  extFn,
-		svrt:    st,
+		id:       strings.Trim(utils.GetUUID(), " "),
+		stop:     stop,
+		sendCh:   make(chan []byte, 1000),
+		conn:     c,
+		Sessmgr:  mgr,
+		extFns:   extFn,
+		svrt:     st,
+		stopthis: make(chan bool, 1),
 	}
+	akLog.Info("tcp new session: ", session.id)
 	session.conn.SetKeepAlive(true)
 	session.SetConnected()
 	mgr.AddTcpSession(session.id, session)
@@ -66,55 +69,84 @@ func (this *TcpSession) handler() {
 
 func (this *TcpSession) heartBeat() {
 	tick := time.NewTicker(3 * time.Second)
-	defer tick.Stop()
+	defer func() {
+		tick.Stop()
+		this.close()
+	}()
 
-	for range tick.C {
-		if this.GetStatus() == messageBase.CLOSED {
-			return
+heartBeat:
+	for {
+		select {
+		case <-this.stopthis:
+			break heartBeat
+		case <-tick.C:
+			if this.GetStatus() == messageBase.CONNECTED {
+				this.sendCh <- this.extFns.CS_HeartBeat(this.id)
+			}
 		}
-		this.sendCh <- this.extFns.CS_HeartBeat(this.id)
+
 	}
+	akLog.Info("heartBeat break.")
 }
 
 func (this *TcpSession) readloop() {
-	defer this.close()
+	common.Dosafe(func() {
+		defer func() {
+			this.close()
+		}()
 
-	for {
-		if this.GetStatus() == messageBase.CLOSED {
-			return
-		}
-		this.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
-		if this.extFns.Handler != nil {
-			if !this.extFns.Handler(this.id, this.conn, this.Sessmgr.Handler) {
-				return
+	readloop:
+		for {
+			select {
+			case <-this.stopthis:
+				break readloop
+			default:
+				this.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+				if this.extFns.Handler != nil {
+					if !this.extFns.Handler(this.id, this.conn, this.Sessmgr.Handler) {
+						return
+					}
+				}
 			}
 		}
-	}
+
+		akLog.Info("readloop break.")
+	}, nil)
 }
 
 func (this *TcpSession) writeloop() {
-	defer this.close()
 
-	for {
-		select {
-		case data := <-this.sendCh:
-			if this.GetStatus() == messageBase.CLOSED {
-				return
-			}
-			this.conn.SetWriteDeadline(aktime.Now().Add(15 * time.Second))
-			_, err := this.conn.Write(data)
-			if err != nil {
-				akLog.Error("send data fail, err: ", err)
-				return
+	common.Dosafe(func() {
+		defer func() {
+			this.close()
+		}()
+
+	writeloop:
+		for {
+			select {
+			case <-this.stopthis:
+				break writeloop
+
+			case data := <-this.sendCh:
+
+				this.conn.SetWriteDeadline(aktime.Now().Add(15 * time.Second))
+				_, err := this.conn.Write(data)
+				if err != nil {
+					akLog.Info("send data fail, err: ", err)
+					return
+				}
+
 			}
 		}
-	}
+
+		akLog.Info("writeloop break.")
+	}, nil)
+
 }
 
 func (this *TcpSession) Stop() {
-	if this.GetStatus() == messageBase.CLOSED {
-		return
-	}
+
+	this.stopthis <- true
 	this.stop <- true
 	this.SetClose()
 	time.Sleep(time.Second)
@@ -127,10 +159,6 @@ func (this *TcpSession) close() {
 }
 
 func (this *TcpSession) SendMsg(data []byte) {
-	if this.GetStatus() == messageBase.CLOSED {
-		akLog.Error("status CLOSED...")
-		return
-	}
 	this.sendCh <- data
 }
 

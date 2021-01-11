@@ -1,6 +1,10 @@
 package common
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"runtime"
@@ -55,4 +59,22 @@ func SafeExit() {
 	akLog.Error("\nunknow exception, exit: \n", separator, callerDebug(), string(debug.Stack()), separator+"\n")
 	time.Sleep(time.Second)
 	os.Exit(0)
+}
+
+func HmacSha256(data string, secret string) string {
+	h := hmac.New(sha256.New, []byte(secret))
+	h.Write([]byte(data))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+func ComputeHmacSha256(message string, secret string) string {
+	key := []byte(secret)
+	h := hmac.New(sha256.New, key)
+	h.Write([]byte(message))
+	//	fmt.Println(h.Sum(nil))
+	sha := hex.EncodeToString(h.Sum(nil))
+	//	fmt.Println(sha)
+
+	//	hex.EncodeToString(h.Sum(nil))
+	return base64.StdEncoding.EncodeToString([]byte(sha))
 }

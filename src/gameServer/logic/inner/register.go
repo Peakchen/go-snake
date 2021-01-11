@@ -1,17 +1,17 @@
 package inner
 
 import (
-	"go-snake/gameServer/entityMgr"
+	"go-snake/gameServer/entityBase"
 )
 
 func init() {
-	entityMgr.RegisterModel(entityMgr.M_SERVERINNER, func(entity entityMgr.IEntityUser) interface{} { return newInner(entity) })
+	entityBase.RegisterModel(entityBase.M_SERVERINNER, func(entity entityBase.IEntityUser) interface{} { return newInner(entity) })
 }
 
 type ServerInner struct {
-	entityMgr.IEntityUser
+	entityBase.IEntityUser
 }
 
-func newInner(entity entityMgr.IEntityUser) *ServerInner {
+func newInner(entity entityBase.IEntityUser) *ServerInner {
 	return &ServerInner{IEntityUser: entity}
 }

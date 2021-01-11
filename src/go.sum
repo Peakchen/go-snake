@@ -3,8 +3,8 @@ cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 cloud.google.com/go v0.37.4 h1:glPeL3BQJsbF6aIIYfZizMwc5LTYz250bDMjttbBGAU=
 cloud.google.com/go v0.37.4/go.mod h1:NHPJ89PdicEuT9hdPXMROBD91xc5uRDxsMtSB16k7hw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/Peakchen/xgameCommon v0.0.6-0.20201216024322-e1b5d7c10063 h1:6DK4rXyhNS7ib1s6ymLcAs8WUd8w/JsVwUUTWVhYU2w=
-github.com/Peakchen/xgameCommon v0.0.6-0.20201216024322-e1b5d7c10063/go.mod h1:9JhX87Z8WLxWFT9CfLTCjKk+/DfIipk7EmGEq48RI0M=
+github.com/Peakchen/xgameCommon v0.0.6-0.20201224111837-6e0dc4f38968 h1:oWX3TX5gGIylxRzlr5yl1Bi5kwd/LL1s7bDsRYMdNiw=
+github.com/Peakchen/xgameCommon v0.0.6-0.20201224111837-6e0dc4f38968/go.mod h1:9JhX87Z8WLxWFT9CfLTCjKk+/DfIipk7EmGEq48RI0M=
 github.com/PuerkitoBio/goquery v1.5.1/go.mod h1:GsLWisAFVj4WgDibEWF4pvYnkVQBpKBKeU+7zCJoLcc=
 github.com/Shopify/sarama v1.19.0 h1:9oksLxC6uxVPHPVYUmq6xhr1BOF/hHobWH2UzO67z1s=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=

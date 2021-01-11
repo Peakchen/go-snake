@@ -3,6 +3,7 @@ package gateServer
 import (
 	"go-snake/akmessage"
 	"go-snake/app/in"
+	"go-snake/common/evtAsync"
 	"go-snake/common/messageBase"
 	"go-snake/common/mixNet"
 	"go-snake/common/tcpNet"
@@ -32,6 +33,7 @@ func (this *Gate) Init() {
 	app.Init()
 	messageBase.InitCodec(&utils.CodecProtobuf{})
 	mixNet.NewSessionMgr(mixNet.GetApp())
+	evtAsync.NewMainEvtMgr()
 }
 
 func (this *Gate) Type() akmessage.ServerType {

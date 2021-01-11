@@ -20,7 +20,7 @@ func ServerMsgProc(sid string, conn *net.TCPConn, fn func(string, []byte)) bool 
 			akLog.Error("unexcept error: ", err)
 			return false
 		case rdn1 == 0 && err == nil:
-			akLog.Error("net EOF")
+			akLog.Info("net EOF")
 		}
 
 		return true

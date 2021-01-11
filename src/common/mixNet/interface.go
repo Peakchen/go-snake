@@ -17,7 +17,6 @@ type SessionMgrIf interface {
 	GetTcpSessions() sync.Map
 
 	CS_SendInner(sid string, id uint32, data []byte)
-	SendClient(sid string, id uint32, data []byte)
 	Handler(sid string, data []byte)
 	IsClose() bool
 }

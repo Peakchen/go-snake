@@ -21,6 +21,13 @@ type ServerConfig struct {
 	MysqlUser     string
 	MysqlPwd      string
 	MysqlDataBase string
+
+	PprofHost string
+
+	HasWechat bool
+	WebHttp   string
+	AppID     string
+	AppSecret string
 }
 
 func (this *ServerConfig) PrintAll() {
@@ -36,6 +43,12 @@ func (this *ServerConfig) PrintAll() {
 		this.MysqlUser,
 		this.MysqlPwd,
 		this.MysqlDataBase,
+		this.PprofHost,
+
+		this.HasWechat,
+		this.WebHttp,
+		this.AppID,
+		this.AppSecret,
 	)
 }
 
@@ -58,6 +71,9 @@ func LoadServerConfig(s string) *ServerConfig {
 	for _, k := range section.Keys() {
 		fv := reflect.ValueOf(_cfg).Elem().FieldByName(k.Name())
 		switch fv.Kind() {
+		case reflect.Bool:
+			boolv, _ := k.Bool()
+			fv.Set(reflect.ValueOf(boolv))
 		case reflect.String:
 			fv.Set(reflect.ValueOf(k.Value()))
 		case reflect.Int:
