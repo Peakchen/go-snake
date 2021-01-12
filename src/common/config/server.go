@@ -57,7 +57,7 @@ var (
 )
 
 func LoadServerConfig(s string) *ServerConfig {
-	f, err := ini.Load("../ini/server.ini")
+	f, err := ini.Load("./ini/server.ini")
 	if err != nil {
 		panic(fmt.Errorf("Failed to parse config file: %s", err))
 	}

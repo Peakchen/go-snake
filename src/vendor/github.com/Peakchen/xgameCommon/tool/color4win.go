@@ -1,3 +1,5 @@
+// +build windows
+
 package tool
 
 //add by stefan for linux windows.
