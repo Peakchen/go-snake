@@ -1,2 +1,0 @@
-package account_model
-

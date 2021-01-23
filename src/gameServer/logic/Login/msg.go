@@ -1,5 +1,0 @@
-package Login
-
-func init() {
-
-}

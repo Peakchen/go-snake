@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+message RpcRequest {
+    string name = 1;
+}
+
+message RpcResponse {
+    string message = 1;
+    string from = 2;
+}
+
+service Rpc {
+    rpc Send(RpcRequest) returns(RpcResponse);
+}
