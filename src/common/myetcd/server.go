@@ -1,29 +1,33 @@
 package myetcd
 
 import (
-	"strings"
-	"github.com/coreos/etcd/clientv3"
+    "context"
+    "time"
+    "net"
+
+    "go.etcd.io/etcd/clientv3"
+	//"github.com/coreos/etcd/clientv3"
+    "github.com/Peakchen/xgameCommon/akLog"
+	//"go.etcd.io/etcd/client/v3"
+
 )
 
 type etcdServer struct {
 	addr string
-	name string 
-
 }
 
-func NewEtcdServer(host, src string, service EtcdCallService){
+func NewEtcdServer(host string, service EtcdRpc){
 	rpc.RegisterName(service.Name(), service)
 	es := &etcdServer{
 		addr: host,
-		name: src,
 	}
-	common.DosafeRoutine(es.accept, func(){
-
-	})
-
+	common.DosafeRoutine(es.accept, func(){})
+    common.DosafeRotine(func(){
+        es.keepalive(service)
+        }, func(){})
 }
 
-func (this *etcdServer) accept(service EtcdCallService){
+func (this *etcdServer) accept(){
 	listener, err := net.Listen("tcp", this.addr)
     if err != nil {
         log.Fatal("ListenTCP error:", err)
@@ -36,7 +40,7 @@ func (this *etcdServer) accept(service EtcdCallService){
 	rpc.ServeConn(conn)
 }
 
-func (this *etcdServer) keepalive(service EtcdCallService){
+func (this *etcdServer) keepalive(service EtcdRpc){
     client, err := clientv3.New(clientv3.Config{
         Endpoints:   []string{this.addr},
         DialTimeout: 5 * time.Second,
@@ -61,7 +65,7 @@ func (this *etcdServer) keepalive(service EtcdCallService){
 				continue
             }
  
-            key := service.Name() + fmt.Sprintf("%d", leaseResp.ID)
+            key := service.Name() + ":"+ fmt.Sprintf("%d", leaseResp.ID)
             if _, err := kv.Put(context.TODO(), key, this.addr, clientv3.WithLease(leaseResp.ID)); err != nil {
                 akLog.Error("err: ", err)
 				continue

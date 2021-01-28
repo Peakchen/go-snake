@@ -9,10 +9,11 @@ import (
 	"go-snake/common/mixNet"
 	"go-snake/common/tcpNet"
 	"go-snake/gameServer/app"
-
 	_ "go-snake/gameServer/logic"
+	"go-snake/gameServer/rpcBase"
 
 	"github.com/Peakchen/xgameCommon/utils"
+
 )
 
 type Game struct {
@@ -37,6 +38,7 @@ func (this *Game) Type() akmessage.ServerType {
 
 func (this *Game) Run(d *in.Input) {
 	akOrm.OpenDB(d.Scfg.MysqlUser, d.Scfg.MysqlPwd, d.Scfg.MysqlHost, d.Scfg.MysqlDataBase)
+	rpcBase.RunRpc(d.Scfg.EtcdIP)
 	tcpNet.NewTcpClient(
 		d.TCPHost,
 		this.Type(),

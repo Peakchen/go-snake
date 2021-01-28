@@ -2,13 +2,15 @@ syntax = "proto3";
 
 option go_package = "../akmessage";
 
+import "mainID.proto";
+
 message RpcRequest {
-    string name = 1;
+    RPCMSG msgId = 1;
+    bytes  ReqData = 2;
 }
 
 message RpcResponse {
-    string message = 1;
-    string from = 2;
+    bytes RespData = 1;
 }
 
 service Rpc {

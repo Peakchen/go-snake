@@ -1,24 +1,25 @@
 package myetcd
 
+import (
+	"net"
+
+)
+
 type NodeInfo struct {
 	value string
 	session net.Conn
 }
 
-type EtcdNode struct{
-	name string
-	nodes map[string]*NodeInfo
-	mx sync.Mutex
-}
-
-type EtcdCallService interface{
+//rpc call back
+type EtcdRpc interface{
 	Name() string
 }
 
-//dail node rpc call back.
-type EtcdClient interface{
+//dail node
+type EtcdNodeIF interface{
 	Name()string
-	Update(k, v string)
-	Delete(k string)
-	Connect(addr string)
+	Update(k, v string) error
+	Delete(k string) error
+	Connect(addr string)(net.Conn, error)
+	GetNodeConn(name string) net.Conn
 }

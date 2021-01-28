@@ -41,3 +41,11 @@ enum MSG
 
     GAME_MAX = 100000; //客户端服务器最大协议
 }
+
+enum RPCMSG 
+{
+    RpcNo = 0;
+
+    L2G_GET_ROLE_NUM_REQ  = 1; //L2G_Get_Role_Num_Req
+    G2L_GET_ROLE_NUM_RSP  = 2; //G2L_Get_Role_Num_Rsp
+}

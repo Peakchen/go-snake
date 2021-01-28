@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+
+//L2G_GET_ROLE_NUM_REQ
+message L2G_Get_Role_Num_Req
+{
+
+}
+
+//G2L_GET_ROLE_NUM_RSP
+message G2L_Get_Role_Num_Rsp
+{
+    int64 Roles = 1;
+}

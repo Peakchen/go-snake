@@ -5,8 +5,8 @@ import (
 	"reflect"
 
 	"github.com/Peakchen/xgameCommon/akLog"
-
 	"gopkg.in/ini.v1"
+
 )
 
 type ServerConfig struct {
@@ -28,6 +28,8 @@ type ServerConfig struct {
 	WebHttp   string
 	AppID     string
 	AppSecret string
+
+	EtcdIP  	string
 }
 
 func (this *ServerConfig) PrintAll() {

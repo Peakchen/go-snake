@@ -1,0 +1,40 @@
+syntax = "proto3";
+option go_package = "msgProto/MSG_Chat";
+package MSG_Chat;
+
+// add by stefan 
+// server 
+enum SUBMSG
+{
+    Begin = 0; //起点消息
+
+	CS_BroadCast = 1; //消息广播请求
+    SC_BroadCast = 2; //消息广播回复
+}
+
+enum ErrorCode
+{
+    Invalid = 0; //非法数据
+    Success = 1; //成功
+    Fail = 2; //失败
+}
+
+enum BroadCastRangeType
+{
+    No = 0;
+    Zone = 1; //全区广播
+    //...
+}
+
+//CS_BroadCast
+message CS_BroadCast_Req
+{
+    string SrcData = 1; //消息内容
+    BroadCastRangeType range = 2; //广播类型
+}
+
+//SC_BroadCast
+message SC_BroadCast_Rsp
+{
+    string SrcData = 1; //消息内容
+}

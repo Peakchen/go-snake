@@ -11,10 +11,11 @@ import (
 	"go-snake/loginServer/app"
 	"go-snake/loginServer/base"
 	"go-snake/loginServer/sdk_wechat"
-
 	_ "go-snake/loginServer/logic"
+	"go-snake/loginServer/rpcBase"
 
 	"github.com/Peakchen/xgameCommon/utils"
+
 )
 
 type Login struct {
@@ -31,6 +32,7 @@ func (this *Login) Init() {
 	messageBase.InitCodec(&utils.CodecProtobuf{})
 	mixNet.NewSessionMgr(mixNet.GetApp())
 	evtAsync.NewMainEvtMgr()
+
 }
 
 func (this *Login) Type() akmessage.ServerType {
@@ -42,6 +44,8 @@ func (this *Login) Run(d *in.Input) {
 	akOrm.OpenDB(d.Scfg.MysqlUser, d.Scfg.MysqlPwd, d.Scfg.MysqlHost, d.Scfg.MysqlDataBase)
 	//db数据加载至内存
 	base.DBPreloading()
+	//初始化etcd rpc
+	rpcBase.RunRpc(d.Scfg.EtcdIP)
 	//启动tcp链接
 	tcpNet.NewTcpClient(
 		d.TCPHost,
