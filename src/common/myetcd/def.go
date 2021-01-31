@@ -1,13 +1,13 @@
 package myetcd
 
 import (
-	"net"
+	"google.golang.org/grpc"
 
 )
 
 type NodeInfo struct {
 	value string
-	session net.Conn
+	session *grpc.ClientConn
 }
 
 //rpc call back
@@ -20,6 +20,6 @@ type EtcdNodeIF interface{
 	Name()string
 	Update(k, v string) error
 	Delete(k string) error
-	Connect(addr string)(net.Conn, error)
-	GetNodeConn(name string) net.Conn
+	Connect(addr string)(*grpc.ClientConn, error)
+	GetNodeConn(name string) *grpc.ClientConn
 }

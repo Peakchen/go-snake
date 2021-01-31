@@ -3,26 +3,29 @@ package rpcBase
 import (
 	"go-snake/akmessage"
 	"go-snake/common/myetcd"
+	"go-snake/common/logicBase"
+	"context"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 
 )
 
 type GameRpc struct {
-	myetcd.RpcMessageNode
+	*myetcd.RpcMessageNode
 
 }
 
 func newGameRpc()*GameRpc{
 	return &GameRpc{
-		msgNodes: map[akmessage.RPCMSG]*logicBase.RpcMessage{
-			
+		&myetcd.RpcMessageNode{
+			MsgNodes: map[akmessage.RPCMSG]*logicBase.RpcMessage{
+			},
+			NodeName: logicBase.RPC_GAME,
 		},
-		name: logicBase.RPC_GAME,
 	}
 }
 
-func (this *GameRpc) CallBackxxxx(msg interface{})(*akmessage.RpcResponse, error){
-	akLog.FmtPrintln("rpc call: ", this.Name())
+func (this *GameRpc) CallBackxxxx(ctx context.Context,msg interface{})(*akmessage.RpcResponse, error){
+	akLog.FmtPrintln("rpc call: ", this.NodeName)
 	return &akmessage.RpcResponse{}, nil
 }

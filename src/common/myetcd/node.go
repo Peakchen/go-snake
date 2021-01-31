@@ -3,7 +3,6 @@ package myetcd
 import (
 	"sync"
 	"errors"
-	"net"
 
 	"google.golang.org/grpc"
 
@@ -13,12 +12,14 @@ type RpcNode struct {
 	nodes map[string]*NodeInfo
 	mutx sync.RWMutex
 	name string
+	nodeAddr string
 }
 
-func newRpcMgr(name string)*RpcNode{
+func newRpcMgr(name, addr string)*RpcNode{
 	return &RpcNode{
-		nodes: make(map[string]string),
+		nodes: make(map[string]*NodeInfo),
 		name: name,
+		nodeAddr: addr,
 	}
 }
 
@@ -27,14 +28,17 @@ func (this *RpcNode) Name()string{
 }
 
 func (this *RpcNode) Update(k, v string) error {
+	if this.nodeAddr == v {
+		return nil
+	}
 	lis, err := this.Connect(v)
 	if lis == nil {
 		return err
 	}
 	this.mutx.Lock()
-	defer this.mutx.UnLock()
+	defer this.mutx.Unlock()
 
-	this.nodes[k] = &myetcd.NodeInfo{
+	this.nodes[k] = &NodeInfo{
 		value: v,
 		session: lis,
 	}
@@ -43,7 +47,7 @@ func (this *RpcNode) Update(k, v string) error {
 
 func (this *RpcNode) Delete(k string) error{
 	this.mutx.Lock()
-	defer this.mutx.UnLock()
+	defer this.mutx.Unlock()
 	
 	node, ok := this.nodes[k]
 	if !ok {
@@ -51,19 +55,20 @@ func (this *RpcNode) Delete(k string) error{
 	}
 	node.session.Close()
 	delete(this.nodes, k)
+	return nil
 }
 
-func (this *RpcNode) Connect(addr string) (net.Conn,error){
+func (this *RpcNode) Connect(addr string) (*grpc.ClientConn,error){
 	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		return nil, errors.New("connect node fail.")
+		return nil, err
 	}
 	return conn, nil
 }
 
-func (this *RpcNode) GetNodeConn(name string)net.Conn{
+func (this *RpcNode) GetNodeConn(name string)*grpc.ClientConn{
 	this.mutx.RLock()
-	defer this.mutx.RUnLock()
+	defer this.mutx.RUnlock()
 	
 	node, ok := this.nodes[name]
 	if !ok {

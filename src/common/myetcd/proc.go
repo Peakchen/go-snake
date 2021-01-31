@@ -5,6 +5,7 @@ import (
 	"context"
 	"go-snake/akmessage"
 	"go-snake/common/logicBase"
+	"errors"
 
 	"google.golang.org/protobuf/proto"
 
@@ -12,29 +13,28 @@ import (
 
 type (
 	RpcMessageNode struct {
-		name string
-		msgNodes map[akmessage.RPCMSG]*logicBase.RpcMessage
+		akmessage.UnimplementedRpcServer
+
+		NodeName string
+		MsgNodes map[akmessage.RPCMSG]*logicBase.RpcMessage
 	}
 )
 
-func (this *RpcMessageNode) Name() string{
-	return this.name
-}
-
 func (this *RpcMessageNode) Call(ctx context.Context, in *akmessage.RpcRequest)(*akmessage.RpcResponse, error){
-	node, ok := this.msgNodes[in.MsgId]
-	if !ok || fn == nil{
+	node, ok := this.MsgNodes[in.MsgId]
+	if !ok || node == nil{
 		return nil, errors.New("can not find msg node")
 	}
-	dst := reflect.New(node.refPb.Elem()).Interface().(proto.Message)
-	err := proto.Unmarshal(in.ReqData, refPb)
+	dst := reflect.New(node.RefPb.Elem()).Interface().(proto.Message)
+	err := proto.Unmarshal(in.ReqData, dst)
 	if err != nil {
 		return nil, errors.New("proto unmarshal fail")
 	}
-	rets := node.refFn.Call([]reflect.Value{
-		reflect.ValueOf(refPb),
+	rets := node.RefFn.Call([]reflect.Value{
+		reflect.ValueOf(ctx),
+		reflect.ValueOf(dst),
 	})
-	rsp := rets.Interface().(*akmessage.RpcResponse)
-	err = rets.Interface().(error)
+	rsp := rets[0].Interface().(*akmessage.RpcResponse)
+	err = rets[1].Interface().(error)
 	return rsp, err
 }

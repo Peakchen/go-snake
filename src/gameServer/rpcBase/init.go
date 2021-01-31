@@ -1,14 +1,20 @@
 package rpcBase
 
-func RunRpClient(host string){
-	myetcd.NewEtcdClient(host, 5, logicBase.RPC_GAME)
+import (
+	"go-snake/common/myetcd"
+	"go-snake/common/logicBase"
+
+)
+
+func RunRpClient(etcdhost, nodehost string){
+	myetcd.NewEtcdClient(etcdhost, nodehost, 5, logicBase.RPC_GAME)
 }
 
-func RunRpcServer(host string){
-	myetcd.NewEtcdServer(host, newGameRpc())
+func RunRpcServer(etcdhost, nodehost string){
+	myetcd.NewEtcdServer(etcdhost, nodehost, logicBase.RPC_GAME, newGameRpc())
 }
 
-func RunRpc(host string){
-	RunRpClient(host)
-	RunRpcServer(host)
+func RunRpc(etcdhost, nodehost string){
+	RunRpClient(etcdhost, nodehost)
+	RunRpcServer(etcdhost, nodehost)
 }

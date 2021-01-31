@@ -18,7 +18,7 @@ type (
 	FunCallBack func(arg interface{})
 	
 	RpcMessage struct {
-		refFn reflect.Value //	FunCallBack
-		refPb reflect.Type 	// 	proto.Message
+		RefFn reflect.Value //	FunCallBack
+		RefPb reflect.Type 	// 	proto.Message
 	}
 )

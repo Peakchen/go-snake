@@ -9,17 +9,20 @@ require (
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394 // indirect
 	github.com/bwmarrin/snowflake v0.3.0 // indirect
+	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/eapache/go-resiliency v1.1.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ole/go-ole v1.2.4 // indirect
+	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.3
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/gomodule/redigo v1.8.3
 	github.com/gonutz/ide v0.0.0-20200517034207-df64a3832118 // indirect
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/gorilla/websocket v1.4.2
+	github.com/grpc-ecosystem/grpc-gateway v1.14.6 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/panjf2000/ants/v2 v2.4.3
@@ -33,7 +36,6 @@ require (
 	github.com/sony/sonyflake v1.0.0 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	go.etcd.io/etcd v0.5.0-alpha.5.0.20210123184945-d51c6c689ba3 //v1.2.3
-	go.etcd.io/etcd/api/v3 v3.0.0-20210127081512-a4fac14353e7
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e // indirect
 	golang.org/x/sys v0.0.0-20201015000850-e3ed0017c211 // indirect
 	google.golang.org/appengine v1.6.0 // indirect

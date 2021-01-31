@@ -15,7 +15,6 @@ import (
 	"go-snake/loginServer/rpcBase"
 
 	"github.com/Peakchen/xgameCommon/utils"
-
 )
 
 type Login struct {
@@ -45,7 +44,7 @@ func (this *Login) Run(d *in.Input) {
 	//db数据加载至内存
 	base.DBPreloading()
 	//初始化etcd rpc
-	rpcBase.RunRpc(d.Scfg.EtcdIP)
+	rpcBase.RunRpc(d.Scfg.EtcdIP, d.Scfg.EtcdNodeIP)
 	//启动tcp链接
 	tcpNet.NewTcpClient(
 		d.TCPHost,

@@ -30,6 +30,7 @@ type ServerConfig struct {
 	AppSecret string
 
 	EtcdIP  	string
+	EtcdNodeIP  string
 }
 
 func (this *ServerConfig) PrintAll() {
