@@ -5,7 +5,10 @@ import (
 	"errors"
 	"go-snake/akmessage"
 	"go-snake/common"
+	"go-snake/common/logicBase"
+	"os"
 	"reflect"
+	//"sync"
 	"time"
 
 	"go.etcd.io/etcd/clientv3"
@@ -18,6 +21,7 @@ import (
 	"github.com/Peakchen/xgameCommon/akLog"
 	"go.etcd.io/etcd/mvcc/mvccpb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/grpclog"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 
 )
@@ -25,11 +29,25 @@ import (
 type etcdService struct {
 	addr   string
 	cli    *clientv3.Client
-	rpcRef reflect.Value
+	RpcRef reflect.Value
+}
+
+func (this *etcdService) GetCli() *clientv3.Client {
+	return this.cli
+}
+
+func (this *etcdService) GetAddr() string {
+	return this.addr
+}
+
+type nodeService struct {
+	Node    string
+	Service *etcdService
 }
 
 var (
-	_ec *etcdService
+	_ec    *etcdService
+	_nodes map[string]*nodeService
 )
 
 func NewEtcdClient(host, nodehost string, timeOuts int, service string) {
@@ -41,27 +59,43 @@ func NewEtcdClient(host, nodehost string, timeOuts int, service string) {
 		akLog.Fail("can not create etcd client, host: ", host)
 		return
 	}
+	clientv3.SetLogger(grpclog.NewLoggerV2(os.Stderr, os.Stderr, os.Stderr))
+
 	_ec = &etcdService{
 		addr:   host,
 		cli:    client,
-		rpcRef: reflect.ValueOf(newRpcMgr(service, nodehost)),
+		RpcRef: reflect.ValueOf(NewRpcMgr(service, nodehost)),
 	}
-	common.DosafeRoutine(_ec.ListenUpdateNodes, func() {})
+
+	others := logicBase.GetAllNode()
+	_nodes = make(map[string]*nodeService, len(others)-1)
+	mynode := _ec.RpcRef.MethodByName("Name").Call([]reflect.Value{})[0].Interface().(string)
+
+	for _, node := range others {
+		if mynode == node {
+			continue
+		}
+		_nodes[node] = &nodeService{
+			Service: _ec,
+			Node:    node,
+		}
+
+		common.DosafeRoutine(_nodes[node].ListenUpdateNodes, func() {})
+	}
 }
 
-func (this *etcdService) ListenUpdateNodes() {
-	nodename := this.rpcRef.MethodByName("Name").Call([]reflect.Value{})[0].Interface().(string)
+func (this *nodeService) ListenUpdateNodes() {
 	collectNodes := func() {
-		kv := clientv3.NewKV(this.cli)
-		rsp, err := kv.Get(context.TODO(), nodename, clientv3.WithPrefix())
+		kv := clientv3.NewKV(this.Service.GetCli())
+		rsp, err := kv.Get(context.TODO(), this.Node, clientv3.WithPrefix())
 		if err != nil {
-			akLog.Error("get etcd nodes fail, node: ", nodename)
+			akLog.Error("get etcd nodes fail, node: ", this.Node)
 			return
 		}
 
 		for _, kv := range rsp.Kvs {
 			akLog.FmtPrintln("node kvs: ", string(kv.Key), string(kv.Value))
-			ret := this.rpcRef.MethodByName("Update").Call([]reflect.Value{
+			ret := this.Service.RpcRef.MethodByName("Update").Call([]reflect.Value{
 				reflect.ValueOf(string(kv.Key)),
 				reflect.ValueOf(string(kv.Value)),
 			})
@@ -81,8 +115,8 @@ func (this *etcdService) ListenUpdateNodes() {
 	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
 
-	watcher := clientv3.NewWatcher(this.cli)
-	watchCh := watcher.Watch(context.TODO(), nodename, clientv3.WithPrefix())
+	watcher := clientv3.NewWatcher(this.Service.GetCli())
+	watchCh := watcher.Watch(context.TODO(), this.Node, clientv3.WithPrefix())
 	for {
 		select {
 		case <-ticker.C:
@@ -93,7 +127,7 @@ func (this *etcdService) ListenUpdateNodes() {
 			for _, e := range rsp.Events {
 				switch e.Type {
 				case mvccpb.PUT:
-					ret := this.rpcRef.MethodByName("Update").Call([]reflect.Value{
+					ret := this.Service.RpcRef.MethodByName("Update").Call([]reflect.Value{
 						reflect.ValueOf(string(e.Kv.Key)),
 						reflect.ValueOf(string(e.Kv.Value)),
 					})
@@ -104,7 +138,7 @@ func (this *etcdService) ListenUpdateNodes() {
 						akLog.Error("service update: ", ret[0].Interface().(error))
 					}
 				case mvccpb.DELETE:
-					ret := this.rpcRef.MethodByName("Delete").Call([]reflect.Value{
+					ret := this.Service.RpcRef.MethodByName("Delete").Call([]reflect.Value{
 						reflect.ValueOf(string(e.Kv.Key)),
 					})
 
@@ -120,9 +154,9 @@ func (this *etcdService) ListenUpdateNodes() {
 	}
 }
 
-func (this *etcdService) Call(name string, arg interface{}) (*akmessage.RpcResponse, error) {
-	ret := this.rpcRef.MethodByName("GetNodeConn").Call([]reflect.Value{
-		reflect.ValueOf(arg),
+func (this *nodeService) Call(name string, arg interface{}) (*akmessage.RpcResponse, error) {
+	ret := this.Service.RpcRef.MethodByName("GetNodeConn").Call([]reflect.Value{
+		reflect.ValueOf(name),
 	})
 	if ret[0].Interface() == nil {
 		return nil, errors.New("can not get node session or not create node session.")
@@ -143,5 +177,8 @@ func (this *etcdService) Call(name string, arg interface{}) (*akmessage.RpcRespo
 }
 
 func Call(name string, arg interface{}) (*akmessage.RpcResponse, error) {
-	return _ec.Call(name, arg)
+	if _nodes[name] == nil {
+		return nil, errors.New("can not find node.")
+	}
+	return _nodes[name].Call(name, arg)
 }

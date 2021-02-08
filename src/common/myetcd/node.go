@@ -15,7 +15,7 @@ type RpcNode struct {
 	nodeAddr string
 }
 
-func newRpcMgr(name, addr string)*RpcNode{
+func NewRpcMgr(name, addr string)*RpcNode{
 	return &RpcNode{
 		nodes: make(map[string]*NodeInfo),
 		name: name,

@@ -7,6 +7,7 @@ import (
     "go-snake/akmessage"
     "go-snake/common"
     "fmt"
+"os"
 
     "go.etcd.io/etcd/clientv3"
 	//"github.com/coreos/etcd/clientv3"
@@ -14,6 +15,7 @@ import (
 	//"go.etcd.io/etcd/client/v3"
     "go.etcd.io/etcd/etcdserver/api/v3rpc/rpctypes"
     "google.golang.org/grpc"
+    "google.golang.org/grpc/grpclog"
 
 )
 
@@ -26,7 +28,8 @@ func NewEtcdServer(etcdHost, nodeHost string, name string, service akmessage.Rpc
 	es := &etcdServer{
         etcdAddr: etcdHost,
         nodeAddr: nodeHost,
-	}
+    }
+    clientv3.SetLogger(grpclog.NewLoggerV2(os.Stderr, os.Stderr, os.Stderr))
 	common.DosafeRoutine(func(){
         es.accept(service)
         }, func(){})

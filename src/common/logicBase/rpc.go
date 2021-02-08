@@ -14,6 +14,14 @@ const (
 
 )
 
+var (
+	allnodeMap = []string{RPC_LOGIN,RPC_GAME,RPC_GATE,RPC_CHAT,RPC_EMAIL}
+)
+
+func GetAllNode()[]string{
+	return allnodeMap
+}
+
 type (
 	FunCallBack func(arg interface{})
 	

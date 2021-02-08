@@ -26,6 +26,6 @@ func newLoginRpc()*LoginRpc{
 }
 
 func (this *LoginRpc) CallBackxxxx(ctx context.Context,msg interface{})(*akmessage.RpcResponse, error){
-	akLog.FmtPrintln("rpc call: ", this.NodeName)
+	akLog.FmtPrintln("rpc call: ", this.RpcMessageNode.NodeName)
 	return &akmessage.RpcResponse{}, nil
 }
