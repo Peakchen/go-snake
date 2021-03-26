@@ -7,4 +7,5 @@ const (
 	CstGate    = "gate"
 	CstRobot   = "robot"
 	CstSDK     = "sdk"
+	CstSimu    = "simulation"
 )

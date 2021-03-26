@@ -18,6 +18,7 @@ type GateMessage struct {
 }
 
 func init() {
+	
 	RegisterActorMessageProc(
 		uint32(akmessage.MSG_CS_HEARTBEAT),
 		(*akmessage.CS_HeartBeat)(nil),
@@ -31,6 +32,7 @@ func init() {
 		func(actor IMessageActor, pb proto.Message) {
 			actor.Handler_SS_HeartBeat(pb)
 		})
+		
 }
 
 func (this *GateMessage) Handler_CS_HeartBeat(pb proto.Message) {

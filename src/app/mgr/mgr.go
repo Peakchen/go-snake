@@ -8,6 +8,7 @@ import (
 	"go-snake/gateServer"
 	"go-snake/loginServer"
 	"go-snake/robot"
+	"go-snake/simulation"
 )
 
 var (
@@ -18,6 +19,7 @@ var (
 		CstAccount: accountServer.New(),
 		CstRobot:   robot.New(),
 		CstSDK:     SDKServer.New(),
+		CstSimu:    simulation.New(),
 	}
 )
 

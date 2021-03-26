@@ -11,7 +11,7 @@ func RunRpClient(etcdhost, nodehost string){
 }
 
 func RunRpcServer(etcdhost, nodehost string){
-	myetcd.NewEtcdServer(etcdhost, nodehost, logicBase.RPC_GAME, newGameRpc())
+	myetcd.NewEtcdServer(etcdhost, nodehost, logicBase.RPC_GAME, gameRpc)
 }
 
 func RunRpc(etcdhost, nodehost string){

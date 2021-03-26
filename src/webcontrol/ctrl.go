@@ -21,5 +21,5 @@ func (this *WebControl) Type() akmessage.ServerType {
 }
 
 func (this *WebControl) Run(d *in.Input) {
-
+	
 }

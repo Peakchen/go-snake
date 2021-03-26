@@ -11,8 +11,10 @@ import (
 )
 
 func ClientMsgProc(sid string, conn *net.TCPConn, fn func(string, []byte)) bool {
+
 	buff := make([]byte, messageBase.CS_MSG_PACK_DATA_SIZE)
 	rdn1, err := io.ReadFull(conn, buff)
+	
 	if err != nil || rdn1 < messageBase.CS_MSG_PACK_DATA_SIZE {
 		switch {
 		case (err == syscall.EAGAIN || err == syscall.EWOULDBLOCK):

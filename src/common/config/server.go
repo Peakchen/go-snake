@@ -31,6 +31,8 @@ type ServerConfig struct {
 
 	EtcdIP  	string
 	EtcdNodeIP  string
+
+	ExtraParams string
 }
 
 func (this *ServerConfig) PrintAll() {
