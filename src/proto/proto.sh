@@ -5,4 +5,4 @@
 #    clang-format -i -style="{AlignConsecutiveAssignments: true,AlignConsecutiveDeclarations: true,AllowShortFunctionsOnASingleLine: None,BreakBeforeBraces: GNU,ColumnLimit: 0,IndentWidth: 4,Language: Proto}" $file
 #done
 #rm -f ../akmessage/*.go
-protoc -I=./ --go_out=../akmessage ./*.proto
+./protoc -I=./ --go_out=plugins=grpc:../akmessage ./*.proto
