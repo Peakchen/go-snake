@@ -18,11 +18,35 @@ var (
 	ErrorRpcInvalidPbMessage = errors.New("Invalid Pb Message")
 )
 
+type CodecType int
+
+const (
+	ENCodecType_Gob = CodecType(1)
+	ENCodecType_Json = CodecType(2)
+	ENCodecType_Msgpack = CodecType(3)
+	ENCodecType_Pb = CodecType(4)
+)
+
+func GetCodecByType(tp CodecType)ICodec{
+	switch tp {
+	case ENCodecType_Gob:
+	return &CodecGob{}
+	case ENCodecType_Json:
+	return &CodecJson{}
+	case ENCodecType_Msgpack:
+	return &CodecMsgpack{}
+	case ENCodecType_Pb:
+	return &CodecProtobuf{}
+	}
+	
+	return nil
+}
+
 // codec interface
 type ICodec interface {
 	Marshal(v interface{}) ([]byte, error)
 	Unmarshal(data []byte, v interface{}) error
-	// Type() string
+	Type() CodecType
 }
 
 // gob codec
@@ -43,6 +67,10 @@ func (c *CodecGob) Unmarshal(data []byte, v interface{}) error {
 	return gob.NewDecoder(bytes.NewBuffer(data)).Decode(v)
 }
 
+func (c *CodecGob) Type() CodecType{
+      return ENCodecType_Gob
+}
+
 // json codec
 type CodecJson struct{}
 
@@ -56,6 +84,10 @@ func (c *CodecJson) Unmarshal(data []byte, v interface{}) error {
 	return jsonlib.Unmarshal(data, v)
 }
 
+func (c *CodecJson) Type() CodecType{
+      return ENCodecType_Json
+}
+
 // msgpack codec
 type CodecMsgpack struct{}
 
@@ -67,6 +99,10 @@ func (c *CodecMsgpack) Marshal(v interface{}) ([]byte, error) {
 // unmarshal
 func (c *CodecMsgpack) Unmarshal(data []byte, v interface{}) error {
 	return msgpack.Unmarshal(data, v)
+}
+
+func (c *CodecMsgpack) Type() CodecType{
+      return ENCodecType_Msgpack
 }
 
 // protobuf codec
@@ -88,4 +124,8 @@ func (c *CodecProtobuf) Unmarshal(data []byte, v interface{}) error {
 		return proto.Unmarshal(data, msg)
 	}
 	return ErrorRpcInvalidPbMessage
+}
+
+func (c *CodecProtobuf) Type() CodecType{
+      return ENCodecType_Pb
 }

@@ -1,0 +1,2 @@
+
+start nats-server.exe

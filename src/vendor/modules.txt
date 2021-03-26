@@ -1,4 +1,5 @@
-# github.com/Peakchen/xgameCommon v0.0.6-0.20201230084149-e77d5ab9e04e
+# github.com/Peakchen/xgameCommon v0.0.6-0.20210310091059-6c4643710177
+## explicit
 github.com/Peakchen/xgameCommon/ado
 github.com/Peakchen/xgameCommon/akLog
 github.com/Peakchen/xgameCommon/aktime
@@ -7,14 +8,21 @@ github.com/Peakchen/xgameCommon/public
 github.com/Peakchen/xgameCommon/tool
 github.com/Peakchen/xgameCommon/utils
 # github.com/Shopify/sarama v1.19.0
+## explicit
 github.com/Shopify/sarama
+# github.com/Shopify/toxiproxy v2.1.4+incompatible
+## explicit
 # github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d
+## explicit
 github.com/StackExchange/wmi
 # github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394
+## explicit
 github.com/axgle/mahonia
 # github.com/bwmarrin/snowflake v0.3.0
+## explicit
 github.com/bwmarrin/snowflake
 # github.com/coreos/go-semver v0.3.0
+## explicit
 github.com/coreos/go-semver/semver
 # github.com/coreos/go-systemd v0.0.0-20180511133405-39ca1b05acc7 => github.com/coreos/go-systemd/v22 v22.0.0
 github.com/coreos/go-systemd/journal
@@ -22,72 +30,115 @@ github.com/coreos/go-systemd/journal
 github.com/coreos/pkg/capnslog
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
+# github.com/davyxu/ulog v1.0.1
+## explicit
+github.com/davyxu/ulog
 # github.com/eapache/go-resiliency v1.1.0
+## explicit
 github.com/eapache/go-resiliency/breaker
 # github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21
+## explicit
 github.com/eapache/go-xerial-snappy
 # github.com/eapache/queue v1.1.0
+## explicit
 github.com/eapache/queue
 # github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
+## explicit
 github.com/globalsign/mgo/bson
 github.com/globalsign/mgo/internal/json
 # github.com/go-ole/go-ole v1.2.4
+## explicit
 github.com/go-ole/go-ole
 github.com/go-ole/go-ole/oleutil
 # github.com/go-sql-driver/mysql v1.5.0
 github.com/go-sql-driver/mysql
 # github.com/gogo/protobuf v1.3.1
+## explicit
 github.com/gogo/protobuf/gogoproto
 github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/protoc-gen-gogo/descriptor
 # github.com/golang/protobuf v1.4.3
+## explicit
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db
+## explicit
 github.com/golang/snappy
 # github.com/gomodule/redigo v1.8.3
+## explicit
 github.com/gomodule/redigo/redis
 # github.com/gonutz/ide v0.0.0-20200517034207-df64a3832118
+## explicit
 github.com/gonutz/ide/w32
 # github.com/google/uuid v1.1.2
+## explicit
 github.com/google/uuid
 # github.com/gorilla/websocket v1.4.2
+## explicit
 github.com/gorilla/websocket
+# github.com/grpc-ecosystem/grpc-gateway v1.14.6
+## explicit
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
 # github.com/jinzhu/now v1.1.1
 github.com/jinzhu/now
 # github.com/json-iterator/go v1.1.10
+## explicit
 github.com/json-iterator/go
+# github.com/kr/pretty v0.2.1
+## explicit
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.1
 github.com/modern-go/reflect2
+# github.com/nats-io/nats-server/v2 v2.2.0
+## explicit
+# github.com/nats-io/nats.go v1.10.1-0.20210228004050-ed743748acac
+## explicit
+github.com/nats-io/nats.go
+github.com/nats-io/nats.go/encoders/builtin
+github.com/nats-io/nats.go/util
+# github.com/nats-io/nkeys v0.3.0
+github.com/nats-io/nkeys
+# github.com/nats-io/nuid v1.0.1
+github.com/nats-io/nuid
 # github.com/panjf2000/ants/v2 v2.4.3
+## explicit
 github.com/panjf2000/ants/v2
 github.com/panjf2000/ants/v2/internal
 # github.com/pierrec/lz4 v2.0.5+incompatible
+## explicit
 github.com/pierrec/lz4
 github.com/pierrec/lz4/internal/xxh32
 # github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a
+## explicit
 github.com/rcrowley/go-metrics
 # github.com/rs/xid v1.2.1
+## explicit
 github.com/rs/xid
 # github.com/samuel/go-zookeeper v0.0.0-20200724154423-2164a8ac840e
+## explicit
 github.com/samuel/go-zookeeper/zk
 # github.com/satori/go.uuid v1.2.0
+## explicit
 github.com/satori/go.uuid
 # github.com/segmentio/ksuid v1.0.3
+## explicit
 github.com/segmentio/ksuid
+# github.com/smartystreets/goconvey v1.6.4
+## explicit
 # github.com/sony/sonyflake v1.0.0
+## explicit
 github.com/sony/sonyflake
 # github.com/vmihailenco/msgpack v4.0.4+incompatible
+## explicit
 github.com/vmihailenco/msgpack
 github.com/vmihailenco/msgpack/codes
 # go.etcd.io/etcd v0.5.0-alpha.5.0.20210123184945-d51c6c689ba3
+## explicit
 go.etcd.io/etcd/auth/authpb
 go.etcd.io/etcd/clientv3
 go.etcd.io/etcd/clientv3/balancer
@@ -118,7 +169,10 @@ go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
-# golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
+# golang.org/x/crypto v0.0.0-20210314154223-e6e6c4f2bb5b
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
+# golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -126,7 +180,7 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20201015000850-e3ed0017c211
+# golang.org/x/sys v0.0.0-20201119102817-f84b799fce68
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
@@ -136,6 +190,7 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 # google.golang.org/appengine v1.6.0
+## explicit
 google.golang.org/appengine
 google.golang.org/appengine/datastore
 google.golang.org/appengine/datastore/internal/cloudkey
@@ -150,6 +205,7 @@ google.golang.org/appengine/internal/remote_api
 # google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.29.1
+## explicit
 google.golang.org/grpc
 google.golang.org/grpc/attributes
 google.golang.org/grpc/backoff
@@ -192,6 +248,7 @@ google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
 # google.golang.org/protobuf v1.25.0
+## explicit
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
 google.golang.org/protobuf/internal/descfmt
@@ -221,11 +278,18 @@ google.golang.org/protobuf/runtime/protoimpl
 google.golang.org/protobuf/types/known/anypb
 google.golang.org/protobuf/types/known/durationpb
 google.golang.org/protobuf/types/known/timestamppb
+# gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15
+## explicit
 # gopkg.in/ini.v1 v1.62.0
+## explicit
 gopkg.in/ini.v1
+# gopkg.in/yaml.v2 v2.3.0
+## explicit
 # gorm.io/driver/mysql v1.0.3
+## explicit
 gorm.io/driver/mysql
 # gorm.io/gorm v1.20.8
+## explicit
 gorm.io/gorm
 gorm.io/gorm/callbacks
 gorm.io/gorm/clause
@@ -233,3 +297,7 @@ gorm.io/gorm/logger
 gorm.io/gorm/migrator
 gorm.io/gorm/schema
 gorm.io/gorm/utils
+# github.com/coreos/bbolt v1.1.0 => go.etcd.io/bbolt v1.1.0
+# go.etcd.io/bbolt v1.1.0 => github.com/coreos/bbolt v1.1.0
+# github.com/coreos/go-systemd => github.com/coreos/go-systemd/v22 v22.0.0
+# google.golang.org/grpc v1.27.0 => google.golang.org/grpc v1.27.0
