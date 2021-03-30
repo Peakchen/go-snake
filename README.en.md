@@ -5,7 +5,10 @@
 4. Robot server client simulator
 5. db mysql
 6. The network protocol adopts protobuf (back end: go, front end: JS)
-7. ...
+7. simulation server simulator
+8. etcd service discovery
+9. Remote call during grpc service
+10. The nats message queue is based on the communication between the gateway and the logical server (planned) 
 
 ##Instructions for use
 
