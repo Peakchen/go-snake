@@ -3,7 +3,7 @@ package rpcBase
 import (
 	"go-snake/akmessage"
 	"go-snake/common/myetcd"
-	"go-snake/common/logicBase"
+	"go-snake/common/rpcBase"
 	"context"
 
 	"github.com/Peakchen/xgameCommon/akLog"
@@ -18,9 +18,9 @@ type SimulationRpc struct {
 func newSimulationRpc()*SimulationRpc{
 	return &SimulationRpc{
 		&myetcd.RpcMessageNode{
-			MsgNodes: map[akmessage.RPCMSG]*logicBase.RpcMessage{
+			MsgNodes: map[akmessage.RPCMSG]*rpcBase.RpcMessage{
 			},
-			NodeName: logicBase.RPC_SIMULATION,
+			NodeName: rpcBase.RPC_SIMULATION,
 		},
 	}
 }

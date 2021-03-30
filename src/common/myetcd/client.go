@@ -5,7 +5,7 @@ import (
 	"errors"
 	"go-snake/akmessage"
 	"go-snake/common"
-	"go-snake/common/logicBase"
+	"go-snake/common/rpcBase"
 	"os"
 	"reflect"
 	//"sync"
@@ -67,7 +67,7 @@ func NewEtcdClient(host, nodehost string, timeOuts int, service string) {
 		RpcRef: reflect.ValueOf(NewRpcMgr(service, nodehost)),
 	}
 
-	others := logicBase.GetAllNode()
+	others := rpcBase.GetAllNode()
 	Nodes = make(map[string]*nodeService, len(others)-1)
 	mynode := _ec.RpcRef.MethodByName("Name").Call([]reflect.Value{})[0].Interface().(string)
 

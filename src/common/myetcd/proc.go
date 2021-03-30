@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"context"
 	"go-snake/akmessage"
-	"go-snake/common/logicBase"
+	"go-snake/common/rpcBase"
 	"errors"
 
 	"google.golang.org/protobuf/proto"
@@ -17,7 +17,7 @@ type (
 		akmessage.UnimplementedRpcServer
 
 		NodeName string
-		MsgNodes map[akmessage.RPCMSG]*logicBase.RpcMessage
+		MsgNodes map[akmessage.RPCMSG]*rpcBase.RpcMessage
 	}
 )
 

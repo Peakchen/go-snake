@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"go-snake/akmessage"
 	"go-snake/common/myetcd"
-	"go-snake/common/logicBase"
+	"go-snake/common/rpcBase"
 	"context"
 
 	"github.com/Peakchen/xgameCommon/akLog"
@@ -19,16 +19,16 @@ type LoginRpc struct {
 func newLoginRpc()*LoginRpc{
 	return &LoginRpc{
 		&myetcd.RpcMessageNode{
-			MsgNodes: map[akmessage.RPCMSG]*logicBase.RpcMessage{
+			MsgNodes: map[akmessage.RPCMSG]*rpcBase.RpcMessage{
 			},
-			NodeName: logicBase.RPC_LOGIN,
+			NodeName: rpcBase.RPC_LOGIN,
 		},
 	}
 }
 
-func (this *LoginRpc) Register(id akmessage.RPCMSG, pb interface{}, fn logicBase.RpcMessageFunc) {
+func (this *LoginRpc) Register(id akmessage.RPCMSG, pb interface{}, fn rpcBase.RpcMessageFunc) {
 
-	this.RpcMessageNode.MsgNodes[id] = &logicBase.RpcMessage{
+	this.RpcMessageNode.MsgNodes[id] = &rpcBase.RpcMessage{
 		RefPb:   reflect.TypeOf(pb),
 		RefFn: 	 reflect.ValueOf(fn),
 	}

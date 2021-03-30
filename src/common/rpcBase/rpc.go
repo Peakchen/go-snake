@@ -1,9 +1,11 @@
-package logicBase
+package rpcBase
 
 import (
 	"reflect"
 	"google.golang.org/protobuf/proto"
 	"go-snake/akmessage"
+	"errors"
+	"fmt"
 )
 
 const (
@@ -33,3 +35,14 @@ type (
 
 	
 )
+
+func MakeRpcResponse(msgRef reflect.Value)(*akmessage.RpcResponse, error){
+
+	data, err := proto.Marshal(msgRef.Elem().Interface().(proto.Message))
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("proto marshal fail, msg: %v.", msgRef.Elem().String()))
+	}
+
+	return &akmessage.RpcResponse{RespData: data}, nil
+
+}

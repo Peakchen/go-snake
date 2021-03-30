@@ -3,7 +3,7 @@ package serverRpc
 import (
 	"go-snake/common/myetcd"
 	"go-snake/akmessage"
-	"go-snake/common/logicBase"
+	"go-snake/common/rpcBase"
 	"go-snake/simulation/sx"
 	"go-snake/simulation/models"
 	//"go-snake/common"
@@ -38,7 +38,7 @@ func (self *SMServerRpc) Exec() {
 	for range t.C{
 		akLog.FmtPrintln("enter game scene....")
 		msg := &akmessage.L2G_Get_Role_Num_Req{}
-		_, err := myetcd.Call(logicBase.RPC_GAME, akmessage.RPCMSG_L2G_GET_ROLE_NUM_REQ, msg)
+		_, err := myetcd.Call(rpcBase.RPC_GAME, akmessage.RPCMSG_L2G_GET_ROLE_NUM_REQ, msg)
 		akLog.FmtPrintln("err: ", err)
 	}
 

@@ -4,8 +4,8 @@ import (
 	"google.golang.org/protobuf/proto"
 	"go-snake/akmessage"
 	"github.com/Peakchen/xgameCommon/akLog"
-	"errors"
-	"fmt"
+	"go-snake/common/rpcBase"
+	"reflect"
 )
 
 var (
@@ -21,12 +21,7 @@ func HandlerGetRoleNum(pb proto.Message) (*akmessage.RpcResponse, error){
 		Roles: 1,
 	}
 
-	data, err := proto.Marshal(ack)
-	if err != nil {
-		return nil, errors.New(fmt.Sprintf("proto marshal fail,msg: %v.", ack.String()))
-	}
-
-	return &akmessage.RpcResponse{RespData: data}, nil
+	return rpcBase.MakeRpcResponse(reflect.ValueOf(ack))
 }
 
 func init(){
