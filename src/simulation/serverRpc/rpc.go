@@ -16,7 +16,7 @@ type SMServerRpc struct {
 }
 
 func (self *SMServerRpc) Name()string{
-	return sx.SM_Discovery
+	return sx.SM_ServerRpc
 }
 
 func (self *SMServerRpc) Parse(params ...string){

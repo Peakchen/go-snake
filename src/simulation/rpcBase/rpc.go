@@ -25,7 +25,9 @@ func newSimulationRpc()*SimulationRpc{
 	}
 }
 
-func (this *SimulationRpc) CallBackxxxx(ctx context.Context, msg interface{})(*akmessage.RpcResponse, error){
+func (this *SimulationRpc) Send(ctx context.Context, in *akmessage.RpcRequest)(*akmessage.RpcResponse, error){
+	
 	akLog.FmtPrintln("rpc call: ", this.NodeName)
-	return &akmessage.RpcResponse{}, nil
+
+	return this.RpcMessageNode.Call(ctx, in)
 }
