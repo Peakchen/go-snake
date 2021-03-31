@@ -49,4 +49,4 @@ Serverapp parameter list:
 
 All server modules have init, run and other initial start modes.
 
-<img src="https://github.com/Peakchen/go-snake/tree/master/src/app/note/struct.png" width="50%">
+<img src="https://github.com/Peakchen/go-snake/tree/master/src/app/note/struct.PNG" width="50%">
