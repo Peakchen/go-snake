@@ -113,3 +113,15 @@ func Find(ms interface{}) {
 	}
 	_db.Find(ms)
 }
+
+func FindOne(m IAkModel){
+
+	if !checkDB() {
+		return
+	}
+
+	ref := reflect.New(reflect.TypeOf(m).Elem()).Interface()
+	_db.AutoMigrate(ref)
+	_db.First(ref, "userid = ?", m.GetDBID())
+	
+}
