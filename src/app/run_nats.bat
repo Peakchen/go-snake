@@ -1,2 +1,6 @@
+@echo off
 
-start nats-server.exe
+set natsHost=0.0.0.0
+set natsPort=23800
+
+nats-server.exe -a %natsHost% -p %natsPort%

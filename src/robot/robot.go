@@ -10,7 +10,7 @@ import (
 	"go-snake/robot/option"
 	"go-snake/robot/wscli"
 	"time"
-
+	"go-snake/common/myNats"
 	"github.com/Peakchen/xgameCommon/utils"
 )
 
@@ -33,6 +33,9 @@ func (this *Robot) Type() akmessage.ServerType {
 }
 
 func (this *Robot) Run(d *in.Input) {
+
+	myNats.Register(d.Scfg.NatsHost, utils.ENCodecType_Pb)
+
 	for i := 0; i < d.Clis; i++ {
 		time.Sleep(10 * time.Millisecond)
 

@@ -4,9 +4,9 @@ import (
 	"github.com/Peakchen/xgameCommon/utils"
 )
 
-func Register(addr string){
+func Register(addr string, codec utils.CodecType){
 
-	SetCodec(utils.GetCodecByType(utils.ENCodecType_Gob))
+	SetCodec(utils.GetCodecByType(codec))
 
 	CreateMyNats(addr)
 

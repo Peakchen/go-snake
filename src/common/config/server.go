@@ -33,6 +33,8 @@ type ServerConfig struct {
 	EtcdNodeIP  string
 
 	ExtraParams string
+	
+	NatsHost string
 }
 
 func (this *ServerConfig) PrintAll() {
