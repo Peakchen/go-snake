@@ -34,4 +34,4 @@ serverApp 参数列表：
 
 统一从main入口，各个服务器模块各有init，run等初始启动方式。
 
-<img src="https://github.com/Peakchen/go-snake/src/app/note/struct.png" width="50%">
+<img src="https://github.com/Peakchen/go-snake/tree/master/src/app/note/struct.png" width="50%">
