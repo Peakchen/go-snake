@@ -41,15 +41,11 @@ func (this *RpcMessageNode) Call(ctx context.Context, in *akmessage.RpcRequest)(
 	})
 
 	var rsp *akmessage.RpcResponse
-	if rets[0].Interface() == nil {
-		rsp = nil
-	}else {
+	if rets[0].Interface() != nil {
 		rsp = rets[0].Interface().(*akmessage.RpcResponse)
 	}
 
-	if rets[1].Interface() == nil {
-		err = nil
-	}else{
+	if rets[1].Interface() != nil {
 		err = rets[1].Interface().(error)
 	}
 	

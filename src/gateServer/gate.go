@@ -12,7 +12,7 @@ import (
 	"math/rand"
 
 	"github.com/Peakchen/xgameCommon/utils"
-
+	"go-snake/app/application"
 	"github.com/Peakchen/xgameCommon/aktime"
 )
 
@@ -25,7 +25,10 @@ func init() {
 type Gate struct {
 }
 
-func New() *Gate {
+func New(name string) *Gate {
+	
+	application.SetAppName(name)
+
 	return &Gate{}
 }
 

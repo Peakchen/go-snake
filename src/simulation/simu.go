@@ -7,13 +7,17 @@ import (
 	"go-snake/simulation/models"
 	_ "go-snake/simulation/reg"
 	"go-snake/common/myNats"
+	"go-snake/app/application"
 	"github.com/Peakchen/xgameCommon/utils"
 )
 
 type Simulation struct {
 }
 
-func New() *Simulation {
+func New(name string) *Simulation {
+	
+	application.SetAppName(name)
+
 	return &Simulation{}
 }
 

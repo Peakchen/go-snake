@@ -12,12 +12,16 @@ import (
 	"time"
 	"go-snake/common/myNats"
 	"github.com/Peakchen/xgameCommon/utils"
+	"go-snake/app/application"
 )
 
 type Robot struct {
 }
 
-func New() *Robot {
+func New(name string) *Robot {
+	
+	application.SetAppName(name)
+
 	return &Robot{}
 }
 

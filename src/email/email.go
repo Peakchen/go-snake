@@ -3,12 +3,16 @@ package email
 import (
 	"go-snake/akmessage"
 	"go-snake/app/in"
+	"go-snake/app/application"
 )
 
 type Email struct {
 }
 
-func New() *Email {
+func New(name string) *Email {
+	
+	application.SetAppName(name)
+
 	return &Email{}
 }
 

@@ -13,14 +13,17 @@ import (
 	"go-snake/loginServer/sdk_wechat"
 	_ "go-snake/loginServer/logic"
 	"go-snake/loginServer/rpcBase"
-
+	"go-snake/app/application"
 	"github.com/Peakchen/xgameCommon/utils"
 )
 
 type Login struct {
 }
 
-func New() *Login {
+func New(name string) *Login {
+	
+	application.SetAppName(name)
+
 	return &Login{}
 }
 

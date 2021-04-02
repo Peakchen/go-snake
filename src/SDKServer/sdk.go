@@ -3,12 +3,16 @@ package SDKServer
 import (
 	"go-snake/akmessage"
 	"go-snake/app/in"
+	"go-snake/app/application"
 )
 
 type SDK struct {
 }
 
-func New() *SDK {
+func New(name string) *SDK {
+	
+	application.SetAppName(name)
+
 	return &SDK{}
 }
 
