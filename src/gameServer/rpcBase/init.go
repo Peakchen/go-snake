@@ -2,16 +2,16 @@ package rpcBase
 
 import (
 	"go-snake/common/myetcd"
-	"go-snake/common/rpcBase"
+	"go-snake/app/application"
 
 )
 
 func RunRpClient(etcdhost, nodehost string){
-	myetcd.NewEtcdClient(etcdhost, nodehost, 5, rpcBase.RPC_GAME)
+	myetcd.NewEtcdClient(etcdhost, nodehost, 5, application.GetAppName())
 }
 
 func RunRpcServer(etcdhost, nodehost string){
-	myetcd.NewEtcdServer(etcdhost, nodehost, rpcBase.RPC_GAME, gameRpc)
+	myetcd.NewEtcdServer(etcdhost, nodehost, application.GetAppName(), gameRpc)
 }
 
 func RunRpc(etcdhost, nodehost string){

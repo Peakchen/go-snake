@@ -1,14 +1,9 @@
 package application
 
-import (
-	"strconv"
-	"time"
-)
-
 var AppStr string
 
-func SetAppName(origin string) {
-	AppStr = origin + ":" + strconv.Itoa(int(time.Now().UnixNano()))
+func SetAppName(node string) {
+	AppStr = node
 }
 
 func GetAppName() string{
