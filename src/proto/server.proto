@@ -15,6 +15,7 @@ enum ServerType
     WebControl = 8; 
     Email = 9;
     SDK = 10;
+    Simulation = 11;
 }
 
 message SS_SSRoute

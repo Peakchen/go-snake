@@ -1,2 +1,2 @@
 
-start ..\..\..\etcd\etcd.exe
+start etcd.exe

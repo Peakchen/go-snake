@@ -3,12 +3,16 @@ package accountServer
 import (
 	"go-snake/akmessage"
 	"go-snake/app/in"
+	"go-snake/app/application"
 )
 
 type Account struct {
 }
 
-func New() *Account {
+func New(name string) *Account {
+	
+	application.SetAppName(name)
+
 	return &Account{}
 }
 

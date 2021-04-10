@@ -6,10 +6,16 @@ import (
 
 	"github.com/Peakchen/xgameCommon/akLog"
 	"gopkg.in/ini.v1"
-
+	"strings"
+	"strconv"
 )
 
 type ServerConfig struct {
+
+	Node string
+	Name string
+	ID   int
+
 	TCPHost string
 	WebHost string
 
@@ -31,6 +37,10 @@ type ServerConfig struct {
 
 	EtcdIP  	string
 	EtcdNodeIP  string
+
+	ExtraParams string
+	
+	NatsHost string
 }
 
 func (this *ServerConfig) PrintAll() {
@@ -60,6 +70,7 @@ var (
 )
 
 func LoadServerConfig(s string) *ServerConfig {
+
 	f, err := ini.Load("./ini/server.ini")
 	if err != nil {
 		panic(fmt.Errorf("Failed to parse config file: %s", err))
@@ -70,21 +81,41 @@ func LoadServerConfig(s string) *ServerConfig {
 		panic(fmt.Errorf("invalid config section: %s", err))
 	}
 
+	if !strings.Contains(section.Name(), "_") {
+		panic("invalid ini service node: " + section.Name())
+	}
+
 	_cfg := new(ServerConfig)
+	
+	_cfg.Node = section.Name()
+	sectionNode := strings.Split(section.Name(), "_")
+	_cfg.Name = sectionNode[0]
+	_cfg.ID, _ = strconv.Atoi(sectionNode[1])
+
 	for _, k := range section.Keys() {
+
 		fv := reflect.ValueOf(_cfg).Elem().FieldByName(k.Name())
+
 		switch fv.Kind() {
 		case reflect.Bool:
+
 			boolv, _ := k.Bool()
 			fv.Set(reflect.ValueOf(boolv))
+
 		case reflect.String:
+
 			fv.Set(reflect.ValueOf(k.Value()))
+
 		case reflect.Int:
+
 			intv, _ := k.Int()
 			fv.Set(reflect.ValueOf(intv))
+
 		}
 	}
+
 	_svrcfg = _cfg
+
 	return _svrcfg
 }
 

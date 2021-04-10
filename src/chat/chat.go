@@ -3,12 +3,16 @@ package chat
 import (
 	"go-snake/akmessage"
 	"go-snake/app/in"
+	"go-snake/app/application"
 )
 
 type Chat struct {
 }
 
-func New() *Chat {
+func New(name string) *Chat {
+	
+	application.SetAppName(name)
+
 	return &Chat{}
 }
 

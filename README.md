@@ -8,7 +8,10 @@
 4. robot server 客户端模拟器
 5. db mysql 
 6. 网络协议采用protobuf（后端：go，前端：js）
-7. ...
+7. simulation 服务器模拟器
+8. etcd 服务发现
+9. grpc 服务期间远程调用
+10. nats 消息队列基于网关与逻辑服间通信（计划）
 
 #### 使用说明
 serverApp 参数列表：   
@@ -31,5 +34,4 @@ serverApp 参数列表：
 
 统一从main入口，各个服务器模块各有init，run等初始启动方式。
 
-
-
+<img src="https://github.com/Peakchen/go-snake/tree/master/src/app/note/struct.PNG" width="50%">

@@ -8,16 +8,18 @@ import (
 	"go-snake/gateServer"
 	"go-snake/loginServer"
 	"go-snake/robot"
+	"go-snake/simulation"
 )
 
 var (
 	apps = map[string]application.ApplicationIF{
-		CstGame:    gameServer.New(),
-		CstGate:    gateServer.New(),
-		CstLogin:   loginServer.New(),
-		CstAccount: accountServer.New(),
-		CstRobot:   robot.New(),
-		CstSDK:     SDKServer.New(),
+		CstGame:    gameServer.New(CstGame),
+		CstGate:    gateServer.New(CstGate),
+		CstLogin:   loginServer.New(CstLogin),
+		CstAccount: accountServer.New(CstAccount),
+		CstRobot:   robot.New(CstRobot),
+		CstSDK:     SDKServer.New(CstSDK),
+		CstSimu:    simulation.New(CstSimu),
 	}
 )
 

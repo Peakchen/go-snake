@@ -5,7 +5,7 @@ import (
 	"errors"
 	"go-snake/akmessage"
 	"go-snake/common"
-	"go-snake/common/logicBase"
+	"go-snake/common/rpcBase"
 	"os"
 	"reflect"
 	//"sync"
@@ -47,7 +47,7 @@ type nodeService struct {
 
 var (
 	_ec    *etcdService
-	_nodes map[string]*nodeService
+	Nodes map[string]*nodeService
 )
 
 func NewEtcdClient(host, nodehost string, timeOuts int, service string) {
@@ -67,20 +67,20 @@ func NewEtcdClient(host, nodehost string, timeOuts int, service string) {
 		RpcRef: reflect.ValueOf(NewRpcMgr(service, nodehost)),
 	}
 
-	others := logicBase.GetAllNode()
-	_nodes = make(map[string]*nodeService, len(others)-1)
+	others := rpcBase.GetAllNode()
+	Nodes = make(map[string]*nodeService, len(others)-1)
 	mynode := _ec.RpcRef.MethodByName("Name").Call([]reflect.Value{})[0].Interface().(string)
 
 	for _, node := range others {
 		if mynode == node {
 			continue
 		}
-		_nodes[node] = &nodeService{
+		Nodes[node] = &nodeService{
 			Service: _ec,
 			Node:    node,
 		}
 
-		common.DosafeRoutine(_nodes[node].ListenUpdateNodes, func() {})
+		common.DosafeRoutine(Nodes[node].ListenUpdateNodes, func() {})
 	}
 }
 
@@ -154,31 +154,51 @@ func (this *nodeService) ListenUpdateNodes() {
 	}
 }
 
-func (this *nodeService) Call(name string, arg interface{}) (*akmessage.RpcResponse, error) {
+func (this *nodeService) Call(name string, msgID akmessage.RPCMSG, arg interface{}) (*akmessage.RpcResponse, error) {
+
 	ret := this.Service.RpcRef.MethodByName("GetNodeConn").Call([]reflect.Value{
 		reflect.ValueOf(name),
 	})
+
 	if ret[0].Interface() == nil {
 		return nil, errors.New("can not get node session or not create node session.")
 	}
+
 	conn := ret[0].Interface().(*grpc.ClientConn)
 	c := akmessage.NewRpcClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	if c == nil {
+		return nil, errors.New("invalid node session.")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	data, err := proto.Marshal(arg.(protoreflect.ProtoMessage))
 	if err != nil {
 		return nil, err
 	}
-	rsp, err := c.Send(ctx, &akmessage.RpcRequest{
-		ReqData: data,
-	})
+
+	var (
+		rsp *akmessage.RpcResponse
+	)
+
+	common.Dosafe(func(){
+		
+		rsp, err = c.Send(ctx, &akmessage.RpcRequest{
+			MsgId: 		msgID,
+			ReqData: 	data,
+		})
+	
+	}, nil)
+	
 	return rsp, err
 }
 
-func Call(name string, arg interface{}) (*akmessage.RpcResponse, error) {
-	if _nodes[name] == nil {
+func Call(name string, msgID akmessage.RPCMSG, arg interface{}) (*akmessage.RpcResponse, error) {
+	
+	if Nodes[name] == nil {
 		return nil, errors.New("can not find node.")
 	}
-	return _nodes[name].Call(name, arg)
+
+	return Nodes[name].Call(name, msgID, arg)
 }

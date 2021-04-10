@@ -16,6 +16,7 @@ import (
     "go.etcd.io/etcd/etcdserver/api/v3rpc/rpctypes"
     "google.golang.org/grpc"
     "google.golang.org/grpc/grpclog"
+    "google.golang.org/grpc/reflection"
 
 )
 
@@ -25,26 +26,34 @@ type etcdServer struct {
 }
 
 func NewEtcdServer(etcdHost, nodeHost string, name string, service akmessage.RpcServer){
+
 	es := &etcdServer{
         etcdAddr: etcdHost,
         nodeAddr: nodeHost,
     }
+
     clientv3.SetLogger(grpclog.NewLoggerV2(os.Stderr, os.Stderr, os.Stderr))
+
 	common.DosafeRoutine(func(){
         es.accept(service)
         }, func(){})
+
     common.DosafeRoutine(func(){
         es.keepalive(name)
         }, func(){})
 }
 
 func (this *etcdServer) accept(service akmessage.RpcServer){
+
 	listener, err := net.Listen("tcp", this.nodeAddr)
     if err != nil {
         akLog.Fail("ListenTCP error:", err)
     }
+
     s := grpc.NewServer()
     akmessage.RegisterRpcServer(s, service)
+    reflection.Register(s)
+
     if err := s.Serve(listener); err != nil {
 		akLog.Fail("failed to serve: %v", err)
 	}

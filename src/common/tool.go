@@ -5,6 +5,8 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -108,4 +110,19 @@ func ComputeHmacSha256(message string, secret string) string {
 
 	//	hex.EncodeToString(h.Sum(nil))
 	return base64.StdEncoding.EncodeToString([]byte(sha))
+}
+
+func ParseJson(src string, dst interface{}, desc string){
+
+	if len(src) == 0 {
+		panic(errors.New("json content is empty."))
+	}
+
+	err := json.Unmarshal([]byte(src), dst)
+	if err != nil {
+	
+		panic(fmt.Errorf("json parse err: %v, desc: %v.", err, desc))
+
+	}
+
 }

@@ -68,7 +68,7 @@ func SetCache(key string, val interface{}) (succ bool) {
 	defer c.Close()
 	_, err = c.Do("SET", key, val)
 	if err != nil {
-		fmt.Println("Do(SET, key, test003) returned errror %v, expected nil.", err)
+		fmt.Println("Do(SET, key...) returned errror %v, expected nil.", err)
 		return
 	}
 

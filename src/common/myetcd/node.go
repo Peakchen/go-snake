@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"google.golang.org/grpc"
-
+	"strings"
 )
 
 type RpcNode struct {
@@ -38,7 +38,8 @@ func (this *RpcNode) Update(k, v string) error {
 	this.mutx.Lock()
 	defer this.mutx.Unlock()
 
-	this.nodes[k] = &NodeInfo{
+	ks := strings.Split(k, ":")
+	this.nodes[ks[0]] = &NodeInfo{
 		value: v,
 		session: lis,
 	}

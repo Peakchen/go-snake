@@ -3,12 +3,16 @@ package backupdate
 import (
 	"go-snake/akmessage"
 	"go-snake/app/in"
+	"go-snake/app/application"
 )
 
 type BackUpdate struct {
 }
 
-func New() *BackUpdate {
+func New(name string) *BackUpdate {
+	
+	application.SetAppName(name)
+
 	return &BackUpdate{}
 }
 
