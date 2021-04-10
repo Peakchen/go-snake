@@ -10,8 +10,10 @@ import (
 	"runtime"
 	"runtime/debug"
 	"time"
+	"sync"
 
 	"github.com/Peakchen/xgameCommon/akLog"
+
 )
 
 func Dosafe(fn func(), exitfn func()) {
@@ -19,9 +21,38 @@ func Dosafe(fn func(), exitfn func()) {
 	fn()
 }
 
+var wg sync.WaitGroup
+	
 func DosafeRoutine(fn func(), exitfn func()) {
-	defer ExceptionStack(exitfn)
-	go fn()
+
+	wg.Add(1)
+	
+	go func(){
+
+	    defer func(){
+
+			err := recover()
+			if err != nil {
+				
+				if exitfn != nil {
+					exitfn()
+				}
+
+				errstr := fmt.Sprintf("\n%s runtime error: %v\n traceback:\n", separator, err)
+				errstr += callerDebug()
+				errstr += separator + "\n"
+				akLog.Error(errstr, string(debug.Stack()))
+			}
+
+	        wg.Done()
+
+	    }()
+	    
+	    fn()
+	    
+	}()
+	
+	wg.Wait()
 }
 
 func callerDebug() (str string) {

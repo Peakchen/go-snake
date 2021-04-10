@@ -1,0 +1,21 @@
+syntax = "proto3";
+option go_package = "msgProto/message";
+package message;
+
+// add by stefanchen 
+// server 
+
+message SendRequest
+{
+    bytes Data = 1;
+}
+
+message SendResponse
+{
+    bool Ret = 1;
+}
+
+service RpcService
+{
+    rpc Send (SendRequest) returns (SendResponse);
+} 

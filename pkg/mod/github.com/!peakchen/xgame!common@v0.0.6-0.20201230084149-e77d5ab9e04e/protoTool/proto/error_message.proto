@@ -1,0 +1,17 @@
+syntax = "proto3";
+option go_package = "msgProto/error_message";
+package ErrMessage;
+
+// add by stefanchen 
+// id : msg + err + desc 
+
+enum Err_message_id
+{
+    msg_err_invalid = 0;       // 非法id
+    msg_err_timeout = 1;       // 连接超时
+    msg_err_disconnect = 2;    // 断开连接
+    msg_err_login_faild = 3;   // 登陆失败
+    msg_err_not_find_user = 4; // 该玩家不存在
+
+
+}

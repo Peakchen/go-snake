@@ -7,7 +7,7 @@ import (
     "go-snake/akmessage"
     "go-snake/common"
     "fmt"
-"os"
+    "os"
 
     "go.etcd.io/etcd/clientv3"
 	//"github.com/coreos/etcd/clientv3"

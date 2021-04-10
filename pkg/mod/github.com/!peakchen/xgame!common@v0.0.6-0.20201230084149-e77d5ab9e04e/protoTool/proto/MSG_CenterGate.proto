@@ -1,0 +1,67 @@
+syntax = "proto3";
+option go_package = "msgProto/MSG_CenterGate";
+package MSG_CenterGate;
+
+// add by stefan 
+// server 
+enum SUBMSG
+{
+    Begin = 0; //起点消息
+
+    CS_PlayerOnline = 1; //玩家上线请求
+    SC_PlayerOnline = 2; //玩家上线回复
+
+    CS_PlayerOffline = 3; //玩家下线请求
+    SC_PlayerOffline = 4; //玩家下线回复
+
+    CS_GetBroadCastSessions     = 5; //获取多个玩家广播所在服会话请求
+    SC_GetBroadCastSessions     = 6; //获取多个玩家广播所在服会话回复
+}
+
+enum ErrorCode
+{
+    Invalid = 0; //非法数据
+    Success = 1; //成功
+    Fail = 2; //失败
+}
+
+//CS_PlayerOnline
+message CS_PlayerOnline_Req
+{
+    string PlayerIdentify = 1;
+}
+
+//SC_PlayerOnline
+message SC_PlayerOnline_Rsp
+{
+    ErrorCode Ret = 1; //返回码
+    string PlayerIdentify = 2;
+}
+
+//CS_PlayerOffline
+message CS_PlayerOffline_Req
+{
+    string PlayerIdentify = 1;
+}
+
+//SC_PlayerOffline
+message SC_PlayerOffline_Rsp
+{
+    ErrorCode Ret = 1; //返回码
+    string PlayerIdentify = 2;
+}
+
+//CS_GetBroadCastSessions
+message CS_GetBroadCastSessions_Req
+{
+    repeated string PlayerIdentifys = 1; //broadcast object 广播对象
+    string   Data = 2; //broadcast data 广播数据
+}
+
+//SC_GetBroadCastSessions
+message SC_GetBroadCastSessions_Rsp
+{
+    ErrorCode Ret = 1; //返回码
+    repeated string PlayerIdentifys = 2; //broadcast object 广播对象
+    string   Data = 3; //broadcast data 广播数据
+}

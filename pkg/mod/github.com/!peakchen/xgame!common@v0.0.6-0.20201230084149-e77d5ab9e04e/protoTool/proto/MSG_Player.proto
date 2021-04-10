@@ -1,0 +1,102 @@
+syntax = "proto3";
+option go_package = "msgProto/MSG_Player";
+package MSG_Player;
+
+// add by stefanchen 
+// server 
+enum SUBMSG
+{
+    Begin = 0; //起点消息
+
+    CS_EnterServer = 1; //进入服务器请求
+    SC_EnterServer = 2; //进入服务器回复
+
+    CS_LeaveServer = 3; //离开服务器请求
+    SC_LeaveServer = 4; //离开服务器回复
+
+    CS_PlayerInfo = 5; //请求获取玩家消息
+    SC_PlayerInfo = 6; //回复获取玩家消息
+
+}
+
+enum ErrorCode
+{
+    Invalid = 0; //非法数据
+    Success = 1; //成功
+    Fail = 2; //失败
+  
+}
+
+//玩家基础信息枚举
+enum emBaseInfo
+{
+    baseInvalid = 0; //非法数据
+    Name = 1; //名字
+    Level = 2; //等级
+    HeadIcon = 3; //头像
+    DBID = 4; //数据库唯一ID
+
+}
+
+//玩家基础信息结构
+message BasePlayerInfo_Repeat
+{
+    string Name = 1; //名字
+    int32  Level = 2; //等级
+    string HeadIcon = 3; //头像
+    int64  DBID = 4; //数据库唯一ID
+
+}
+
+//玩家基础金币类枚举
+enum emBaseMoney
+{
+    moneyInvalid = 0; //非法数据
+    Coin = 1; //金币
+    
+}
+
+//玩家基础金币类结构
+message BaseMoney_Repeat
+{
+    int64 Coin = 1; //金币
+}
+
+
+//CS_EnterServer
+message CS_EnterServer_Req
+{
+    
+}
+
+//SC_EnterServer
+message SC_EnterServer_Rsp
+{
+    ErrorCode Ret = 1; //返回码
+}
+
+//CS_LeaveServer
+message CS_LeaveServer_Req
+{
+    
+}
+
+//SC_LeaveServer
+message SC_LeaveServer_Rsp
+{
+    
+}
+
+//CS_PlayerInfo
+message CS_PlayerInfo_Req
+{
+   
+}
+
+//SC_PlayerInfo
+message SC_PlayerInfo_Rsp
+{
+    BasePlayerInfo_Repeat baseInfo = 1;
+    BaseMoney_Repeat baseMoney = 2;
+    ErrorCode Ret = 3;
+}
