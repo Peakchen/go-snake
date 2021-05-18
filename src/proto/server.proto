@@ -43,3 +43,13 @@ message SS_HeartBeat_Rsp
 {
 
 }
+
+message SS_Enter_Req
+{
+    RoleCtx RoleInfoContext
+}
+
+message SS_Enter_Rsp
+{
+    
+}

@@ -11,7 +11,9 @@ import (
 )
 
 func init() {
-	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_ENTER_GAME_SCENE), (*akmessage.CS_EnterGameScene)(nil), func(actor entityBase.IEntityUser, pb proto.Message) {
+	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_ENTER_GAME_SCENE), 
+		(*akmessage.CS_EnterGameScene)(nil), 
+		func(actor entityBase.IEntityUser, pb proto.Message) {
 		actor.HandlerEnter(pb)
 	})
 }

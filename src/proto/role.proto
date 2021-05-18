@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+message RoleInfoContext 
+{
+    ID int64
+    Name string
+    Level int32
+    Icon string
+        
+}

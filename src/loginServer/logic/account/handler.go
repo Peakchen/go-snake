@@ -82,12 +82,14 @@ func (this *Acc) HandlerLogin(pb proto.Message) {
 		rsp(akmessage.ErrorCode_AccountNotExisted)
 		return
 	}
+
 	akLog.FmtPrintln("login success...")
 	this.user = accM
 	this.SetSessionID(this.GetSessionID())
 	this.SetID(accM.GetDBID())
 	base.GetEntityMgr().AddEnity(accM.GetDBID(), this)
 	rsp(akmessage.ErrorCode_Success)
+	
 }
 
 func (this *Acc) HandlerLogout(pb proto.Message) {
