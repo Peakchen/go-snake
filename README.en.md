@@ -8,7 +8,8 @@
 7. simulation server simulator
 8. etcd service discovery
 9. Remote call during grpc service
-10. The nats message queue is based on the communication between the gateway and the logical server (planned) 
+10. Background control server (CURD background data, using iris open source web framework) 
+11. The nats message queue is based on the communication between the gateway and the logical server (planned) 
 
 ##Instructions for use
 
