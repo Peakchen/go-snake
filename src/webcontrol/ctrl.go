@@ -48,7 +48,7 @@ func (this *WebControl) Run(d *in.Input) {
 
 	rpcBase.RunRpc(d.Scfg.EtcdIP, d.Scfg.EtcdNodeIP)
 
-	app.Run(iris.Addr(d.TCPHost),
+	app.Run(iris.Addr(d.Scfg.TCPHost),
 		iris.WithoutServerError(iris.ErrServerClosed),
 		iris.WithOptimizations,
     )
