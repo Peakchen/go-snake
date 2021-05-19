@@ -19,7 +19,7 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
+	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gomodule/redigo v1.8.3
 	github.com/gonutz/ide v0.0.0-20200517034207-df64a3832118 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
@@ -27,10 +27,16 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/grpc-ecosystem/grpc-gateway v1.14.6 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
+	github.com/iris-contrib/jade v1.1.4 // indirect
+	github.com/iris-contrib/schema v0.0.2 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
+	github.com/kataras/golog v0.0.18 // indirect
 	github.com/kataras/iris/v12 v12.1.8
+	github.com/kataras/neffos v0.0.16 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
+	github.com/mediocregopher/radix/v3 v3.5.2 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.3 // indirect
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/nats-io/nats-server/v2 v2.2.0 // indirect
 	github.com/nats-io/nats.go v1.10.1-0.20210228004050-ed743748acac
@@ -46,6 +52,7 @@ require (
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/sony/sonyflake v1.0.0 // indirect
+	github.com/stretchr/testify v1.6.1 // indirect
 	github.com/valyala/fasthttp v1.24.0 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
@@ -53,12 +60,15 @@ require (
 	github.com/yudai/gojsondiff v1.0.0 // indirect
 	github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
+	go.etcd.io/bbolt v1.3.5 // indirect
 	go.etcd.io/etcd v0.5.0-alpha.5.0.20210123184945-d51c6c689ba3 //v1.2.3
-	google.golang.org/appengine v1.6.0 // indirect
+	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
+	google.golang.org/appengine v1.6.5 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
 	google.golang.org/grpc v1.29.1
 	google.golang.org/protobuf v1.26.0
 	gopkg.in/ini.v1 v1.62.0
+	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	gorm.io/driver/mysql v1.0.3
 	gorm.io/gorm v1.20.8
 )

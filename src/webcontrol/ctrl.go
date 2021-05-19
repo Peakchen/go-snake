@@ -8,6 +8,9 @@ import (
 	"github.com/kataras/iris/v12/mvc"
 	"go-snake/webcontrol/route"
 	"go-snake/webcontrol/controller"
+	"go-snake/webcontrol/rpcBase"
+	"github.com/kataras/iris/v12/middleware/logger"
+    "github.com/kataras/iris/v12/middleware/recover"
 )
 
 type WebControl struct {
@@ -32,6 +35,9 @@ func (this *WebControl) Run(d *in.Input) {
 	
 	app := iris.New()
 	app.Logger().SetLevel("debug")
+
+	app.Use(recover.New())
+    app.Use(logger.New())
 	
 	tmpl := iris.HTML("./webDir", ".html") //Layout("layout.html") 看情况加
 	app.RegisterView(tmpl)
@@ -39,6 +45,8 @@ func (this *WebControl) Run(d *in.Input) {
 
 	route.Register(app)
 	mvc.Configure(app, controller.Basic)
+
+	rpcBase.RunRpc(d.Scfg.EtcdIP, d.Scfg.EtcdNodeIP)
 
 	app.Run(iris.Addr(d.TCPHost),
 		iris.WithoutServerError(iris.ErrServerClosed),

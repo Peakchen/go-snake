@@ -2,14 +2,11 @@ package schema
 
 var (
 	defaultDecoder = NewDecoder() // form, url, schema.
-	formDecoder    = NewDecoder()
-	queryDecoder   = NewDecoder()
+	// Form Decoder. The default instance for DecodeForm function.
+	Form = NewDecoder().SetAliasTag("form")
+	// Query Decoder. The default instance for DecodeQuery function.
+	Query = NewDecoder().SetAliasTag("url").IgnoreUnknownKeys(true) // allow unknown url queries.
 )
-
-func init() {
-	formDecoder.SetAliasTag("form")
-	queryDecoder.SetAliasTag("url")
-}
 
 // Decode maps "values" to "ptr".
 // With one of the "form", "url" or "schema" tag fields that can override the field's name mapping to key.
@@ -20,13 +17,13 @@ func Decode(values map[string][]string, ptr interface{}) error {
 // DecodeForm maps "values" to "ptr".
 // With "form" tag for fields.
 func DecodeForm(values map[string][]string, ptr interface{}) error {
-	return formDecoder.Decode(ptr, values)
+	return Form.Decode(ptr, values)
 }
 
 // DecodeQuery maps "values" to "ptr".
 // With "url" tag for fields.
 func DecodeQuery(values map[string][]string, ptr interface{}) error {
-	return queryDecoder.Decode(ptr, values)
+	return Query.Decode(ptr, values)
 }
 
 // IsErrPath reports whether the incoming error is type of unknown field passed,

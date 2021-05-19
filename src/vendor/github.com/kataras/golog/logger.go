@@ -26,9 +26,11 @@ type Handler func(value *Log) (handled bool)
 
 // Logger is our golog.
 type Logger struct {
-	Prefix     []byte
+	Prefix     string
 	Level      Level
 	TimeFormat string
+	// Limit stacktrace entries on `Debug` level.
+	StacktraceLimit int
 	// if new line should be added on all log functions, even the `F`s.
 	// It defaults to true.
 	//
@@ -53,23 +55,35 @@ func New() *Logger {
 		Level:      InfoLevel,
 		TimeFormat: "2006/01/02 15:04",
 		NewLine:    true,
-		Printer:    pio.NewPrinter("", os.Stdout).EnableDirectOutput().Hijack(logHijacker),
+		Printer:    pio.NewPrinter("", os.Stdout).EnableDirectOutput().Hijack(logHijacker).SetSync(true),
 		children:   newLoggerMap(),
 	}
 }
 
+// Fields is just a custom type of the map type.
+// One or more values of `Fields` type can be passed
+// on all Log methods except `Print/Printf/Println` to set the `Log.Fields` field,
+// which can be accessed through a custom LogHandler.
+type Fields map[string]interface{}
+
 // acquireLog returns a new log fom the pool.
-func (l *Logger) acquireLog(level Level, msg string, withPrintln bool) *Log {
+func (l *Logger) acquireLog(level Level, msg string, withPrintln bool, fields Fields) *Log {
 	log, ok := l.logs.Get().(*Log)
 	if !ok {
 		log = &Log{
 			Logger: l,
 		}
 	}
+
 	log.NewLine = withPrintln
-	log.Time = time.Now()
+	if l.TimeFormat != "" {
+		log.Time = time.Now()
+		log.Timestamp = log.Time.Unix()
+	}
 	log.Level = level
 	log.Message = msg
+	log.Fields = fields
+	log.Stacktrace = log.Stacktrace[:0]
 	return log
 }
 
@@ -77,6 +91,8 @@ func (l *Logger) acquireLog(level Level, msg string, withPrintln bool) *Log {
 func (l *Logger) releaseLog(log *Log) {
 	l.logs.Put(log)
 }
+
+var spaceBytes = []byte(" ")
 
 // we could use marshal inside Log but we don't have access to printer,
 // we could also use the .Handle with NopOutput too but
@@ -88,25 +104,31 @@ var logHijacker = func(ctx *pio.Ctx) {
 		return
 	}
 
-	line := GetTextForLevel(l.Level, ctx.Printer.IsTerminal)
-	if line != "" {
-		line += " "
+	w := ctx.Printer
+
+	if l.Level != DisableLevel {
+		if level, ok := Levels[l.Level]; ok {
+			pio.WriteRich(w, level.Title, level.ColorCode, level.Style...)
+			w.Write(spaceBytes)
+		}
 	}
 
 	if t := l.FormatTime(); t != "" {
-		line += t + " "
-	}
-	line += l.Message
-
-	var b []byte
-	if pref := l.Logger.Prefix; len(pref) > 0 {
-		b = append(pref, []byte(line)...)
-	} else {
-		b = []byte(line)
+		fmt.Fprint(w, t)
+		w.Write(spaceBytes)
 	}
 
-	ctx.Store(b, nil)
-	ctx.Next()
+	if prefix := l.Logger.Prefix; len(prefix) > 0 {
+		fmt.Fprintf(w, prefix)
+	}
+
+	fmt.Fprint(w, l.Message)
+
+	if l.Logger.NewLine {
+		fmt.Fprintln(w)
+	}
+
+	ctx.Store(nil, pio.ErrHandled)
 }
 
 // NopOutput disables the output.
@@ -133,14 +155,13 @@ func (l *Logger) AddOutput(writers ...io.Writer) *Logger {
 
 // SetPrefix sets a prefix for this "l" Logger.
 //
-// The prefix is the first space-separated
-// word that is being presented to the output.
-// It's written even before the log level text.
+// The prefix is the text that is being presented
+// to the output right before the log's message.
 //
 // Returns itself.
 func (l *Logger) SetPrefix(s string) *Logger {
 	l.mu.Lock()
-	l.Prefix = []byte(s)
+	l.Prefix = s
 	l.mu.Unlock()
 	return l
 }
@@ -152,6 +173,18 @@ func (l *Logger) SetPrefix(s string) *Logger {
 func (l *Logger) SetTimeFormat(s string) *Logger {
 	l.mu.Lock()
 	l.TimeFormat = s
+	l.mu.Unlock()
+
+	return l
+}
+
+// SetStacktraceLimit sets a stacktrace entries limit
+// on `Debug` level.
+// Zero means all number of stack entries will be logged.
+// Negative value disables the stacktrace field.
+func (l *Logger) SetStacktraceLimit(limit int) *Logger {
+	l.mu.Lock()
+	l.StacktraceLimit = limit
 	l.mu.Unlock()
 
 	return l
@@ -191,12 +224,15 @@ func (l *Logger) SetLevel(levelName string) *Logger {
 	return l
 }
 
-func (l *Logger) print(level Level, msg string, newLine bool) {
+func (l *Logger) print(level Level, msg string, newLine bool, fields Fields) {
 	if l.Level >= level {
 		// newLine passed here in order for handler to know
 		// if this message derives from Println and Leveled functions
 		// or by simply, Print.
-		log := l.acquireLog(level, msg, newLine)
+		log := l.acquireLog(level, msg, newLine, fields)
+		if level == DebugLevel {
+			log.Stacktrace = GetStacktrace(l.StacktraceLimit)
+		}
 		// if not handled by one of the handler
 		// then print it as usual.
 		if !l.handled(log) {
@@ -217,33 +253,64 @@ func (l *Logger) print(level Level, msg string, newLine bool) {
 
 // Print prints a log message without levels and colors.
 func (l *Logger) Print(v ...interface{}) {
-	l.print(DisableLevel, fmt.Sprint(v...), l.NewLine)
+	l.print(DisableLevel, fmt.Sprint(v...), l.NewLine, nil)
 }
 
 // Printf formats according to a format specifier and writes to `Printer#Output` without levels and colors.
 func (l *Logger) Printf(format string, args ...interface{}) {
-	l.print(DisableLevel, fmt.Sprintf(format, args...), l.NewLine)
+	l.print(DisableLevel, fmt.Sprintf(format, args...), l.NewLine, nil)
 }
 
 // Println prints a log message without levels and colors.
 // It adds a new line at the end, it overrides the `NewLine` option.
 func (l *Logger) Println(v ...interface{}) {
-	l.print(DisableLevel, fmt.Sprint(v...), true)
+	l.print(DisableLevel, fmt.Sprint(v...), true, nil)
+}
+
+func splitArgsFields(v []interface{}) ([]interface{}, Fields) {
+	var (
+		args   = v[:0]
+		fields Fields
+	)
+
+	for _, val := range v {
+		f, ok := val.(Fields)
+		if ok {
+			if len(fields) > 0 { // upsert new values.
+				for k, v := range f {
+					fields[k] = v
+				}
+			} else {
+				fields = f // set fields.
+			}
+			continue
+		}
+
+		args = append(args, val) // use it as fmt argument.
+	}
+
+	return args, fields
 }
 
 // Log prints a leveled log message to the output.
 // This method can be used to use custom log levels if needed.
 // It adds a new line in the end.
 func (l *Logger) Log(level Level, v ...interface{}) {
-	l.print(level, fmt.Sprint(v...), l.NewLine)
+	if l.Level >= level {
+		args, fields := splitArgsFields(v)
+		l.print(level, fmt.Sprint(args...), l.NewLine, fields)
+	}
 }
 
 // Logf prints a leveled log message to the output.
 // This method can be used to use custom log levels if needed.
 // It adds a new line in the end.
 func (l *Logger) Logf(level Level, format string, args ...interface{}) {
-	msg := fmt.Sprintf(format, args...)
-	l.Log(level, msg)
+	if l.Level >= level {
+		args, fields := splitArgsFields(args)
+		msg := fmt.Sprintf(format, args...)
+		l.print(level, msg, l.NewLine, fields)
+	}
 }
 
 // Fatal `os.Exit(1)` exit no matter the level of the logger.
@@ -257,8 +324,7 @@ func (l *Logger) Fatal(v ...interface{}) {
 // If the logger's level is fatal, error, warn, info or debug
 // then it will print the log message too.
 func (l *Logger) Fatalf(format string, args ...interface{}) {
-	msg := fmt.Sprintf(format, args...)
-	l.Fatal(msg)
+	l.Logf(FatalLevel, format, args...)
 }
 
 // Error will print only when logger's Level is error, warn, info or debug.
@@ -268,8 +334,7 @@ func (l *Logger) Error(v ...interface{}) {
 
 // Errorf will print only when logger's Level is error, warn, info or debug.
 func (l *Logger) Errorf(format string, args ...interface{}) {
-	msg := fmt.Sprintf(format, args...)
-	l.Error(msg)
+	l.Logf(ErrorLevel, format, args...)
 }
 
 // Warn will print when logger's Level is warn, info or debug.
@@ -279,8 +344,14 @@ func (l *Logger) Warn(v ...interface{}) {
 
 // Warnf will print when logger's Level is warn, info or debug.
 func (l *Logger) Warnf(format string, args ...interface{}) {
-	msg := fmt.Sprintf(format, args...)
-	l.Warn(msg)
+	l.Logf(WarnLevel, format, args...)
+}
+
+// Warningf exactly the same as `Warnf`.
+// It's here for badger integration:
+// https://github.com/dgraph-io/badger/blob/ef28ef36b5923f12ffe3a1702bdfa6b479db6637/logger.go#L25
+func (l *Logger) Warningf(format string, args ...interface{}) {
+	l.Warnf(format, args...)
 }
 
 // Info will print when logger's Level is info or debug.
@@ -290,8 +361,7 @@ func (l *Logger) Info(v ...interface{}) {
 
 // Infof will print when logger's Level is info or debug.
 func (l *Logger) Infof(format string, args ...interface{}) {
-	msg := fmt.Sprintf(format, args...)
-	l.Info(msg)
+	l.Logf(InfoLevel, format, args...)
 }
 
 // Debug will print when logger's Level is debug.
@@ -301,13 +371,7 @@ func (l *Logger) Debug(v ...interface{}) {
 
 // Debugf will print when logger's Level is debug.
 func (l *Logger) Debugf(format string, args ...interface{}) {
-	// On debug mode don't even try to fmt.Sprintf if it's not required,
-	// this can be used to allow `Debugf` to be called without even the `fmt.Sprintf`'s
-	// performance cost if the logger doesn't allow debug logging.
-	if l.Level >= DebugLevel {
-		msg := fmt.Sprintf(format, args...)
-		l.Debug(msg)
-	}
+	l.Logf(DebugLevel, format, args...)
 }
 
 // Install receives  an external logger
@@ -399,8 +463,8 @@ func (l *Logger) Scan(r io.Reader) (cancel func()) {
 				return nil, pio.ErrMarshalNotResponsible
 			}
 
-			formattedTime := time.Now().Format(l.TimeFormat)
-			if formattedTime != "" {
+			if l.TimeFormat != "" {
+				formattedTime := time.Now().Format(l.TimeFormat)
 				line = append([]byte(formattedTime+" "), line...)
 			}
 

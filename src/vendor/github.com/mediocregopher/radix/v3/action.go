@@ -11,6 +11,8 @@ import (
 	"strings"
 	"sync"
 
+	"golang.org/x/xerrors"
+
 	"github.com/mediocregopher/radix/v3/resp"
 	"github.com/mediocregopher/radix/v3/resp/resp2"
 )
@@ -290,24 +292,31 @@ func (c *cmdAction) ClusterCanRetry() bool {
 
 // MaybeNil is a type which wraps a receiver. It will first detect if what's
 // being received is a nil RESP type (either bulk string or array), and if so
-// set Nil to true. If not the return value will be unmarshaled into Rcv
-// normally.
+// set Nil to true. If not the return value will be unmarshalled into Rcv
+// normally. If the response being received is an empty array then the EmptyArray
+// field will be set and Rcv unmarshalled into normally.
 type MaybeNil struct {
-	Nil bool
-	Rcv interface{}
+	Nil        bool
+	EmptyArray bool
+	Rcv        interface{}
 }
 
 // UnmarshalRESP implements the method for the resp.Unmarshaler interface.
 func (mn *MaybeNil) UnmarshalRESP(br *bufio.Reader) error {
 	var rm resp2.RawMessage
-	if err := rm.UnmarshalRESP(br); err != nil {
+	err := rm.UnmarshalRESP(br)
+	switch {
+	case err != nil:
 		return err
-	} else if rm.IsNil() {
+	case rm.IsNil():
 		mn.Nil = true
 		return nil
+	case rm.IsEmptyArray():
+		mn.EmptyArray = true
+		fallthrough // to not break backwards compatibility
+	default:
+		return rm.UnmarshalInto(resp2.Any{I: mn.Rcv})
 	}
-
-	return rm.UnmarshalInto(resp2.Any{I: mn.Rcv})
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -441,25 +450,34 @@ func (p pipeline) Run(c Conn) error {
 	if err := c.Encode(p); err != nil {
 		return err
 	}
-	for _, cmd := range p {
+
+	for i, cmd := range p {
 		if err := c.Decode(cmd); err != nil {
+			p.drain(c, len(p)-i-1)
 			return decodeErr(cmd, err)
 		}
 	}
 	return nil
 }
 
+func (p pipeline) drain(c Conn, n int) {
+	rcv := resp2.Any{I: nil}
+	for i := 0; i < n; i++ {
+		_ = c.Decode(&rcv)
+	}
+}
+
 func decodeErr(cmd CmdAction, err error) error {
 	c, ok := cmd.(*cmdAction)
 	if ok {
-		return fmt.Errorf(
-			"failed to decode pipeline CmdAction '%v' with keys %v: %v",
+		return xerrors.Errorf(
+			"failed to decode pipeline CmdAction '%v' with keys %v: %w",
 			c.cmd,
 			c.Keys(),
 			err)
 	}
-	return fmt.Errorf(
-		"failed to decode pipeline CmdAction '%v': %v",
+	return xerrors.Errorf(
+		"failed to decode pipeline CmdAction '%v': %w",
 		cmd,
 		err)
 }
@@ -494,10 +512,13 @@ type withConn struct {
 }
 
 // WithConn is used to perform a set of independent Actions on the same Conn.
-// key should be a key which one or more of the inner Actions is acting on, or
-// "" if no keys are being acted on. The callback function is what should
-// actually carry out the inner actions, and the error it returns will be
-// passed back up immediately.
+//
+// key should be a key which one or more of the inner Actions is going to act
+// on, or "" if no keys are being acted on or the keys aren't yet known. key is
+// generally only necessary when using Cluster.
+//
+// The callback function is what should actually carry out the inner actions,
+// and the error it returns will be passed back up immediately.
 //
 // NOTE that WithConn only ensures all inner Actions are performed on the same
 // Conn, it doesn't make them transactional. Use MULTI/WATCH/EXEC within a

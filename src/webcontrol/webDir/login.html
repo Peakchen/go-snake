@@ -23,6 +23,7 @@
 			</div>
 		</div>
 
+		<button id="registerBtn">注册</button>
 		<button id="loginBtn">登录</button>
 
 		<script>
@@ -54,6 +55,27 @@
 				return xhr;  //返回对象实例
 
 			}
+
+
+			document.getElementById("registerBtn").onclick = function() {
+
+					let account = document.getElementById("account")
+					let pwd = document.getElementById("password")
+
+					let xhr = createXHR();
+					xhr.open("GET", "http://127.0.0.1:8000/register?account="+account.value+"&passward=" + pwd.value, true);
+					xhr.onreadystatechange = function(){
+						//alert("xhr state: ", xhr.readyState)
+					};
+
+					xhr.onload = function () {
+						// 请求结束后,在此处写处理代码
+						console.log("....")
+					};
+
+					xhr.send(null);
+
+			};
 
 			document.getElementById("loginBtn").onclick = function() {
 

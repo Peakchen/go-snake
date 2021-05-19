@@ -1,3 +1,25 @@
+## Tu 09 June 2020 | v0.0.18
+
+- New `SetStacktraceLimit` method. If 0 (default) all debug stacktrace will be logged, if negative the field is disabled.
+- If `TimeFormat` field is empty then `timestamp` field is disabled. 
+
+## Sa 06 June 2020 | v0.0.16
+
+- New `Fields` map type that can be passed to `Logf/Debugf/Infof/Warnf/Errorf/Fatalf` functions and set the `Log.Fields` data field (which can be retrieved through a custom `LogHandler`).
+- Add `Log.Stacktrace` of new `Frame` type which holds the callers stack trace when `Debug/Debugf`.
+- Add `json` struct fields to the `Log` structure.
+- Update the [customize-output](_examples/customize-output) example.
+
+## Su 17 May 2020 | v0.0.14
+
+Add a `Warningf` method to complete the [dgraph-io/badger.Logger](https://github.com/dgraph-io/badger/blob/ef28ef36b5923f12ffe3a1702bdfa6b479db6637/logger.go#L27) interface **and set the `Prefix` text right before the log's actual message instead of the beginning of the log line.**
+
+## Tu 28 April 2020 | v0.0.12
+
+This release provides support for colorized log level per registered output. Log's level will be colorful for registered `io.Writer`(via `AddOutput`) that supports colors, even when the rest of the writers (e.g. files) don't.
+
+**Breaking changes on the `Levels` map**. See the corresponding updated example for migration.
+
 ## Th 12 December 2019 | v0.0.10
 
 - Update [pio dependency](https://github.com/kataras/pio) to version 0.0.2 as it contains a small but important bugfix for GUI apps.

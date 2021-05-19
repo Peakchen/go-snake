@@ -28,6 +28,8 @@ github.com/StackExchange/wmi
 # github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394
 ## explicit
 github.com/axgle/mahonia
+# github.com/aymerick/douceur v0.2.0
+github.com/aymerick/douceur/css
 # github.com/aymerick/raymond v2.0.3-0.20180322193309-b565731e1464+incompatible
 github.com/aymerick/raymond
 github.com/aymerick/raymond/ast
@@ -36,6 +38,8 @@ github.com/aymerick/raymond/parser
 # github.com/bwmarrin/snowflake v0.3.0
 ## explicit
 github.com/bwmarrin/snowflake
+# github.com/chris-ramon/douceur v0.2.0
+github.com/chris-ramon/douceur/parser
 # github.com/coreos/go-semver v0.3.0
 ## explicit
 github.com/coreos/go-semver/semver
@@ -81,7 +85,7 @@ github.com/gobwas/pool
 github.com/gobwas/pool/internal/pmath
 github.com/gobwas/pool/pbufio
 github.com/gobwas/pool/pbytes
-# github.com/gobwas/ws v1.0.2
+# github.com/gobwas/ws v1.0.3
 github.com/gobwas/ws
 github.com/gobwas/ws/wsutil
 # github.com/gogo/protobuf v1.3.2
@@ -96,7 +100,7 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
-# github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db
+# github.com/golang/snappy v0.0.1
 ## explicit
 github.com/golang/snappy
 # github.com/gomodule/redigo v1.8.3
@@ -110,6 +114,8 @@ github.com/gonutz/ide/w32
 # github.com/google/uuid v1.1.2
 ## explicit
 github.com/google/uuid
+# github.com/gorilla/css v1.0.0
+github.com/gorilla/css/scanner
 # github.com/gorilla/websocket v1.4.2
 ## explicit
 github.com/gorilla/websocket
@@ -121,11 +127,13 @@ github.com/gorilla/websocket
 github.com/iris-contrib/blackfriday
 # github.com/iris-contrib/go.uuid v2.0.0+incompatible
 github.com/iris-contrib/go.uuid
-# github.com/iris-contrib/jade v1.1.3
+# github.com/iris-contrib/jade v1.1.4
+## explicit
 github.com/iris-contrib/jade
 # github.com/iris-contrib/pongo2 v0.0.1
 github.com/iris-contrib/pongo2
-# github.com/iris-contrib/schema v0.0.1
+# github.com/iris-contrib/schema v0.0.2
+## explicit
 github.com/iris-contrib/schema
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
@@ -136,7 +144,8 @@ github.com/jinzhu/now
 github.com/json-iterator/go
 # github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88
 ## explicit
-# github.com/kataras/golog v0.0.10
+# github.com/kataras/golog v0.0.18
+## explicit
 github.com/kataras/golog
 # github.com/kataras/iris/v12 v12.1.8
 ## explicit
@@ -169,13 +178,14 @@ github.com/kataras/iris/v12/middleware/recover
 github.com/kataras/iris/v12/mvc
 github.com/kataras/iris/v12/view
 github.com/kataras/iris/v12/websocket
-# github.com/kataras/neffos v0.0.14
+# github.com/kataras/neffos v0.0.16
+## explicit
 github.com/kataras/neffos
 github.com/kataras/neffos/gobwas
 github.com/kataras/neffos/gorilla
 github.com/kataras/neffos/stackexchange/nats
 github.com/kataras/neffos/stackexchange/redis
-# github.com/kataras/pio v0.0.2
+# github.com/kataras/pio v0.0.8
 github.com/kataras/pio
 github.com/kataras/pio/terminal
 # github.com/kataras/sitemap v0.0.5
@@ -185,13 +195,15 @@ github.com/klauspost/compress/flate
 github.com/klauspost/compress/gzip
 # github.com/kr/pretty v0.2.1
 ## explicit
-# github.com/mediocregopher/radix/v3 v3.4.2
+# github.com/mediocregopher/radix/v3 v3.5.2
+## explicit
 github.com/mediocregopher/radix/v3
 github.com/mediocregopher/radix/v3/internal/bytesutil
 github.com/mediocregopher/radix/v3/resp
 github.com/mediocregopher/radix/v3/resp/resp2
 github.com/mediocregopher/radix/v3/trace
-# github.com/microcosm-cc/bluemonday v1.0.2
+# github.com/microcosm-cc/bluemonday v1.0.3
+## explicit
 github.com/microcosm-cc/bluemonday
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 github.com/modern-go/concurrent
@@ -249,6 +261,8 @@ github.com/shurcooL/sanitized_anchor_name
 # github.com/sony/sonyflake v1.0.0
 ## explicit
 github.com/sony/sonyflake
+# github.com/stretchr/testify v1.6.1
+## explicit
 # github.com/valyala/fasthttp v1.24.0
 ## explicit
 # github.com/vmihailenco/msgpack v4.0.4+incompatible
@@ -264,6 +278,8 @@ github.com/vmihailenco/msgpack/codes
 # github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82
 ## explicit
 # github.com/yudai/pp v2.0.1+incompatible
+## explicit
+# go.etcd.io/bbolt v1.3.5
 ## explicit
 # go.etcd.io/etcd v0.5.0-alpha.5.0.20210123184945-d51c6c689ba3
 ## explicit
@@ -326,10 +342,12 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
+# golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e
+## explicit
 # golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 golang.org/x/xerrors
 golang.org/x/xerrors/internal
-# google.golang.org/appengine v1.6.0
+# google.golang.org/appengine v1.6.5
 ## explicit
 google.golang.org/appengine
 google.golang.org/appengine/datastore
@@ -425,7 +443,8 @@ google.golang.org/protobuf/types/known/timestamppb
 # gopkg.in/ini.v1 v1.62.0
 ## explicit
 gopkg.in/ini.v1
-# gopkg.in/yaml.v3 v3.0.0-20191120175047-4206685974f2
+# gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
+## explicit
 gopkg.in/yaml.v3
 # gorm.io/driver/mysql v1.0.3
 ## explicit
