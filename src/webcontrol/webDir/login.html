@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="cache-control" content="no-cache">
+		<meta http-equiv="expires" content="0">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<title>xxx后台管理</title>
+
+	</head>
+
+	<body>
+
+		<div class="login_bg">
+			<div class="login_account">
+				<input type=text placeholder="请输入账号" id="account"/>
+			</div>
+			<div class="login_pwd">
+				<input type=text placeholder="请输入密码" id="password"/>
+			</div>
+		</div>
+
+		<button id="loginBtn">登录</button>
+
+		<script>
+
+			//创建XMLHttpRequest 对象
+			//参数：无
+			//返回值：XMLHttpRequest 对象
+			
+			function createXHR () {
+				
+				var XHR = [  //兼容不同浏览器和版本得创建函数数组
+					function () { return new XMLHttpRequest () },
+					function () { return new ActiveXObject ("Msxml2.XMLHTTP") },
+					function () { return new ActiveXObject ("Msxml3.XMLHTTP") },
+					function () { return new ActiveXObject ("Microsoft.XMLHTTP") }
+				];
+
+				var xhr = null;
+				//尝试调用函数，如果成功则返回XMLHttpRequest对象，否则继续尝试
+				for (var i = 0; i < XHR.length; i ++) {
+					try {
+						xhr = XHR[i]();
+					} catch(e) {
+						continue  //如果发生异常，则继续下一个函数调用
+					}
+					break;  //如果成功，则中止循环
+				}
+
+				return xhr;  //返回对象实例
+
+			}
+
+			document.getElementById("loginBtn").onclick = function() {
+
+					let account = document.getElementById("account")
+					let pwd = document.getElementById("password")
+
+					let xhr = createXHR();
+					xhr.open("GET", "http://127.0.0.1:8000/login?account="+account.value+"&passward=" + pwd.value, true);
+					xhr.onreadystatechange = function(){
+						//alert("xhr state: ", xhr.readyState)
+					};
+
+					xhr.onload = function () {
+						// 请求结束后,在此处写处理代码
+						console.log("....")
+					};
+
+					xhr.send(null);
+
+			};
+
+		</script>
+
+		
+	</body>
+
+	
+</html>
+
+

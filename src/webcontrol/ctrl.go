@@ -4,6 +4,10 @@ import (
 	"go-snake/akmessage"
 	"go-snake/app/in"
 	"go-snake/app/application"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/mvc"
+	"go-snake/webcontrol/route"
+	"go-snake/webcontrol/controller"
 )
 
 type WebControl struct {
@@ -26,4 +30,19 @@ func (this *WebControl) Type() akmessage.ServerType {
 
 func (this *WebControl) Run(d *in.Input) {
 	
+	app := iris.New()
+	app.Logger().SetLevel("debug")
+	
+	tmpl := iris.HTML("./webDir", ".html") //Layout("layout.html") 看情况加
+	app.RegisterView(tmpl)
+	app.HandleDir("/webDir", "./webDir")
+
+	route.Register(app)
+	mvc.Configure(app, controller.Basic)
+
+	app.Run(iris.Addr(d.TCPHost),
+		iris.WithoutServerError(iris.ErrServerClosed),
+		iris.WithOptimizations,
+    )
+
 }
