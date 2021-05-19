@@ -89,13 +89,39 @@ func HasExistAcc(m IAkModel, user string, pwd string) (bool, error) {
 	return m.GetDBID() != 0, nil
 }
 
-func HasExistForWx(m IAkModel, openid string) (bool, error) {
+func HasExistAcc2(m IAkModel, acc string) (bool, error) {
 	if !checkDB() {
 		return false, errors.New("db session disconnect.")
 	}
 	_db.AutoMigrate(m)
-	_db.First(m, "openid = ?", openid)
+	_db.First(m, "account = ?", acc)
 	return m.GetDBID() != 0, nil
+}
+
+func HasExistForWx(m IAkModel, openid string) (bool, error) {
+	
+	if !checkDB() {
+		return false, errors.New("db session disconnect.")
+	}
+	
+	_db.AutoMigrate(m)
+	_db.First(m, "openid = ?", openid)
+	
+	return m.GetDBID() != 0, nil
+	
+}
+
+func GetBackUser(m IAkModel, acc, pwd string) (bool, error) {
+
+	if !checkDB() {
+		return false, errors.New("db session disconnect.")
+	}
+
+	_db.AutoMigrate(m)
+	_db.First(m, "account = ?", acc, "password = ?", pwd)
+	
+	return m.GetDBID() != 0, nil
+
 }
 
 func GetModel(m interface{}, openid string) error {
