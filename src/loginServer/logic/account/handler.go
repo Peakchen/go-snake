@@ -3,10 +3,10 @@ package account
 import (
 	"go-snake/akmessage"
 	"go-snake/common/akOrm"
-	"go-snake/loginServer/base"
-	"go-snake/loginServer/entityBase"
-	"go-snake/loginServer/logic/account/acc_model"
-	"go-snake/loginServer/msg"
+	"go-snake/core/usermgr"
+	"go-snake/core/user"
+	"go-snake/dbmodel/acc_model"
+	"go-snake/core/msg"
 
 	"google.golang.org/protobuf/proto"
 
@@ -14,13 +14,13 @@ import (
 )
 
 func init() {
-	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_ACC_REGISTER), (*akmessage.CS_AccRegister)(nil), func(actor entityBase.IEntityUser, pb proto.Message) {
+	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_ACC_REGISTER), (*akmessage.CS_AccRegister)(nil), func(actor user.IEntityUser, pb proto.Message) {
 		actor.HandlerRegister(pb)
 	})
-	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_LOGIN), (*akmessage.CS_Login)(nil), func(actor entityBase.IEntityUser, pb proto.Message) {
+	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_LOGIN), (*akmessage.CS_Login)(nil), func(actor user.IEntityUser, pb proto.Message) {
 		actor.HandlerLogin(pb)
 	})
-	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_LOGOUT), (*akmessage.CS_Logout)(nil), func(actor entityBase.IEntityUser, pb proto.Message) {
+	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_LOGOUT), (*akmessage.CS_Logout)(nil), func(actor user.IEntityUser, pb proto.Message) {
 		actor.HandlerLogout(pb)
 	})
 }
@@ -36,7 +36,7 @@ func (this *Acc) HandlerRegister(pb proto.Message) {
 		this.SendMsg(akmessage.MSG_SC_ACC_REGISTER, res)
 	}
 
-	accM := &acc_model.Acc{}
+	accM := &accdb.Acc{}
 	exist, err := akOrm.HasExistAcc(accM, reg.Acc, reg.Pwd)
 	if err != nil {
 		rsp(akmessage.ErrorCode_Invaild)
@@ -47,14 +47,14 @@ func (this *Acc) HandlerRegister(pb proto.Message) {
 		return
 	}
 
-	accM = acc_model.NewAcc(reg.Acc, reg.Pwd)
+	accM = accdb.NewAcc(reg.Acc, reg.Pwd)
 	if accM != nil {
 		akLog.FmtPrintln("AccRegister success...")
 
 		this.user = accM
 		this.SetSessionID(this.GetSessionID())
 		this.SetID(accM.GetDBID())
-		base.GetEntityMgr().AddEnity(accM.GetDBID(), this)
+		usermgr.GetEntityMgr().AddEnity(accM.GetDBID(), this)
 		rsp(akmessage.ErrorCode_Success)
 	} else {
 		rsp(akmessage.ErrorCode_Invaild)
@@ -72,7 +72,7 @@ func (this *Acc) HandlerLogin(pb proto.Message) {
 		this.SendMsg(akmessage.MSG_SC_LOGIN, res)
 	}
 
-	accM := &acc_model.Acc{}
+	accM := &accdb.Acc{}
 	exist, err := akOrm.HasExistAcc(accM, login.Acc, login.Pwd)
 	if err != nil {
 		rsp(akmessage.ErrorCode_Invaild)
@@ -87,7 +87,7 @@ func (this *Acc) HandlerLogin(pb proto.Message) {
 	this.user = accM
 	this.SetSessionID(this.GetSessionID())
 	this.SetID(accM.GetDBID())
-	base.GetEntityMgr().AddEnity(accM.GetDBID(), this)
+	usermgr.GetEntityMgr().AddEnity(accM.GetDBID(), this)
 	rsp(akmessage.ErrorCode_Success)
 	
 }

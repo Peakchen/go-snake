@@ -4,7 +4,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"go-snake/webcontrol/parser"
 	"go-snake/webcontrol/controller/errorCode"
-	"go-snake/dbModule/backdb"
+	"go-snake/dbmodel/backdb"
 	"github.com/Peakchen/xgameCommon/utils"
 )
 

@@ -8,7 +8,7 @@ import (
 	"go-snake/common/mixNet"
 	"go-snake/common/tcpNet"
 	"go-snake/chat/base"
-	"go-snake/chat/entityBase"
+	"go-snake/chat/user"
 	"go-snake/chat/msg"
 	"reflect"
 
@@ -110,7 +110,7 @@ func (this *ChatApp) Handler(sid string, data []byte) {
 		case uint32(akmessage.MSG_SS_REGISTER_RSP),
 			uint32(akmessage.MSG_SS_HEARTBEAT_RSP):
 			if entity == nil {
-				entity = entityBase.NewEntity(sessid, uid)
+				entity = user.NewEntity(sessid, uid)
 				base.AddUser(uid, entity)
 			}
 		}

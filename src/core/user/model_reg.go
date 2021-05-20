@@ -1,4 +1,4 @@
-package entityBase
+package user
 
 type ModelFn func(entity IEntityUser) interface{}
 

@@ -1,17 +1,17 @@
 package inner
 
 import (
-	"go-snake/loginServer/entityBase"
+	"go-snake/core/user"
 )
 
 func init() {
-	entityBase.RegisterModel(entityBase.M_SERVERINNER, func(entity entityBase.IEntityUser) interface{} { return newInner(entity) })
+	user.RegisterModel(user.M_SERVERINNER, func(entity user.IEntityUser) interface{} { return newInner(entity) })
 }
 
 type ServerInner struct {
-	entityBase.IEntityUser
+	user.IEntityUser
 }
 
-func newInner(entity entityBase.IEntityUser) *ServerInner {
+func newInner(entity user.IEntityUser) *ServerInner {
 	return &ServerInner{IEntityUser: entity}
 }

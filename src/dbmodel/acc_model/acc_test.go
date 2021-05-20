@@ -1,4 +1,4 @@
-package acc_model
+package accdb
 
 import (
 	"go-snake/common/akOrm"

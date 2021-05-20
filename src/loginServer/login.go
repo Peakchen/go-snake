@@ -9,7 +9,7 @@ import (
 	"go-snake/common/mixNet"
 	"go-snake/common/tcpNet"
 	"go-snake/loginServer/app"
-	"go-snake/loginServer/base"
+	"go-snake/core/usermgr"
 	"go-snake/loginServer/sdk_wechat"
 	_ "go-snake/loginServer/logic"
 	"go-snake/loginServer/rpcBase"
@@ -45,7 +45,7 @@ func (this *Login) Run(d *in.Input) {
 	//启动db链接
 	akOrm.OpenDB(d.Scfg.MysqlUser, d.Scfg.MysqlPwd, d.Scfg.MysqlHost, d.Scfg.MysqlDataBase)
 	//db数据加载至内存
-	base.DBPreloading()
+	usermgr.DBPreloading()
 	//初始化etcd rpc
 	rpcBase.RunRpc(d.Scfg.EtcdIP, d.Scfg.EtcdNodeIP)
 	//启动tcp链接

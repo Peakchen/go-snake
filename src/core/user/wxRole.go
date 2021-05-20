@@ -1,7 +1,7 @@
-package entityBase
+package user
 
 import (
-	"go-snake/loginServer/sdk_wechat/wechat_model"
+	"go-snake/dbmodel/wechat_model"
 )
 
 type IWxRole interface {

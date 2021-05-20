@@ -2,8 +2,8 @@ package role
 
 import (
 	"go-snake/akmessage"
-	"go-snake/gameServer/entityBase"
-	"go-snake/gameServer/msg"
+	"go-snake/core/user"
+	"go-snake/core/msg"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 
@@ -13,7 +13,7 @@ import (
 func init() {
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_ENTER_GAME_SCENE), 
 		(*akmessage.CS_EnterGameScene)(nil), 
-		func(actor entityBase.IEntityUser, pb proto.Message) {
+		func(actor user.IEntityUser, pb proto.Message) {
 		actor.HandlerEnter(pb)
 	})
 }

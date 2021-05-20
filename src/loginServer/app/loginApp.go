@@ -8,9 +8,9 @@ import (
 	"go-snake/common/messageBase"
 	"go-snake/common/mixNet"
 	"go-snake/common/tcpNet"
-	"go-snake/loginServer/base"
-	"go-snake/loginServer/entityBase"
-	"go-snake/loginServer/msg"
+	"go-snake/core/usermgr"
+	userEntity "go-snake/core/user"
+	"go-snake/core/msg"
 	"reflect"
 	"sync"
 
@@ -115,7 +115,7 @@ func (this *LoginApp) Handler(sid string, data []byte) {
 		}
 
 		content := msg.GetActorMessageProc(msgid)
-		user := base.GetUserByID(sspt.GetUID())
+		user := usermgr.GetUserByID(sspt.GetUID())
 		if content != nil {
 			dst := reflect.New(content.RefPb.Elem()).Interface().(proto.Message)
 			err := messageBase.Codec().Unmarshal(dstData, dst)
@@ -130,8 +130,8 @@ func (this *LoginApp) Handler(sid string, data []byte) {
 				uint32(akmessage.MSG_SS_REGISTER_RSP),
 				uint32(akmessage.MSG_SS_HEARTBEAT_RSP):
 				if user == nil {
-					user = entityBase.NewEntity(sspt.GetSessID())
-					base.AddUser(user.GetID(), user)
+					user = userEntity.NewEntityBySid(sspt.GetSessID())
+					usermgr.AddUser(user.GetID(), user)
 				}
 			default:
 			}

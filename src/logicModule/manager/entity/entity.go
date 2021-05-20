@@ -1,13 +1,13 @@
 package entity
 
 import (
-	"go-snake/dbModule"
+	"go-snake/dbmodel"
 )
 
 type BaseEntity struct {
 	
 	uid int64
-	role *dbModule.Role
+	role *dbmodel.Role
 
 }
 

@@ -1,19 +1,19 @@
-package base
+package usermgr
 
 import (
-	"go-snake/loginServer/entityBase"
+	"go-snake/core/user"
 	"sync"
 )
 
 type EntityManager struct {
 	sync.RWMutex
 
-	entitys map[int64]entityBase.IEntityUser
+	entitys map[int64]user.IEntityUser
 }
 
 var (
 	entitymgr = &EntityManager{
-		entitys: make(map[int64]entityBase.IEntityUser),
+		entitys: make(map[int64]user.IEntityUser),
 	}
 )
 
@@ -25,14 +25,14 @@ func GetEntityMgr() *EntityManager {
 	return entitymgr
 }
 
-func GetUserByID(uid int64) entityBase.IEntityUser {
+func GetUserByID(uid int64) user.IEntityUser {
 	entitymgr.RLock()
 	defer entitymgr.RUnlock()
 
 	return entitymgr.entitys[uid]
 }
 
-func AddUser(uid int64, user entityBase.IEntityUser) {
+func AddUser(uid int64, user user.IEntityUser) {
 	entitymgr.Lock()
 	defer entitymgr.Unlock()
 
@@ -43,14 +43,14 @@ func AddUser(uid int64, user entityBase.IEntityUser) {
 	entitymgr.entitys[uid] = user
 }
 
-func (this *EntityManager) GetEnity(uid int64) entityBase.IEntityUser {
+func (this *EntityManager) GetEnity(uid int64) user.IEntityUser {
 	this.RLock()
 	defer this.RUnlock()
 
 	return this.entitys[uid]
 }
 
-func (this *EntityManager) AddEnity(uid int64, user entityBase.IEntityUser) bool {
+func (this *EntityManager) AddEnity(uid int64, user user.IEntityUser) bool {
 	this.Lock()
 	defer this.Unlock()
 
@@ -62,7 +62,7 @@ func (this *EntityManager) AddEnity(uid int64, user entityBase.IEntityUser) bool
 	return true
 }
 
-func (this *EntityManager) UpdateEntity(uid int64, user entityBase.IEntityUser) bool {
+func (this *EntityManager) UpdateEntity(uid int64, user user.IEntityUser) bool {
 	this.Lock()
 	defer this.Unlock()
 

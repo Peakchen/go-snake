@@ -6,9 +6,9 @@ import (
 	"go-snake/common"
 	"go-snake/common/akOrm"
 	"go-snake/common/wechat"
-	"go-snake/loginServer/base"
-	"go-snake/loginServer/entityBase"
-	"go-snake/loginServer/sdk_wechat/wechat_model"
+	"go-snake/core/usermgr"
+	"go-snake/core/user"
+	"go-snake/dbmodel/wechat_model"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -289,9 +289,9 @@ func wxLogin(sessionkey string, encryptedData string, iv string) {
 			akLog.Error("new wx role fail, openid: ", userInfo.OpenID)
 			return
 		}
-		entity := entityBase.InitEntity(wxrole.GetDBID())
+		entity := user.InitEntity(wxrole.GetDBID())
 		entity.LoadWxRole(wxrole)
-		base.AddUser(wxrole.GetDBID(), entity)
+		usermgr.AddUser(wxrole.GetDBID(), entity)
 	} else {
 		var wxRole = &wechat_model.WxRole{}
 		err := akOrm.GetModel(wxRole, userInfo.OpenID)
@@ -302,7 +302,7 @@ func wxLogin(sessionkey string, encryptedData string, iv string) {
 		wxRole.Copy(&userInfo)
 		wxRole.Update()
 
-		role := base.GetUserByID(wxRole.GetDBID())
+		role := usermgr.GetUserByID(wxRole.GetDBID())
 		if role == nil {
 			akLog.Error("get entity fail, dbid: ", wxRole.GetDBID())
 			return

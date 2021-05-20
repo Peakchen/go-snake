@@ -1,4 +1,4 @@
-package entityBase
+package user
 
 import "google.golang.org/protobuf/proto"
 

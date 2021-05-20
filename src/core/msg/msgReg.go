@@ -1,13 +1,13 @@
 package msg
 
 import (
-	"go-snake/chat/entityBase"
+	"go-snake/core/user"
 	"reflect"
 
 	"google.golang.org/protobuf/proto"
 )
 
-type FnMessageProc func(entityBase.IEntityUser, proto.Message)
+type FnMessageProc func(user.IEntityUser, proto.Message)
 
 type MessageContent struct {
 	RefPb   reflect.Type

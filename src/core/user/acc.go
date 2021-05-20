@@ -1,13 +1,13 @@
-package entityBase
+package user
 
 import (
-	"go-snake/loginServer/logic/account/acc_model"
+	"go-snake/dbmodel/acc_model"
 
 	"google.golang.org/protobuf/proto"
 )
 
 type IAcc interface {
-	LoadAcc(acc *acc_model.Acc)
+	LoadAcc(acc *accdb.Acc)
 
 	HandlerRegister(pb proto.Message)
 	HandlerLogin(pb proto.Message)

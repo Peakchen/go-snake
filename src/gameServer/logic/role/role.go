@@ -1,21 +1,21 @@
 package role
 
 import (
-	"go-snake/gameServer/entityBase"
-	"go-snake/gameServer/logic/role/role_model"
+	"go-snake/core/user"
+	"go-snake/dbmodel/role_model"
 )
 
 func init() {
-	entityBase.RegisterModel(entityBase.M_ROLE, func(entity entityBase.IEntityUser) interface{} { return newRoleCache(entity) })
+	user.RegisterModel(user.M_ROLE, func(entity user.IEntityUser) interface{} { return newRoleCache(entity) })
 }
 
 type RoleCache struct {
-	entityBase.IEntityUser
+	user.IEntityUser
 
 	role *role_model.Role
 }
 
-func newRoleCache(entity entityBase.IEntityUser) *RoleCache {
+func newRoleCache(entity user.IEntityUser) *RoleCache {
 	return &RoleCache{
 		IEntityUser: entity,
 	}

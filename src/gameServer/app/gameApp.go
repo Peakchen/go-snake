@@ -7,9 +7,9 @@ import (
 	"go-snake/common/messageBase"
 	"go-snake/common/mixNet"
 	"go-snake/common/tcpNet"
-	"go-snake/gameServer/base"
-	"go-snake/gameServer/entityBase"
-	"go-snake/gameServer/msg"
+	"go-snake/core/usermgr"
+	"go-snake/core/user"
+	"go-snake/core/msg"
 	"reflect"
 
 	"google.golang.org/protobuf/proto"
@@ -105,14 +105,14 @@ func (this *GameApp) Handler(sid string, data []byte) {
 		sessid := sspt.GetSessID()
 		uid := sspt.GetUID()
 
-		entity := base.GetUserByID(uid)
+		entity := usermgr.GetUserByID(uid)
 		switch msgid {
 		case uint32(akmessage.MSG_CS_ENTER_GAME_SCENE),
 			uint32(akmessage.MSG_SS_REGISTER_RSP),
 			uint32(akmessage.MSG_SS_HEARTBEAT_RSP):
 			if entity == nil {
-				entity = entityBase.NewEntity(sessid, uid)
-				base.AddUser(uid, entity)
+				entity = user.NewEntity(sessid, uid)
+				usermgr.AddUser(uid, entity)
 			}
 		}
 

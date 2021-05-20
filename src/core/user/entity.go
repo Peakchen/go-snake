@@ -1,4 +1,4 @@
-package entityBase
+package user
 
 import (
 	"go-snake/akmessage"
@@ -62,6 +62,7 @@ type IEntityUser interface {
 	IAcc
 	IInner
 	IWxRole
+	IRole
 }
 
 type EntityUser struct {
@@ -70,6 +71,7 @@ type EntityUser struct {
 	IAcc
 	IInner
 	IWxRole
+	IRole
 }
 
 func InitEntity(dbid int64) IEntityUser {
@@ -82,7 +84,16 @@ func InitEntity(dbid int64) IEntityUser {
 	return user
 }
 
-func NewEntity(sid string) IEntityUser {
+func NewEntity(sid string, uid int64) IEntityUser {
+	return &EntityUser{
+		Entity: &Entity{
+			dbid: uid,
+			sid:  sid,
+		},
+	}
+}
+
+func NewEntityBySid(sid string) IEntityUser {
 	user := &EntityUser{
 		Entity: newEntity(sid),
 	}
@@ -100,6 +111,8 @@ func (this *EntityUser) RegModels() {
 			this.IInner = entity.(IInner)
 		case M_WXROLE:
 			this.IWxRole = entity.(IWxRole)
+		case M_ROLE:
+			this.IRole = entity.(IRole)
 		}
 	})
 }
