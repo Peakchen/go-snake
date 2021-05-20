@@ -14,7 +14,7 @@
             "env": {},
             "args": [
                 "-app",
-                "simulation",
+                "webctrl",
                 "-ver",
                 "1",
                 "-webhost",

@@ -9,7 +9,8 @@
 8. etcd service discovery
 9. Remote call during grpc service
 10. Background control server (CURD background data, using iris open source web framework) 
-11. The nats message queue is based on the communication between the gateway and the logical server (planned) 
+11. Data storage and logic processing modules are independent, and can be allocated to each server as needed 
+12. The nats message queue is based on the communication between the gateway and the logical server (planned) 
 
 ##Instructions for use
 
