@@ -51,10 +51,12 @@ var (
 )
 
 func NewEtcdClient(host, nodehost string, timeOuts int, service string) {
+
 	client, err := clientv3.New(clientv3.Config{
 		Endpoints:   []string{host},
 		DialTimeout: time.Duration(timeOuts) * time.Second,
 	})
+	
 	if err != nil {
 		akLog.Fail("can not create etcd client, host: ", host)
 		return
@@ -72,9 +74,11 @@ func NewEtcdClient(host, nodehost string, timeOuts int, service string) {
 	mynode := _ec.RpcRef.MethodByName("Name").Call([]reflect.Value{})[0].Interface().(string)
 
 	for _, node := range others {
+
 		if mynode == node {
 			continue
 		}
+
 		Nodes[node] = &nodeService{
 			Service: _ec,
 			Node:    node,

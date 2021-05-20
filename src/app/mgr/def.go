@@ -8,4 +8,5 @@ const (
 	CstRobot   = "robot"
 	CstSDK     = "sdk"
 	CstSimu    = "simulation"
+	CstWebctrl    = "webctrl"
 )

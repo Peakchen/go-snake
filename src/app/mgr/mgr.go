@@ -9,6 +9,7 @@ import (
 	"go-snake/loginServer"
 	"go-snake/robot"
 	"go-snake/simulation"
+	"go-snake/webcontrol"
 )
 
 var (
@@ -20,6 +21,7 @@ var (
 		CstRobot:   robot.New(CstRobot),
 		CstSDK:     SDKServer.New(CstSDK),
 		CstSimu:    simulation.New(CstSimu),
+		CstWebctrl: webcontrol.New(CstWebctrl),
 	}
 )
 
