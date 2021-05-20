@@ -10,7 +10,7 @@ import (
 	"go-snake/common/mixNet"
 	"go-snake/common/tcpNet"
 	"go-snake/gameServer/app"
-	_ "go-snake/gameServer/logic"
+	"go-snake/gameServer/logic"
 	"go-snake/gameServer/rpcBase"
 
 	"github.com/Peakchen/xgameCommon/utils"
@@ -33,6 +33,7 @@ func (this *Game) Init() {
 	//load config...
 	//...
 	app.Init()
+	logic.Init()
 	messageBase.InitCodec(&utils.CodecProtobuf{})
 	mixNet.NewSessionMgr(mixNet.GetApp())
 	evtAsync.NewMainEvtMgr()

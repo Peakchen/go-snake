@@ -10,7 +10,7 @@ import (
 	"go-snake/common/tcpNet"
 	"go-snake/loginServer/app"
 	"go-snake/core/usermgr"
-	"go-snake/loginServer/sdk_wechat"
+	"go-snake/model/sdk_wechat"
 	_ "go-snake/loginServer/logic"
 	"go-snake/loginServer/rpcBase"
 	"go-snake/app/application"

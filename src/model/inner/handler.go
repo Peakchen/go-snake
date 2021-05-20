@@ -9,7 +9,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func init() {
+func Register() {
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_SS_REGISTER_RSP),
 		(*akmessage.SS_Register_Resp)(nil),
 		func(actor user.IEntityUser, pb proto.Message) {

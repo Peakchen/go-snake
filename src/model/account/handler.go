@@ -13,16 +13,20 @@ import (
 	"github.com/Peakchen/xgameCommon/akLog"
 )
 
-func init() {
+func Register() {
+
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_ACC_REGISTER), (*akmessage.CS_AccRegister)(nil), func(actor user.IEntityUser, pb proto.Message) {
 		actor.HandlerRegister(pb)
 	})
+
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_LOGIN), (*akmessage.CS_Login)(nil), func(actor user.IEntityUser, pb proto.Message) {
 		actor.HandlerLogin(pb)
 	})
+
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_LOGOUT), (*akmessage.CS_Logout)(nil), func(actor user.IEntityUser, pb proto.Message) {
 		actor.HandlerLogout(pb)
 	})
+	
 }
 
 func (this *Acc) HandlerRegister(pb proto.Message) {

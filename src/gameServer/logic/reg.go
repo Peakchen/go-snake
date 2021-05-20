@@ -1,6 +1,13 @@
 package logic
 
 import (
-	_ "go-snake/gameServer/logic/inner"
-	_ "go-snake/gameServer/logic/role"
+	"go-snake/model/inner"
+	"go-snake/model/role"
 )
+
+func Init(){
+
+	inner.Register()
+	role.Register()
+	
+}

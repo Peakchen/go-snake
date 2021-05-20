@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func init() {
+func Register() {
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_CS_ENTER_GAME_SCENE), 
 		(*akmessage.CS_EnterGameScene)(nil), 
 		func(actor user.IEntityUser, pb proto.Message) {
