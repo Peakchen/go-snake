@@ -10,6 +10,8 @@ import (
 	"go-snake/robot"
 	"go-snake/simulation"
 	"go-snake/webcontrol"
+	"go-snake/world"
+	"go-snake/battle"
 )
 
 var (
@@ -22,6 +24,8 @@ var (
 		CstSDK:     SDKServer.New(CstSDK),
 		CstSimu:    simulation.New(CstSimu),
 		CstWebctrl: webcontrol.New(CstWebctrl),
+		CstWorld: 	world.New(CstWorld),
+		CstBattle: 	battle.New(CstBattle),
 	}
 )
 

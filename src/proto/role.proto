@@ -4,9 +4,9 @@ option go_package = "../akmessage";
 
 message RoleInfoContext 
 {
-    ID int64
-    Name string
-    Level int32
-    Icon string
+    int64   ID = 1; 
+    string  Name = 2;    
+    int32   Level = 3;
+    string  Icon = 4;  
         
 }

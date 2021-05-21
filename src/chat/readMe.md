@@ -1,1 +1,1 @@
-#### chat between to roles  in game
+# chat for roles / world / orignazition 

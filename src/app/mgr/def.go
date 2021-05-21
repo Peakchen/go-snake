@@ -8,5 +8,7 @@ const (
 	CstRobot   = "robot"
 	CstSDK     = "sdk"
 	CstSimu    = "simulation"
-	CstWebctrl    = "webctrl"
+	CstWebctrl  = "webctrl"
+	CstBattle 	= "battle"
+	CstWorld 	= "world"
 )

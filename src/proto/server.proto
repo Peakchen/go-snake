@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option go_package = "../akmessage";
 
+import "role.proto";
+
 enum ServerType
 {
     No = 0;
@@ -16,6 +18,8 @@ enum ServerType
     Email = 9;
     SDK = 10;
     Simulation = 11;
+    World = 12;
+    Battle = 13;
 }
 
 message SS_SSRoute
@@ -46,7 +50,7 @@ message SS_HeartBeat_Rsp
 
 message SS_Enter_Req
 {
-    RoleCtx RoleInfoContext
+    RoleInfoContext RoleCtx = 1;
 }
 
 message SS_Enter_Rsp
