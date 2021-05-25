@@ -9,6 +9,7 @@ type EntityManager struct {
 	sync.RWMutex
 
 	entitys map[int64]user.IEntityUser
+	loads   []func(em *EntityManager)
 }
 
 var (
@@ -17,8 +18,13 @@ var (
 	}
 )
 
-func DBPreloading() {
+func DBPreLoad() {
 	entitymgr.LoadAll()
+}
+
+func DBPreAddAndLoad(f ...func(em *EntityManager)){
+	entitymgr.Add(f...)
+	DBPreLoad()
 }
 
 func GetEntityMgr() *EntityManager {
