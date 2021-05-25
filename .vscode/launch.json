@@ -14,7 +14,7 @@
             "env": {},
             "args": [
                 "-app",
-                "webctrl",
+                "gate",
                 "-ver",
                 "1",
                 "-webhost",

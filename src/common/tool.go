@@ -12,7 +12,7 @@ import (
 	"runtime"
 	"runtime/debug"
 	"time"
-	"sync"
+	//"sync"
 
 	"github.com/Peakchen/xgameCommon/akLog"
 
@@ -23,13 +23,13 @@ func Dosafe(fn func(), exitfn func()) {
 	fn()
 }
 
-var wg sync.WaitGroup
+//var wg sync.WaitGroup
 	
 func DosafeRoutine(fn func(), exitfn func()) {
 
-	wg.Add(1)
+	//wg.Add(1)
 	
-	go func(){
+	//go func(){
 
 	    defer func(){
 
@@ -46,15 +46,15 @@ func DosafeRoutine(fn func(), exitfn func()) {
 				akLog.Error(errstr, string(debug.Stack()))
 			}
 
-	        wg.Done()
+	        //wg.Done()
 
 	    }()
 	    
-	    fn()
+	    go fn()
 	    
-	}()
+	//}()
 	
-	wg.Wait()
+	//wg.Wait()
 }
 
 func callerDebug() (str string) {
