@@ -1,4 +1,7 @@
 ##Software architecture
+
+![](https://img.shields.io/github/issues/Peakchen/go-snake)	![](https://img.shields.io/github/forks/Peakchen/go-snake)![](https://img.shields.io/github/stars/Peakchen/go-snake)![](https://img.shields.io/github/license/Peakchen/go-snake)
+
 1. Data security protection of gate server, load balancing and distribution of client messages
 2. Game server message processing, data storage
 3. Login server login service (for common login [by accountID and pwd] and wechat)

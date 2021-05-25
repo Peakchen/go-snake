@@ -1,5 +1,7 @@
 # go-snake
 
+![](https://img.shields.io/github/issues/Peakchen/go-snake)	![](https://img.shields.io/github/forks/Peakchen/go-snake)![](https://img.shields.io/github/stars/Peakchen/go-snake)![](https://img.shields.io/github/license/Peakchen/go-snake)
+
 #### 软件架构
 
 1. gate server （内、外网管）数据安全防护，负载均衡, 分发客户端消息
