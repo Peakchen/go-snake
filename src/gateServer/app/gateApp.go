@@ -36,18 +36,16 @@ type C2SContext struct {
 type GateApp struct {
 	sync.RWMutex
 
-	roles uint32
-	c2s   sync.Map //map[string]*C2SContext
-	s2s   sync.Map //map[string]*S2SContext
+	nt 		messageBase.NetType
+	roles 	uint32
+	c2s   	sync.Map
+	s2s   	sync.Map
 
 	isclose bool
 }
 
 func New() *GateApp {
 	return &GateApp{
-		//c2s: make(map[string]*C2SContext),
-		//s2s: make(map[string]*S2SContext),
-		//o2i: make(map[string]string),
 	}
 }
 
@@ -66,6 +64,9 @@ func (this *GateApp) selectServer(routeID akmessage.ServerType) string {
 }
 
 func (this *GateApp) Online(nt messageBase.NetType, sess interface{}) {
+
+	this.nt = nt
+
 	common.Dosafe(func() {
 		switch nt {
 		case messageBase.Net_WS:
@@ -170,7 +171,7 @@ func (this *GateApp) CS_SendInner(sid string, id uint32, data []byte) {
 
 		selectSID := this.selectServer(routeID)
 		if len(selectSID) == 0 {
-			//akLog.Error("can select server, info: ", cspt.GetMsgID(), routeID)
+			akLog.Error("can select server, info: ", cspt.GetMsgID(), routeID)
 			return
 		}
 
@@ -182,10 +183,12 @@ func (this *GateApp) CS_SendInner(sid string, id uint32, data []byte) {
 			akLog.Error("can not find server select server, selectSID: ", selectSID)
 			return
 		}
+
 		packMsg := messageBase.SSPackMsg_pb(sid, s.(*S2SContext).session.GetUID(), akmessage.MSG_SS_ROUTE, &akmessage.SS_SSRoute{Data: data})
 		if packMsg != nil {
 			s.(*S2SContext).session.SendMsg(packMsg)
 		}
+
 	}, nil)
 }
 

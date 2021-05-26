@@ -55,7 +55,7 @@ func NewWebSession(conn *websocket.Conn, mgr mixNet.SessionMgrIf) *WebSession {
 	akLog.Info("ws new session: ", sess.sessionID)
 	sess.sessmgr.AddWebSession(sess.GetSessionID(), sess)
 	sess.Handle()
-	
+
 	return sess
 }
 
@@ -176,7 +176,7 @@ func (this *WebSession) readloop() {
 }
 
 func (this *WebSession) read(content *wsMessage) {
-	akLog.FmtPrintln("read: ", content.messageType)
+	akLog.FmtPrintln("read: ", content.messageType, len(content.data))
 	if handler := GetMessageHandler(content.messageType); handler != nil {
 		handler(this, content)
 	} else {

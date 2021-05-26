@@ -19,8 +19,11 @@ func NewTcpServer(host string, st akmessage.ServerType, extFn ...OptionFn) {
 }
 
 func (this *myTcpServer) StartTcpListen(host string, mgr mixNet.SessionMgrIf, st akmessage.ServerType, extFns *ExtFnsOption) {
+
 	os.Setenv("GOTRACEBACK", "crash")
+
 	common.DosafeRoutine(func() {
+
 		tcpAddr, err := net.ResolveTCPAddr("tcp4", host)
 		if err != nil {
 			akLog.Fail("resole tcp, host: ", host)
@@ -34,16 +37,21 @@ func (this *myTcpServer) StartTcpListen(host string, mgr mixNet.SessionMgrIf, st
 		}
 
 		for {
+			
 			conn, err := listener.AcceptTCP()
 			if err != nil {
 				akLog.Error("accept fail,err: ", err)
 				continue
 			}
+
+			/*
 			if mgr.IsClose() {
 				akLog.Info("server close tcp...")
 				return
-			}
-			NewTcpSession(conn, st, make(chan bool, 1), mgr, extFns)
+			}*/
+
+			go NewTcpSession(conn, st, make(chan bool, 1), mgr, extFns)
 		}
+		
 	}, nil)
 }

@@ -46,7 +46,7 @@ func (this *Game) Type() akmessage.ServerType {
 func (this *Game) Run(d *in.Input) {
 
 	akOrm.OpenDB(d.Scfg.MysqlUser, d.Scfg.MysqlPwd, d.Scfg.MysqlHost, d.Scfg.MysqlDataBase)
-
+	logic.LoadDB()
 	rpcBase.RunRpc(d.Scfg.EtcdIP, d.Scfg.EtcdNodeIP)
 	
 	tcpNet.NewTcpClient(

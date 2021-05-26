@@ -7,6 +7,7 @@ import (
 	"go-snake/common/mixNet"
 	"net"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -25,18 +26,17 @@ type TcpSession struct {
 	stopthis chan bool
 	sendCh   chan []byte
 	conn     *net.TCPConn
-
 	Sessmgr mixNet.SessionMgrIf
 	extFns  *ExtFnsOption
-
-	uid  int64
-	svrt akmessage.ServerType
-	clit akmessage.ServerType
-
-	status uint32
+	uid  	int64
+	svrt 	akmessage.ServerType
+	clit 	akmessage.ServerType
+	status 	uint32
+	wg 		sync.WaitGroup
 }
 
 func NewTcpSession(c *net.TCPConn, st akmessage.ServerType, stop chan<- bool, mgr mixNet.SessionMgrIf, extFn *ExtFnsOption) *TcpSession {
+	
 	session := &TcpSession{
 		id:       strings.Trim(utils.GetUUID(), " "),
 		stop:     stop,
@@ -47,11 +47,13 @@ func NewTcpSession(c *net.TCPConn, st akmessage.ServerType, stop chan<- bool, mg
 		svrt:     st,
 		stopthis: make(chan bool, 1),
 	}
+
 	akLog.Info("tcp new session: ", session.id)
 	session.conn.SetKeepAlive(true)
 	session.SetConnected()
 	mgr.AddTcpSession(session.id, session)
 	session.handler()
+	
 	return session
 }
 
@@ -60,18 +62,27 @@ func (this *TcpSession) GetSessionID() string {
 }
 
 func (this *TcpSession) handler() {
-	common.DosafeRoutine(this.readloop, this.close)
-	common.DosafeRoutine(this.writeloop, this.close)
+	
+	this.wg.Add(2)
+
+	common.DosafeRoutine(this.readloop, nil)
+	common.DosafeRoutine(this.writeloop, nil)
+
 	if this.extFns.CS_HeartBeat != nil {
-		common.DosafeRoutine(this.heartBeat, this.close)
+		common.DosafeRoutine(this.heartBeat, nil)
 	}
+
+	this.wg.Wait()
+	this.close()
+
 }
 
 func (this *TcpSession) heartBeat() {
+
 	tick := time.NewTicker(3 * time.Second)
+
 	defer func() {
-		tick.Stop()
-		this.close()
+		this.wg.Done()
 	}()
 
 heartBeat:
@@ -79,6 +90,7 @@ heartBeat:
 		select {
 		case <-this.stopthis:
 			break heartBeat
+
 		case <-tick.C:
 			if this.GetStatus() == messageBase.CONNECTED {
 				this.sendCh <- this.extFns.CS_HeartBeat(this.id)
@@ -90,16 +102,16 @@ heartBeat:
 }
 
 func (this *TcpSession) readloop() {
+
 	common.Dosafe(func() {
+		
 		defer func() {
-			this.close()
+			this.stop <- true
+			this.wg.Done()
 		}()
 
-	readloop:
 		for {
 			select {
-			case <-this.stopthis:
-				break readloop
 			default:
 				this.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
 				if this.extFns.Handler != nil {
@@ -111,22 +123,21 @@ func (this *TcpSession) readloop() {
 		}
 
 		akLog.Info("readloop break.")
+
 	}, nil)
 }
 
 func (this *TcpSession) writeloop() {
 
 	common.Dosafe(func() {
+
 		defer func() {
-			this.close()
+			this.stop <- true
+			this.wg.Done()
 		}()
 
-	writeloop:
 		for {
 			select {
-			case <-this.stopthis:
-				break writeloop
-
 			case data := <-this.sendCh:
 
 				this.conn.SetWriteDeadline(aktime.Now().Add(15 * time.Second))
@@ -140,6 +151,7 @@ func (this *TcpSession) writeloop() {
 		}
 
 		akLog.Info("writeloop break.")
+
 	}, nil)
 
 }

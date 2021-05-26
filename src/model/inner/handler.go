@@ -13,20 +13,20 @@ func Register() {
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_SS_REGISTER_RSP),
 		(*akmessage.SS_Register_Resp)(nil),
 		func(actor user.IEntityUser, pb proto.Message) {
-			actor.HandlerRegisterResp(pb)
+			HandlerRegisterResp(pb)
 		})
 
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_SS_HEARTBEAT_RSP),
 		(*akmessage.SS_HeartBeat_Rsp)(nil),
 		func(actor user.IEntityUser, pb proto.Message) {
-			actor.HandlerHeartBeatResp(pb)
+			HandlerHeartBeatResp(pb)
 		})
 }
 
-func (this *ServerInner) HandlerRegisterResp(pb proto.Message) {
+func HandlerRegisterResp(pb proto.Message) {
 	akLog.FmtPrintln("register finish....")
 }
 
-func (this *ServerInner) HandlerHeartBeatResp(pb proto.Message) {
+func HandlerHeartBeatResp(pb proto.Message) {
 	akLog.FmtPrintln("recv Heart Beat....")
 }
