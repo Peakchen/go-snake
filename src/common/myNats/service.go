@@ -10,6 +10,7 @@ import (
 
 type MyNats struct {
 	natsConn *nats.Conn
+	encodeConn *nats.EncodedConn
 }
 
 var (
@@ -25,10 +26,18 @@ func CreateMyNats(addr string){
 		return
 	}
 
+	eConn, err := nats.NewEncodedConn(conn, nats.DEFAULT_ENCODER)
+	if err != nil {
+	
+		ulog.Errorf("nats EncodedConn fail, err: %v.", err)
+		return
+	}
+
 	conn.Flush()
 
 	myNatsObj = &MyNats{
 		natsConn: conn,
+		encodeConn: eConn,
 	}
 
 }
@@ -63,13 +72,14 @@ func (self *MyNats) Publish(topic string, data []byte) (err error) {
 	return
 }
 
-func (self *MyNats) Subscribe(topic string, callback nats.MsgHandler){
+func (self *MyNats) Subscribe(topic string, callback nats.MsgHandler) bool {
 
-	_, err := self.natsConn.Subscribe(topic, callback) // return ?
+	_, err := self.natsConn.Subscribe(topic, callback)
 	if err != nil {
-
 		ulog.Errorf("nats subscribe err: %v.", err)	
 	}
+
+	return err == nil
 
 }
 
@@ -92,3 +102,4 @@ func (self *MyNats) Request(topic string, interf interface{}, callback nats.MsgH
 	callback(msg)
 	
 }
+

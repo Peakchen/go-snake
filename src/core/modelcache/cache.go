@@ -9,7 +9,7 @@ import (
 	"go-snake/dbmodel/acc_model"
 	"go-snake/dbmodel/wechat_model"
 	"go-snake/core/usermgr"
-	"github.com/Peakchen/xgameCommon/akLog"
+	//"github.com/Peakchen/xgameCommon/akLog"
 )
 
 
@@ -24,7 +24,8 @@ func LoadAllRole(em *usermgr.EntityManager) {
 			entity := user.InitEntity(model.DBID)
 
 			if !em.AddEnity(model.DBID, entity) {
-				akLog.Error("exist same entity, dbid: ", model.DBID)
+				//akLog.Info("exist same entity, dbid: ", model.DBID)
+				continue
 			}
 
 			entity.LoadAcc(model)
@@ -43,7 +44,8 @@ func LoadAllWxRole(em *usermgr.EntityManager) {
 
 			entity := user.InitEntity(model.DBID)
 			if !em.AddEnity(model.DBID, entity) {
-				akLog.Error("exist same entity, dbid: ", model.DBID)
+				//akLog.Info("exist same entity, dbid: ", model.DBID)
+				continue
 			}
 
 			entity.LoadWxRole(model)

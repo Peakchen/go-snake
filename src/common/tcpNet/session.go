@@ -81,16 +81,8 @@ func (this *TcpSession) heartBeat() {
 
 	tick := time.NewTicker(3 * time.Second)
 
-	defer func() {
-		this.wg.Done()
-	}()
-
-heartBeat:
 	for {
 		select {
-		case <-this.stopthis:
-			break heartBeat
-
 		case <-tick.C:
 			if this.GetStatus() == messageBase.CONNECTED {
 				this.sendCh <- this.extFns.CS_HeartBeat(this.id)

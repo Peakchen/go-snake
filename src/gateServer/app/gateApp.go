@@ -68,6 +68,7 @@ func (this *GateApp) Online(nt messageBase.NetType, sess interface{}) {
 	this.nt = nt
 
 	common.Dosafe(func() {
+
 		switch nt {
 		case messageBase.Net_WS:
 
@@ -90,6 +91,7 @@ func (this *GateApp) Online(nt messageBase.NetType, sess interface{}) {
 			})
 
 		}
+
 	}, nil)
 }
 
@@ -137,6 +139,7 @@ func (this *GateApp) CS_SendInner(sid string, id uint32, data []byte) {
 			akLog.Error("can not find client session, sid: ", sid)
 			return
 		}
+		
 		c.(*C2SContext).msgActor.SetSession(sid)
 
 		cspt := messageBase.CSPackTool()

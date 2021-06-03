@@ -86,17 +86,20 @@ func CSPackMsg_pb(mainID akmessage.MSG, msg proto.Message) []byte {
 	return out
 }
 
-func CSUnPackMsg_pb(data []byte, pb proto.Message) (id uint32) {
+func CSUnPackMsg_pb(data []byte, pb proto.Message) (id uint32, err error) {
+
 	pack := CSPackTool()
-	err := pack.UnPack(data)
+	err = pack.UnPack(data)
 	if err != nil {
 		akLog.Error(err)
 		return
 	}
+
 	err = Codec().Unmarshal(pack.GetData(), pb)
 	if err != nil {
 		akLog.Error(fmt.Errorf("unmarshal message fail, err: %v.", err))
 		return
 	}
-	return pack.GetMsgID()
+
+	return pack.GetMsgID(), err
 }

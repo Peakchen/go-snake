@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"go-snake/akmessage"
 	"github.com/Peakchen/xgameCommon/akLog"
+	"github.com/davyxu/ulog"
+	"github.com/nats-io/nats.go"
 )
 
 func init(){
@@ -49,6 +51,23 @@ func (this *NatsQueue) publish() {
 	akLog.FmtPrintln("nats queue publish...")
 
 	myNats.Publish("nats", messageBase.CSPackMsg_pb(akmessage.MSG_CS_ENTER_GAME_SCENE, &akmessage.CS_EnterGameScene{}))
+
+	myNats.Request("natstwo", &akmessage.CS_AccRegister{
+		Acc: "111",
+	}, func(rsp *nats.Msg){
+
+		var msg akmessage.SC_AccRegister
+		id, err := messageBase.CSUnPackMsg_pb(rsp.Data, &msg)
+		if err != nil {
+			ulog.Errorf("nats rsp msg unpack fail, err: %v", err)
+			return
+		}
+
+		ulog.Infoln("nats2 ret: ", id, msg.Ret)
+
+	})
+
+	ulog.Infoln("push end.... ")
 
 }
 

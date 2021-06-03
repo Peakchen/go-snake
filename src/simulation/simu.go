@@ -9,6 +9,7 @@ import (
 	"go-snake/common/myNats"
 	"go-snake/app/application"
 	"github.com/Peakchen/xgameCommon/utils"
+	"go-snake/common/messageBase"
 )
 
 type Simulation struct {
@@ -22,7 +23,7 @@ func New(name string) *Simulation {
 }
 
 func (this *Simulation) Init() {
-
+	messageBase.InitCodec(&utils.CodecProtobuf{})
 }
 
 func (this *Simulation) Type() akmessage.ServerType {

@@ -74,7 +74,9 @@ func (this *LoginApp) SendClient(sid string, id uint32, data []byte) {
 
 //gate2->login
 func (this *LoginApp) Handler(sid string, data []byte) {
+
 	common.Dosafe(func() {
+		
 		sessIf, _ := this.session.Load(sid)
 		if sessIf == nil {
 			akLog.Info("session disconnect, sid: ", sid)
