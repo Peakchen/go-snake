@@ -9,8 +9,9 @@ type IEvent interface {
 }
 
 type EventOption struct {
-	Task  interface{}
-	Event interface{}
+	Task  	interface{}
+	Event 	interface{}
+	Func 	interface{}
 }
 
 func (this *EventOption) TaskHandler(t interface{}) {

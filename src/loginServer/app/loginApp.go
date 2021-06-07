@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"go-snake/akmessage"
 	"go-snake/common"
-	"go-snake/common/evtAsync"
+	//"go-snake/common/evtAsync"
 	"go-snake/common/messageBase"
 	"go-snake/common/mixNet"
 	"go-snake/common/tcpNet"
@@ -37,28 +37,28 @@ func NewApp() *LoginApp {
 }
 
 func (this *LoginApp) Online(nt messageBase.NetType, sess interface{}) {
-	evtAsync.SendEvtFn(func() {
-		switch nt {
-		case messageBase.Net_WS:
 
-		case messageBase.Net_TCP:
-			session := sess.(*tcpNet.TcpSession)
-			this.session.Store(session.GetSessionID(), session)
-			session.SendMsg(messageBase.GetActorRegisterReq(session.GetSessionID(), session.GetType()))
-		}
-	})
+	switch nt {
+	case messageBase.Net_WS:
+
+	case messageBase.Net_TCP:
+		session := sess.(*tcpNet.TcpSession)
+		this.session.Store(session.GetSessionID(), session)
+		session.SendMsg(messageBase.GetActorRegisterReq(session.GetSessionID(), session.GetType()))
+	}
+
 }
 
 func (this *LoginApp) Offline(nt messageBase.NetType, id string) {
-	evtAsync.SendEvtFn(func() {
-		switch nt {
-		case messageBase.Net_WS:
 
-		case messageBase.Net_TCP:
-			this.session.Delete(id)
-			akLog.Info("tcp offline: ", id)
-		}
-	})
+	switch nt {
+	case messageBase.Net_WS:
+
+	case messageBase.Net_TCP:
+		this.session.Delete(id)
+		akLog.Info("tcp offline: ", id)
+	}
+
 }
 
 func (this *LoginApp) Bind(sid string, id int64) {
@@ -155,7 +155,6 @@ func (this *LoginApp) Handler(sid string, data []byte) {
 
 //login->gate2
 func (this *LoginApp) SS_SendInner(sid string, id uint32, data []byte) {
-	//evtAsync.SendEvtFn(func() {
 	this.session.Range(func(k interface{}, v interface{}) bool {
 		v.(*tcpNet.TcpSession).SendMsg(data)
 		return true

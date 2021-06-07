@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	ET_FUNC = iota
+	ET_FUNC = iota + 1
 	ET_TASK
 	ET_EVENT
 )
@@ -23,6 +23,7 @@ type EvtMgr struct {
 	content chan *EventContent
 	eopts   *EventOption
 	poolfn  *ants.Pool
+	
 }
 
 var (
@@ -34,7 +35,6 @@ func NewMainEvtMgr(opts ...OptFn) {
 	p, _ := ants.NewPool(10 * 1024)
 	_main = &EvtMgr{
 		poolfn: p,
-		//fnch:    make(chan func(), 3*1000),
 		content: make(chan *EventContent, 1000),
 		eopts:   loadEventOpts(opts...),
 	}
