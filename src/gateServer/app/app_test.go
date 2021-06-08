@@ -11,6 +11,8 @@ import (
 	"github.com/Peakchen/xgameCommon/utils"
 
 	"google.golang.org/protobuf/proto"
+	"time"
+	"sync"
 )
 
 func init() {
@@ -66,4 +68,75 @@ func TestPackHeartBeat(t *testing.T) {
 		fmt.Println("ss recv invalid, id: ", msgid, dstData)
 		return
 	}
+}
+
+func TestMapOperate(t *testing.T){
+
+	var Data []int64
+
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var cond = sync.NewCond(&mu)
+	
+
+	wg.Add(2)
+
+	go func(){
+
+		t := time.NewTicker(10*time.Millisecond)
+		defer func(){
+			wg.Done()	
+			t.Stop()
+		}()
+
+		nowt := time.Now().Unix()
+		for range t.C{
+
+			mu.Lock()
+			nowt += 1
+			//for i:=1; i<=5;i++{
+			fmt.Println("produce... ")
+			Data = append(Data, nowt)
+			//}
+			mu.Unlock()
+
+			cond.Signal()
+
+		}
+
+	}()
+
+	go func(){
+
+		//t := time.NewTicker(60*time.Millisecond)
+		defer func(){
+			wg.Done()	
+			//t.Stop()
+		}()
+
+		for {
+
+			cond.L.Lock()
+			if len(Data) == 0 {
+				cond.Wait()
+			}
+
+			//for range t.C{
+
+			for i:=0; i<len(Data);i++{
+				fmt.Println("consume: ", Data[i])
+				Data = append(Data[:i], Data[i+1:]...)
+			}
+
+			//}
+
+			cond.L.Unlock()
+		}
+
+	}()
+
+	wg.Wait()
+
+	fmt.Println("test end.")
+
 }

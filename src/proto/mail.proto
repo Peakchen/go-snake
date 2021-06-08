@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+import "errorcode.proto";
+import "item.proto";
+
+message CS_MailInfo {
+
+}
+
+enum EMailStatus {
+    EMS_None = 0;   //未读未领取
+    EMS_Read = 1;   //已读未领取
+    EMS_Done = 2;   //已读已领取
+}
+
+message MailItem 
+{
+    string MailSN  = 1;                         //唯一标识
+    int32 ID       = 2;                         //配置ID，后台自定义邮件，此值为0
+    string Title   = 3;                         //标配，配置可找到，则不需要，否则需要加
+    string Content = 4;                         //内容，如果当前是配置内容，则当前不存，否则，后台运营自定义邮件，则需要填充
+    string Params  = 5;                         //参数[xx,yy,aa...]，有参数则填补，没有则不需要
+    repeated BagItem Attachments = 6;           //附件,后台运营自定义邮件，则需要填充，特殊情况：配置有，但某功能产出附加，则双方面都需要
+    int64 CreateTimeUTC = 7;                    //创建时间
+    string Creator      = 8;                    //创建者
+    EMailStatus Status  = 9;                    //邮件状态
+    int32 Duration      = 10;                   //持续时间，后台运营设置
+    int32 Type          = 11;                   //邮件类型，后台运营设置
+}
+
+message SC_MailInfo {
+    
+    ErrorCode Ret = 1;
+
+    repeated MailItem Items = 2;
+
+}
+
+message CS_MailRead {
+    
+    int64 MailSN = 1;
+
+}
+
+message SC_MailRead {
+
+    ErrorCode Ret = 1;
+    int64 MailSN = 2;
+
+}
+
+message CS_MailTake {
+
+    int64 MailSN = 1;
+
+}
+
+message SC_MailTake {
+
+    ErrorCode Ret = 1;
+    int64 MailSN = 2;
+
+}
+
+message CS_MailOneKeyRead {
+
+}
+
+message SC_MailOneKeyRead {
+    ErrorCode Ret = 1;
+}
+
+message CS_MailOneKeyTake{
+
+}
+
+message SC_MailOneKeyTake {
+    ErrorCode Ret = 1;
+}
+
+message CS_MailDelete {
+    int64 MailSN = 1;
+}
+
+message SC_MailDelete {
+
+    ErrorCode Ret = 1;
+    int64 MailSN = 2;
+
+}
+
+enum EMailDeleteStatus {
+    EMDS_All = 0;
+    EMDS_Read = 1;
+    EMDS_Done = 2;
+}
+
+message CS_MailOneKeyDelete {
+    EMailDeleteStatus Status = 1;
+}
+
+message SC_MailOneKeyDelete {
+
+    ErrorCode Ret = 1;
+    EMailDeleteStatus Status = 2;
+
+}

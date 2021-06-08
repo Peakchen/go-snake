@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+import "errorcode.proto";
+
+message BagItem 
+{
+    int32 ID = 1; 
+    int32 Count = 2;
+}
+

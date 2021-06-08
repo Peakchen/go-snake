@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+import "errorcode.proto";
+import "item.proto";
+
+message SyncData 
+{
+    repeated BagItem Items = 1;
+}
+
