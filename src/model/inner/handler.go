@@ -10,23 +10,36 @@ import (
 )
 
 func Register() {
+
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_SS_REGISTER_RSP),
 		(*akmessage.SS_Register_Resp)(nil),
 		func(actor user.IEntityUser, pb proto.Message) {
-			HandlerRegisterResp(pb)
+
+			if actor != nil {
+				actor.HandlerRegisterResp(pb)
+			}else{
+				akLog.Error("invalid actor object.")
+			}
+			
 		})
 
 	msg.RegisterActorMessageProc(uint32(akmessage.MSG_SS_HEARTBEAT_RSP),
 		(*akmessage.SS_HeartBeat_Rsp)(nil),
 		func(actor user.IEntityUser, pb proto.Message) {
-			HandlerHeartBeatResp(pb)
+
+			if actor != nil {
+				actor.HandlerHeartBeatResp(pb)
+			}else{
+				akLog.Error("invalid actor object.")
+			}
+
 		})
 }
 
-func HandlerRegisterResp(pb proto.Message) {
+func (this *ServerInner) HandlerRegisterResp(pb proto.Message) {
 	akLog.FmtPrintln("register finish....")
 }
 
-func HandlerHeartBeatResp(pb proto.Message) {
+func (this *ServerInner) HandlerHeartBeatResp(pb proto.Message) {
 	akLog.FmtPrintln("recv Heart Beat....")
 }

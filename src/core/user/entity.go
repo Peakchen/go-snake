@@ -63,6 +63,7 @@ type IEntityUser interface {
 	IInner
 	IWxRole
 	IRole
+	IMail
 }
 
 type EntityUser struct {
@@ -72,50 +73,89 @@ type EntityUser struct {
 	IInner
 	IWxRole
 	IRole
+	IMail
 }
 
 func InitEntity(dbid int64) IEntityUser {
+
 	user := &EntityUser{
 		Entity: &Entity{
 			dbid: dbid,
 		},
 	}
+
 	user.RegModels()
 	return user
+
 }
 
 func NewEntity(sid string, uid int64) IEntityUser {
+
 	return &EntityUser{
 		Entity: &Entity{
 			dbid: uid,
 			sid:  sid,
 		},
 	}
+
 }
 
 func NewEntityBySid(sid string) IEntityUser {
+
 	user := &EntityUser{
 		Entity: newEntity(sid),
 	}
+
 	user.RegModels()
 	return user
 }
 
 func (this *EntityUser) RegModels() {
+
 	RangeModels(func(id int, cb ModelFn) {
+
 		entity := cb(this)
-		switch id {
-		case M_ACCOUNT:
-			this.IAcc = entity.(IAcc)
-		case M_SERVERINNER:
-			this.IInner = entity.(IInner)
-		case M_WXROLE:
-			this.IWxRole = entity.(IWxRole)
-		case M_ROLE:
-			this.IRole = entity.(IRole)
+		
+		set := entityRegMap[id]
+		if set != nil {
+			set(this, entity)
+		}else{
+			akLog.Error("can not find model id: %v.", id)
 		}
+
 	})
+
 }
+
+type RegHandler func(this *EntityUser, entity interface{})
+var entityRegMap = map[int]RegHandler{
+	M_ACCOUNT: SetAcc,
+	M_SERVERINNER: SetInner,
+	M_WXROLE: SetWxRole,
+	M_ROLE: SetRole,
+	M_Mail: SetMail,
+}
+
+func SetAcc(this *EntityUser, entity interface{}){
+	this.IAcc = entity.(IAcc)
+}
+
+func SetInner(this *EntityUser, entity interface{}){
+	this.IInner = entity.(IInner)
+}
+
+func SetWxRole(this *EntityUser, entity interface{}){
+	this.IWxRole = entity.(IWxRole)
+}
+
+func SetRole(this *EntityUser, entity interface{}){
+	this.IRole = entity.(IRole)
+}
+
+func SetMail(this *EntityUser, entity interface{}){
+	this.IMail = entity.(IMail)
+}
+
 
 type IEntityAI interface {
 	//self
