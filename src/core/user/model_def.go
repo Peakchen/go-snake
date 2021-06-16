@@ -6,4 +6,5 @@ const (
 	M_WXROLE
 	M_ROLE
 	M_Mail
+	M_Chat
 )

@@ -39,6 +39,7 @@ enum MSG
     CS_LOGOUT = 10003;  //登出
     SC_LOGOUT = 10004;  //
 
+    //邮件相关
     CS_MAILINFO = 10005; 
     SC_MAILINFO = 10006; 
 
@@ -59,6 +60,11 @@ enum MSG
 
     CS_MAILONEKEYDELETE = 10017;
     SC_MAILONEKEYDELETE = 10018;
+
+    //聊天相关
+    CS_CHAT = 10019;
+    SC_CHAT = 10020;
+    SS_CHAT = 10021;
 
     GAME_MAX = 100000; //客户端服务器最大协议
 }

@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+import "errorcode.proto";
+
+enum EChatType
+{
+    None = 0; //非法类型
+    Private = 1; //私有聊天
+    Global = 2; //世界聊天
+    Guild = 3; //公会/帮会
+    FriendGroup = 4; //朋友分组
+    
+}
+
+message CS_Chat {
+    EChatType Type = 1;
+    string Content = 2;
+}
+
+message SC_Chat{
+    ErrorCode Ret = 1;
+
+    EChatType Type = 2;
+    string Content = 3;
+}
+
+message SS_Chat {
+    EChatType Type = 1;
+    string Content = 2;
+}

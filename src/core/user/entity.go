@@ -64,6 +64,7 @@ type IEntityUser interface {
 	IWxRole
 	IRole
 	IMail
+	IChat
 }
 
 type EntityUser struct {
@@ -74,6 +75,7 @@ type EntityUser struct {
 	IWxRole
 	IRole
 	IMail
+	IChat
 }
 
 func InitEntity(dbid int64) IEntityUser {
@@ -125,35 +127,6 @@ func (this *EntityUser) RegModels() {
 
 	})
 
-}
-
-type RegHandler func(this *EntityUser, entity interface{})
-var entityRegMap = map[int]RegHandler{
-	M_ACCOUNT: SetAcc,
-	M_SERVERINNER: SetInner,
-	M_WXROLE: SetWxRole,
-	M_ROLE: SetRole,
-	M_Mail: SetMail,
-}
-
-func SetAcc(this *EntityUser, entity interface{}){
-	this.IAcc = entity.(IAcc)
-}
-
-func SetInner(this *EntityUser, entity interface{}){
-	this.IInner = entity.(IInner)
-}
-
-func SetWxRole(this *EntityUser, entity interface{}){
-	this.IWxRole = entity.(IWxRole)
-}
-
-func SetRole(this *EntityUser, entity interface{}){
-	this.IRole = entity.(IRole)
-}
-
-func SetMail(this *EntityUser, entity interface{}){
-	this.IMail = entity.(IMail)
 }
 
 
