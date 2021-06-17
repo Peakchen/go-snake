@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+option go_package = "../akmessage";
+
+import "errorcode.proto";
+
+enum EFriendType {
+    EFT_None = 0;
+    EFT_Friend = 1; //好友
+    EFT_Stranger = 2; //陌生人
+    EFT_Guild = 3; //帮会朋友
+}
+
+//请求好友列表
+message CS_FriendList {
+    int32 PageIdx = 1; 
+    EFriendType Select = 2; //查询类型
+}
+
+message SC_FriendList {
+    ErrorCode Ret = 1;
+
+    int32 PageIdx = 2; 
+    EFriendType Select = 3; //查询类型
+}
+
+//请求添加好友
+message CS_FriendAdd {
+    int64 RoleSN = 1;
+}
+
+message SC_FriendAdd {
+    ErrorCode Ret = 1;
+
+    int64 RoleSN = 2;
+}
+
+//请求删除好友
+message CS_FriendDelete {
+    int64 RoleSN = 1;
+}
+
+message SC_FriendDelete {
+    int64 RoleSN = 1;
+    ErrorCode Ret = 2;
+}
+
+//请求查询好友
+message CS_FriendQuery {
+    string RoleName = 1;
+}
+
+message SC_FriendQuery {
+    string RoleName = 1;
+
+    ErrorCode Ret = 2;
+}
+
+//拉黑好友
+message CS_FriendBlack {
+    int64 RoleSN = 1;
+}
+
+message SC_FriendBlack {
+    int64 RoleSN = 1;
+
+    ErrorCode Ret = 2;
+}

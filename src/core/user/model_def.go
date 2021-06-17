@@ -7,4 +7,5 @@ const (
 	M_ROLE
 	M_Mail
 	M_Chat
+	M_Friend
 )

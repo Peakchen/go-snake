@@ -65,6 +65,7 @@ type IEntityUser interface {
 	IRole
 	IMail
 	IChat
+	IFriend
 }
 
 type EntityUser struct {
@@ -76,6 +77,7 @@ type EntityUser struct {
 	IRole
 	IMail
 	IChat
+	IFriend
 }
 
 func InitEntity(dbid int64) IEntityUser {
