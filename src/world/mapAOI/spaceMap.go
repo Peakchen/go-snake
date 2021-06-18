@@ -145,12 +145,12 @@ func (this *SpaceMap) GetFirstFiltered(x, y, filters, notFilters interface{})int
 				break
 			}
 
-			if reflect.TypeOf(objs[i]) != reflect.TypeOf([]int{}){
+			if reflect.TypeOf(objs[i]) != reflect.TypeOf([]interface{}{}){
 				ok = false
 				break
 			}
 			
-			sliceObjs := objs[i].([]int)
+			sliceObjs := objs[i].([]interface{})
 			if sliceObjs[sliceFilters[f]] == 0 {
 				ok = false
 				break
@@ -168,13 +168,13 @@ func (this *SpaceMap) GetFirstFiltered(x, y, filters, notFilters interface{})int
 				break
 			}
 
-			if reflect.TypeOf(objs[i]) != reflect.TypeOf([]int{}){
+			if reflect.TypeOf(objs[i]) != reflect.TypeOf([]interface{}{}){
 				ok = false
 				break
 			}
 			
-			sliceObjs := objs[i].([]int)
-			if sliceObjs[slicenotFilters[f]] == 0 {
+			sliceObjs := objs[i].([]interface{})
+			if sliceObjs[slicenotFilters[f]] == nil {
 				ok = false
 				break
 			}
