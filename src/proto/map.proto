@@ -2,5 +2,24 @@ syntax = "proto3";
 
 option go_package = "../akmessage";
 
-//地图协议
+import "errorcode.proto";
 
+//enter map
+message SS_EnterMap_Req {
+    int64 RoleID = 1;
+    int32 MapID = 2;
+}
+
+message SS_EnterMap_Rsp {
+
+    int64 RoleID = 1;
+    int32 MapID = 2;
+
+    ErrorCode Ret = 3;
+}
+
+//enter map success notify
+message SC_EnterMap {
+    int64 RoleID = 1;
+    int64 MapID = 2;
+}

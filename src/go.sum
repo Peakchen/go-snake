@@ -9,6 +9,8 @@ github.com/CloudyKit/jet/v3 v3.0.0 h1:1PwO5w5VCtlUUl+KTOBsTGZlhjWkcybsGaAau52tOy
 github.com/CloudyKit/jet/v3 v3.0.0/go.mod h1:HKQPgSJmdK8hdoAbKUUWajkHyHo4RaU5rMdUywE7VMo=
 github.com/Joker/hpp v1.0.0 h1:65+iuJYdRXv/XyN62C1uEmmOx3432rNG/rKlX6V7Kkc=
 github.com/Joker/hpp v1.0.0/go.mod h1:8x5n+M1Hp5hC0g8okX3sR3vFQwynaX/UgSOM9MeBKzY=
+github.com/Peakchen/go-tmx v0.0.0-20210618111834-e690ac89fd6b h1:lTshEhBR24mkY8N1v1iS0Q8R/XrGJyW8LdKPtpOlPcg=
+github.com/Peakchen/go-tmx v0.0.0-20210618111834-e690ac89fd6b/go.mod h1:D4gqerPYff9+jPNq8YFnYmRXFekg+1OwH99/stJwvM4=
 github.com/Peakchen/xgameCommon v0.0.6-0.20210310091059-6c4643710177 h1:yG+rOcOWnIyJTlpm6mcRmhwix43+8sYa1ZkPj+MXHdk=
 github.com/Peakchen/xgameCommon v0.0.6-0.20210310091059-6c4643710177/go.mod h1:9JhX87Z8WLxWFT9CfLTCjKk+/DfIipk7EmGEq48RI0M=
 github.com/Shopify/goreferrer v0.0.0-20181106222321-ec9c9a553398 h1:WDC6ySpJzbxGWFh4aMxFFC28wwGp5pEuoTtvA4q/qQ4=

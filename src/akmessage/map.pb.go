@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
+	sync "sync"
 )
 
 const (
@@ -19,21 +20,230 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+//enter map
+type SS_EnterMap_Req struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	RoleID int64 `protobuf:"varint,1,opt,name=RoleID,proto3" json:"RoleID,omitempty"`
+	MapID  int32 `protobuf:"varint,2,opt,name=MapID,proto3" json:"MapID,omitempty"`
+}
+
+func (x *SS_EnterMap_Req) Reset() {
+	*x = SS_EnterMap_Req{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_map_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SS_EnterMap_Req) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SS_EnterMap_Req) ProtoMessage() {}
+
+func (x *SS_EnterMap_Req) ProtoReflect() protoreflect.Message {
+	mi := &file_map_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SS_EnterMap_Req.ProtoReflect.Descriptor instead.
+func (*SS_EnterMap_Req) Descriptor() ([]byte, []int) {
+	return file_map_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *SS_EnterMap_Req) GetRoleID() int64 {
+	if x != nil {
+		return x.RoleID
+	}
+	return 0
+}
+
+func (x *SS_EnterMap_Req) GetMapID() int32 {
+	if x != nil {
+		return x.MapID
+	}
+	return 0
+}
+
+type SS_EnterMap_Rsp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	RoleID int64     `protobuf:"varint,1,opt,name=RoleID,proto3" json:"RoleID,omitempty"`
+	MapID  int32     `protobuf:"varint,2,opt,name=MapID,proto3" json:"MapID,omitempty"`
+	Ret    ErrorCode `protobuf:"varint,3,opt,name=Ret,proto3,enum=ErrorCode" json:"Ret,omitempty"`
+}
+
+func (x *SS_EnterMap_Rsp) Reset() {
+	*x = SS_EnterMap_Rsp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_map_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SS_EnterMap_Rsp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SS_EnterMap_Rsp) ProtoMessage() {}
+
+func (x *SS_EnterMap_Rsp) ProtoReflect() protoreflect.Message {
+	mi := &file_map_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SS_EnterMap_Rsp.ProtoReflect.Descriptor instead.
+func (*SS_EnterMap_Rsp) Descriptor() ([]byte, []int) {
+	return file_map_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *SS_EnterMap_Rsp) GetRoleID() int64 {
+	if x != nil {
+		return x.RoleID
+	}
+	return 0
+}
+
+func (x *SS_EnterMap_Rsp) GetMapID() int32 {
+	if x != nil {
+		return x.MapID
+	}
+	return 0
+}
+
+func (x *SS_EnterMap_Rsp) GetRet() ErrorCode {
+	if x != nil {
+		return x.Ret
+	}
+	return ErrorCode_Invaild
+}
+
+//enter map success notify
+type SC_EnterMap struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	RoleID int64 `protobuf:"varint,1,opt,name=RoleID,proto3" json:"RoleID,omitempty"`
+	MapID  int64 `protobuf:"varint,2,opt,name=MapID,proto3" json:"MapID,omitempty"`
+}
+
+func (x *SC_EnterMap) Reset() {
+	*x = SC_EnterMap{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_map_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SC_EnterMap) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SC_EnterMap) ProtoMessage() {}
+
+func (x *SC_EnterMap) ProtoReflect() protoreflect.Message {
+	mi := &file_map_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SC_EnterMap.ProtoReflect.Descriptor instead.
+func (*SC_EnterMap) Descriptor() ([]byte, []int) {
+	return file_map_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SC_EnterMap) GetRoleID() int64 {
+	if x != nil {
+		return x.RoleID
+	}
+	return 0
+}
+
+func (x *SC_EnterMap) GetMapID() int64 {
+	if x != nil {
+		return x.MapID
+	}
+	return 0
+}
+
 var File_map_proto protoreflect.FileDescriptor
 
 var file_map_proto_rawDesc = []byte{
-	0x0a, 0x09, 0x6d, 0x61, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x42, 0x0e, 0x5a, 0x0c, 0x2e,
-	0x2e, 0x2f, 0x61, 0x6b, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x0a, 0x09, 0x6d, 0x61, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x0f, 0x65, 0x72, 0x72,
+	0x6f, 0x72, 0x63, 0x6f, 0x64, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x3f, 0x0a, 0x0f,
+	0x53, 0x53, 0x5f, 0x45, 0x6e, 0x74, 0x65, 0x72, 0x4d, 0x61, 0x70, 0x5f, 0x52, 0x65, 0x71, 0x12,
+	0x16, 0x0a, 0x06, 0x52, 0x6f, 0x6c, 0x65, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x06, 0x52, 0x6f, 0x6c, 0x65, 0x49, 0x44, 0x12, 0x14, 0x0a, 0x05, 0x4d, 0x61, 0x70, 0x49, 0x44,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x4d, 0x61, 0x70, 0x49, 0x44, 0x22, 0x5d, 0x0a,
+	0x0f, 0x53, 0x53, 0x5f, 0x45, 0x6e, 0x74, 0x65, 0x72, 0x4d, 0x61, 0x70, 0x5f, 0x52, 0x73, 0x70,
+	0x12, 0x16, 0x0a, 0x06, 0x52, 0x6f, 0x6c, 0x65, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x06, 0x52, 0x6f, 0x6c, 0x65, 0x49, 0x44, 0x12, 0x14, 0x0a, 0x05, 0x4d, 0x61, 0x70, 0x49,
+	0x44, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x4d, 0x61, 0x70, 0x49, 0x44, 0x12, 0x1c,
+	0x0a, 0x03, 0x52, 0x65, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x0a, 0x2e, 0x45, 0x72,
+	0x72, 0x6f, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x03, 0x52, 0x65, 0x74, 0x22, 0x3b, 0x0a, 0x0b,
+	0x53, 0x43, 0x5f, 0x45, 0x6e, 0x74, 0x65, 0x72, 0x4d, 0x61, 0x70, 0x12, 0x16, 0x0a, 0x06, 0x52,
+	0x6f, 0x6c, 0x65, 0x49, 0x44, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x52, 0x6f, 0x6c,
+	0x65, 0x49, 0x44, 0x12, 0x14, 0x0a, 0x05, 0x4d, 0x61, 0x70, 0x49, 0x44, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x03, 0x52, 0x05, 0x4d, 0x61, 0x70, 0x49, 0x44, 0x42, 0x0e, 0x5a, 0x0c, 0x2e, 0x2e, 0x2f,
+	0x61, 0x6b, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
-var file_map_proto_goTypes = []interface{}{}
+var (
+	file_map_proto_rawDescOnce sync.Once
+	file_map_proto_rawDescData = file_map_proto_rawDesc
+)
+
+func file_map_proto_rawDescGZIP() []byte {
+	file_map_proto_rawDescOnce.Do(func() {
+		file_map_proto_rawDescData = protoimpl.X.CompressGZIP(file_map_proto_rawDescData)
+	})
+	return file_map_proto_rawDescData
+}
+
+var file_map_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_map_proto_goTypes = []interface{}{
+	(*SS_EnterMap_Req)(nil), // 0: SS_EnterMap_Req
+	(*SS_EnterMap_Rsp)(nil), // 1: SS_EnterMap_Rsp
+	(*SC_EnterMap)(nil),     // 2: SC_EnterMap
+	(ErrorCode)(0),          // 3: ErrorCode
+}
 var file_map_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: SS_EnterMap_Rsp.Ret:type_name -> ErrorCode
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_map_proto_init() }
@@ -41,18 +251,58 @@ func file_map_proto_init() {
 	if File_map_proto != nil {
 		return
 	}
+	file_errorcode_proto_init()
+	if !protoimpl.UnsafeEnabled {
+		file_map_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SS_EnterMap_Req); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_map_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SS_EnterMap_Rsp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_map_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SC_EnterMap); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_map_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_map_proto_goTypes,
 		DependencyIndexes: file_map_proto_depIdxs,
+		MessageInfos:      file_map_proto_msgTypes,
 	}.Build()
 	File_map_proto = out.File
 	file_map_proto_rawDesc = nil

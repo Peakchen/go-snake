@@ -78,6 +78,11 @@ enum MSG
     CS_FRIENDBLACK = 10308;
     SC_FRIENDBLACK = 10309;
 
+    //地图相关
+    SS_ENTERMAP_REQ = 10400;
+    SS_ENTERMAP_RSP = 10401;
+    SC_ENTERMAP     = 10402;
+
     GAME_MAX = 100000; //客户端服务器最大协议
 }
 

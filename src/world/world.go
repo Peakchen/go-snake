@@ -35,6 +35,7 @@ func (this *World) Init() {
 	//...
 	app.Init()
 	logic.Init()
+	logic.LoadTab()
 	messageBase.InitCodec(&utils.CodecProtobuf{})
 	mixNet.NewSessionMgr(mixNet.GetApp())
 	evtAsync.NewMainEvtMgr()

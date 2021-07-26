@@ -3,6 +3,7 @@ module go-snake
 go 1.15
 
 require (
+	github.com/Peakchen/go-tmx v0.0.0-20210618111834-e690ac89fd6b
 	github.com/Peakchen/xgameCommon v0.0.6-0.20210310091059-6c4643710177
 	github.com/Shopify/sarama v1.19.0 // indirect
 	github.com/Shopify/toxiproxy v2.1.4+incompatible // indirect

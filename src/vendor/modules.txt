@@ -4,6 +4,9 @@ github.com/BurntSushi/toml
 github.com/CloudyKit/fastprinter
 # github.com/CloudyKit/jet/v3 v3.0.0
 github.com/CloudyKit/jet/v3
+# github.com/Peakchen/go-tmx v0.0.0-20210618111834-e690ac89fd6b
+## explicit
+github.com/Peakchen/go-tmx/tmx
 # github.com/Peakchen/xgameCommon v0.0.6-0.20210310091059-6c4643710177
 ## explicit
 github.com/Peakchen/xgameCommon/ado

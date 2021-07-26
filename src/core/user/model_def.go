@@ -8,4 +8,5 @@ const (
 	M_Mail
 	M_Chat
 	M_Friend
+	M_Map
 )
