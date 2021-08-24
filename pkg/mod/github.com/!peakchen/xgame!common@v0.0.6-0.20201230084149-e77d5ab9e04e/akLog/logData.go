@@ -1,3 +1,0 @@
-package akLog
-
-import ()
