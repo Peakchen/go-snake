@@ -1,6 +1,0 @@
-.vscode
-_authortools
-/_examples/issue-*/
-/_examples/**/node_modules
-.directory
-*.exe
